@@ -1,4 +1,14 @@
-# Flask Login System
+# SportsSync Application
+
+## Group Members
+
+| Student Name   | Student Number | Github Username |
+|----------------|----------------|-----------------|
+| Lauren Hart    | 23164229       | lauhart         |
+| Declan Barrett | 23074941       | DeclanB1        |
+| Edward Le      | 23020568       | TBA             |
+| Matthew Chew   | 22974046       | TBA             |
+
 
 ## Quick Start Guide
 
