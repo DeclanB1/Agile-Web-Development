@@ -1,27 +1,30 @@
 # Flask Login System
 
 ## Quick Start Guide
-   ```
+
+Follow these steps to get the Flask application running locally on your machine:
 
 1. **Create and Activate a Virtual Environment**
-   ```
-   $ python -m venv venv
-   $ source venv/bin/activate
-   ```
+   Open your terminal and run the following commands:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate
 
 2. **Install Required Dependencies**
-   ```
-   $ pip install -r requirements.txt
-   ```
 
-3. **Navigate to the Source Directory**
-   ```
-   $ cd src
-   ```
+```bash
+pip install -r requirements.txt
+```
 
-4. **Launch the Application**
-   ```
-   $ python app.py
-   ```
+3. **Navigate the Source Directory**
 
-After completing these steps, the Flask application should be running locally on your machine.
+```bash
+cd src
+```
+
+4. **Launch Application**
+
+```bash
+python app.py
+```
+
