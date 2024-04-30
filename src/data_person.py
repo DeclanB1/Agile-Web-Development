@@ -2,10 +2,11 @@ def Person_Data():
   person_data = [
     {
       'person_id': 1,
+      'sport': 'Basketball',
       'person_name': 'John Doe',
       'age': 25,
       'location': 'Downtown',
-      'skill-level': 'Intermediate',
+      'skill_level': 'Intermediate',
       'availability': ['Weekdays: Evenings after 6:00 PM', 
                        'Weekends: Flexible'],
       'information': ['Played basketball in high school and college', 
@@ -17,10 +18,11 @@ def Person_Data():
     },
     {
       'person_id': 2,
+      'sport': 'Tennis',
       'person_name': 'Alex Johnson',
       'age': 28,
       'location': 'City Center',
-      'skill-level': 'Advanced',
+      'skill_level': 'Advanced',
       'availability': ['Weekdays: Evenings after 6:00 PM', 
                        'Weekends: Flexible'],
       'information': ['Former collegiate tennis player with advanced skills', 
@@ -32,10 +34,11 @@ def Person_Data():
     },
     {
       'person_id': 3,
+      'sport': 'Golf',
       'person_name': 'Emily Smith',
       'age': 30,
       'location': 'Suburbia',
-      'skill-level': 'Advanced',
+      'skill_level': 'Advanced',
       'availability': ['Weekdays: Mornings before 11:00 AM', 
                        'Weekends: Afternoons after 2:00 PM'],
       'information': ['Experienced golfer with a handicap of 12', 

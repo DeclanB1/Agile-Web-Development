@@ -11,6 +11,8 @@ from flask import (
 
 from create_database import setup_database
 from utils import login_required, set_session
+from data_team import Team_Data
+from data_person import Person_Data
 
 
 app = Flask(__name__)
@@ -18,6 +20,9 @@ app.secret_key = 'xpSm7p5bgJY8rNoBjGWiz5yjxM-NEBlW6SIBI62OkLc='
 
 database = "users.db"
 setup_database(name=database)
+
+Team_Data = Team_Data()
+Person_Data = Person_Data()
 
 
 @app.route('/')
@@ -128,7 +133,7 @@ def register():
 
 @app.route('/dashboard')
 def dashboard():
-    return render_template('dashboard.html')
+    return render_template('dashboard.html', team_data=Team_Data, person_data=Person_Data)
 
 if __name__ == '__main__':
     app.run(debug=True)
