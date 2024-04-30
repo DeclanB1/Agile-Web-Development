@@ -135,5 +135,29 @@ def register():
 def dashboard():
     return render_template('dashboard.html', team_data=Team_Data, person_data=Person_Data)
 
+@app.route('/team-basketball')
+def team_basketball():
+    return render_template('team_basketball.html', team_data=Team_Data)
+
+@app.route('/team-football')
+def team_football():
+    return render_template('team_football.html', team_data=Team_Data)
+
+@app.route('/team-baseball')
+def team_baseball():
+    return render_template('team_baseball.html', team_data=Team_Data)
+
+@app.route('/person-basketball')
+def person_basketball():
+    return render_template('person_basketball.html', person_data=Person_Data)
+
+@app.route('/person-tennis')
+def person_tennis():
+    return render_template('person_tennis.html', person_data=Person_Data)
+
+@app.route('/person-golf')
+def person_golf():
+    return render_template('person_golf.html', person_data=Person_Data)
+
 if __name__ == '__main__':
     app.run(debug=True)

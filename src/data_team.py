@@ -36,7 +36,7 @@ def Team_Data():
       'team_id': 3,
       'sport': 'Baseball',
       'team_name': 'Diamond Kings',
-      'skilllevel': 'Intermediate',
+      'skill_level': 'Intermediate',
       'location': 'Diamond Park, Suburbia',
       'number_of_players_needed': 4,
       'availability': ['Practice: Tuesdays and Thursdays from 6:30 PM to 8:30 PM', 

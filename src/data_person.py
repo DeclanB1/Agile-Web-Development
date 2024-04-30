@@ -11,7 +11,7 @@ def Person_Data():
                        'Weekends: Flexible'],
       'information': ['Played basketball in high school and college', 
                       'Looking for a competitive team to improve skills and stay active', 
-                      'Committed to attending practices and games regularly'
+                      'Committed to attending practices and games regularly',
                       'Positive attitude and team player'],
       'contact': ['Email: johndoe@gmail.com',
                   'Phone: 0412 423 456']
@@ -27,7 +27,7 @@ def Person_Data():
                        'Weekends: Flexible'],
       'information': ['Former collegiate tennis player with advanced skills', 
                       'Seeking a competitive tennis team for regular practice and matches', 
-                      'Experienced in both singles and doubles play'
+                      'Experienced in both singles and doubles play',
                       'Fitness-focused and dedicated to maintaining peak performance'],
       'contact': ['Email: alexjohnson@example.com',
                   'Phone: 0412 523 456']
@@ -43,7 +43,7 @@ def Person_Data():
                        'Weekends: Afternoons after 2:00 PM'],
       'information': ['Experienced golfer with a handicap of 12', 
                       'Looking for a friendly and supportive golf team for regular play', 
-                      'Enjoys both casual rounds and competitive tournaments'
+                      'Enjoys both casual rounds and competitive tournaments',
                       'Committed to improving skills and contributing positively to the team'],
       'contact': ['Email: emilysmith@gmail.com',
                   'Phone: 0412 623 456']
