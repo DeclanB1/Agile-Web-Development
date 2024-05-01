@@ -11,6 +11,8 @@ from flask import (
 
 from create_database import setup_database
 from utils import login_required, set_session
+from data_team import Team_Data
+from data_person import Person_Data
 
 
 app = Flask(__name__)
@@ -18,6 +20,9 @@ app.secret_key = 'xpSm7p5bgJY8rNoBjGWiz5yjxM-NEBlW6SIBI62OkLc='
 
 database = "users.db"
 setup_database(name=database)
+
+Team_Data = Team_Data()
+Person_Data = Person_Data()
 
 
 @app.route('/')
@@ -126,6 +131,33 @@ def register():
     set_session( username=username, email=email)
     return redirect('/')
 
+@app.route('/dashboard')
+def dashboard():
+    return render_template('dashboard.html', team_data=Team_Data, person_data=Person_Data)
+
+@app.route('/team-basketball')
+def team_basketball():
+    return render_template('team_basketball.html', team_data=Team_Data)
+
+@app.route('/team-football')
+def team_football():
+    return render_template('team_football.html', team_data=Team_Data)
+
+@app.route('/team-baseball')
+def team_baseball():
+    return render_template('team_baseball.html', team_data=Team_Data)
+
+@app.route('/person-basketball')
+def person_basketball():
+    return render_template('person_basketball.html', person_data=Person_Data)
+
+@app.route('/person-tennis')
+def person_tennis():
+    return render_template('person_tennis.html', person_data=Person_Data)
+
+@app.route('/person-golf')
+def person_golf():
+    return render_template('person_golf.html', person_data=Person_Data)
 
 if __name__ == '__main__':
     app.run(debug=True)

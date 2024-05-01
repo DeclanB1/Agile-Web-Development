@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> - Looking for Teams</title>
+  <link rel="stylesheet" href="{{url_for('static', filename='details.css')}}">
+</head>
+<body>
+  <div class="container">
+    <header>
+        <h1>Sport: {{person_data[1].sport}}</h1>
+        <p class="lead">Looking for Teams</p>
+    </header>
+    
+    <div class="team-info">
+        <p><strong>Name:</strong> {{person_data[1].person_name}}</p>
+        <p><strong>Age:</strong> {{person_data[1].age}}</p>
+        <p><strong>Location:</strong> {{person_data[1].location}}</p>
+        <p><strong>Skill Level:</strong> {{person_data[1].skill_level}}</p>
+        <p class="ul-content"><strong>Availability:</strong></p>
+        <ul>
+            <li>{{person_data[1].availability[0]}}</li>
+            <li>{{person_data[1].availability[1]}}</li>
+        </ul>
+        <p class="ul-content"><strong>Additional Information:</strong></p>
+        <ul>
+            <li>{{person_data[1].information[0]}}</li>
+            <li>{{person_data[1].information[1]}}</li>
+            <li>{{person_data[1].information[2]}}</li>
+            <li>{{person_data[1].information[3]}}</li>
+        </ul>
+        <p class="ul-content"><strong>Contact Methods:</strong></p>
+        <ul>
+            <li>{{person_data[1].contact[0]}}</li>
+            <li>{{person_data[1].contact[1]}}</li>
+        </ul>
+    </div>
+  </div>
+</body>
+</html>
