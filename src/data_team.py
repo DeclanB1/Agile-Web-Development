@@ -5,7 +5,7 @@ def Team_Data():
       'sport': 'Basketball',
       'team_name': 'Downtown Ballers',
       'skill_level': 'Intermediate',
-      'location': 'City Park Basketball Courts, Downtown',
+      'location': 'City Park, Downtown',
       'number_of_players_needed': 2,
       'availability': ['Practice: Tuesdays and Thursdays from 6:00 PM to 8:00 PM', 
                       'Games: Saturdays at 10:00 AM'],

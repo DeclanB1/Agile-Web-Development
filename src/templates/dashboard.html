@@ -2,15 +2,13 @@
 
 {% block body %}
   <!-- Teams Looking For Players -->
-  <section id="team-looking">
-    <h1 class="text-center text-warning">Looking for Players</h1>
-    <section id="team-basketball" class="p-5 pt-0">
-      <div class="container">
-        <div class="row align-items-center justify-content-between">
-          <div class="col-md">
-            <img src="https://img.freepik.com/premium-vector/basketball-player-playing-sports-game-running-with-orange-ball-hand-passing-throwing-it-strong-man-athlete-sportsman-training-uniform-flat-vector-illustration-isolated-white-background_198278-16251.jpg?w=1380" class="img-fluid" alt="" />
-          </div>
-          <div class="col-md p-5">
+  <section id="team-looking" class="p-5">
+    <div class="container">
+      <h1 class="text-center text-warning mb-4">Looking for Players</h1>
+
+      <div class="row">
+        <div class="col-md-4 team-basketball">
+          <div>
             <h2>Sport: {{team_data[0].sport}}</h2>
             <br>
             <p class="lead">Team: {{team_data[0].team_name}}</p>
@@ -24,14 +22,13 @@
               Details <i class="bi bi-info-circle-fill details"></i>
             </a>
           </div>
+          <div>
+            <img src="https://img.freepik.com/premium-vector/basketball-player-playing-sports-game-running-with-orange-ball-hand-passing-throwing-it-strong-man-athlete-sportsman-training-uniform-flat-vector-illustration-isolated-white-background_198278-16251.jpg?w=1380" class="img-fluid" alt="" />
+          </div>
         </div>
-      </div>
-    </section>
 
-    <section id="team-football" class="p-5 bg-dark text-light">
-      <div class="container">
-        <div class="row align-items-center justify-content-between">
-          <div class="col-md p-5">
+        <div class="col-md-4 team-football">
+          <div class="mb-4">
             <h2>Sport: {{team_data[1].sport}}</h2>
             <br>
             <p class="lead">Team: {{team_data[1].team_name}}</p>
@@ -45,45 +42,42 @@
               Details <i class="bi bi-info-circle-fill details"></i>
             </a>
           </div>
-          <div class="col-md">
-            <img src="https://uploads-ssl.webflow.com/5f7aea81e75cbd6140ed089f/5f7af06b20c4f574757ac3f9_undraw_goal_0v5v.svg" class="img-fluid" alt="" />
+          <div>
+              <img src="https://uploads-ssl.webflow.com/5f7aea81e75cbd6140ed089f/5f7af06b20c4f574757ac3f9_undraw_goal_0v5v.svg" class="img-fluid" alt="" />
           </div>
         </div>
-      </div>
-    </section>
 
-    <section id="team-baseball" class="p-5 mb-5">
-      <div class="container">
-        <div class="row align-items-center justify-content-between">
-          <div class="col-md">
+        <div class="col-md-4 team-baseball">
+          <div>
+            <h2>Sport: {{team_data[2].sport}}</h2>
+              <br>
+              <p class="lead">Team: {{team_data[2].team_name}}</p>
+              <p class="lead">Skill Level Required: {{team_data[2].skill_level}}</p>
+              <p class="lead">Location: {{team_data[2].location}}</p>
+              <p class="lead">Number of players needed: {{team_data[2].number_of_players_needed}}</p>
+              <a
+                href="/team-baseball"
+                class="btn btn-secondary mt-2"
+              >
+                Details <i class="bi bi-info-circle-fill details"></i>
+              </a>
+          </div>
+          <div>
             <img src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTi2SIlTOASSV4iIk-Im81jn_bv4GDV_k2arF_ZDfp2QDDqkyZD" class="img-fluid image" alt="" />
           </div>
-          <div class="col-md p-5">
-            <h2>Sport: {{team_data[2].sport}}</h2>
-            <br>
-            <p class="lead">Team: {{team_data[2].team_name}}</p>
-            <p class="lead">Skill Level Required: {{team_data[2].skill_level}}</p>
-            <p class="lead">Location: {{team_data[2].location}}</p>
-            <p class="lead">Number of players needed: {{team_data[2].number_of_players_needed}}</p>
-            <a
-              href="/team-baseball"
-              class="btn btn-secondary mt-2"
-            >
-              Details <i class="bi bi-info-circle-fill details"></i>
-            </a>
-          </div>
         </div>
       </div>
-    </section>
+    </div>
   </section>
 
   <!-- Players Looking For Teams -->
   <section id="player-looking">
-    <h1 class="text-center text-danger mb-4">Looking for Teams</h1>
-    <section id="player-basketball" class="p-5 bg-dark text-light">
-      <div class="container">
-        <div class="row align-items-center justify-content-between">
-          <div class="col-md p-5">
+    <div class="container">
+      <h1 class="text-center text-danger mb-4">Looking for Teams</h1>
+
+      <div class="row">
+        <div class="col-md-4 player-basketball">
+          <div class="mb-2">
             <h2>Sport: {{person_data[0].sport}}</h2>
             <br>
             <p class="lead">Name: {{person_data[0].person_name}}</p>
@@ -97,20 +91,13 @@
               Details <i class="bi bi-info-circle-fill details"></i>
             </a>
           </div>
-          <div class="col-md">
+          <div>
             <img src="https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcTxsy3xpMOGLcLvk5QUvBykk0W7HCXdDDAM-fmYgAO017aW4PHV" class="img-fluid image" alt="" />
           </div>
         </div>
-      </div>
-    </section>
 
-    <section id="player-tennis" class="p-5">
-      <div class="container">
-        <div class="row align-items-center justify-content-between">
-          <div class="col-md">
-            <img src="https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQffik82FmBC2DhEQq868lJ03Sh6sPOK5spARlW-k14UOoEl0JT" class="img-fluid image" alt="" />
-          </div>
-          <div class="col-md p-5">
+        <div class="col-md-4 player-tennis">
+          <div class="mb-4">
             <h2>Sport: {{person_data[1].sport}}</h2>
             <br>
             <p class="lead">Name: {{person_data[1].person_name}}</p>
@@ -124,14 +111,13 @@
               Details <i class="bi bi-info-circle-fill details"></i>
             </a>
           </div>
+          <div>
+            <img src="https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQffik82FmBC2DhEQq868lJ03Sh6sPOK5spARlW-k14UOoEl0JT" class="img-fluid image" alt="" />
+          </div>
         </div>
-      </div>
-    </section>
 
-    <section id="player-golf" class="p-5 bg-dark text-light">
-      <div class="container">
-        <div class="row align-items-center justify-content-between">
-          <div class="col-md p-5">
+        <div class="col-md-4 player-golf">
+          <div class="mb-4">
             <h2>Sport: {{person_data[2].sport}}</h2>
             <br>
             <p class="lead">Name: {{person_data[2].person_name}}</p>
@@ -145,12 +131,12 @@
               Details <i class="bi bi-info-circle-fill details"></i>
             </a>
           </div>
-          <div class="col-md">
-            <img src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQf2OtK7wKho_gET-6Tmb9oyNBQBKBF-xtEGjd8xiYRCYzGhCPm" class="img-fluid image" alt="" />
+          <div>
+            <img src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQf2OtK7wKho_gET-6Tmb9oyNBQBKBF-xtEGjd8xiYRCYzGhCPm" class="img-fluid player-golf-image" alt="" />
           </div>
         </div>
       </div>
-    </section>
+    </div>
   </section>
 
 {% endblock %}
