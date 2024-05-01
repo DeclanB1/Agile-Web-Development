@@ -26,12 +26,26 @@ def create_table(db_file: str) -> None:
             conn.execute(query)
 
 
+def create_requests_table(db_file: str):
+
+    with contextlib.closing(sqlite3.connect(db_file)) as conn:
+        with conn:
+            conn.execute('''
+                CREATE TABLE IF NOT EXISTS requests (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    title TEXT NOT NULL,
+                    description TEXT NOT NULL
+                );
+            ''')
+
+
 def setup_database(name: str) -> None:
     if Path(name).exists():
         return
 
     create_connection(name)
     create_table(name)
+    create_requests_table(name)
 
     print('\033[91m', 'Creating new example database "users.db"', '\033[0m')
     

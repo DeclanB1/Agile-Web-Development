@@ -127,5 +127,27 @@ def register():
     return redirect('/')
 
 
+@app.route('/requests', methods=['GET', 'POST'])
+@login_required
+def submit_request():
+    if request.method == 'GET':
+        return render_template('requests.html')
+    
+    title = request.form.get('title')
+    description = request.form.get('description')
+    
+    query = 'INSERT INTO requests (title, description) VALUES (:title, :description);'
+    params = {
+        'title': title,
+        'description': description
+    }
+    
+    with contextlib.closing(sqlite3.connect(database)) as conn:
+        with conn:
+            conn.execute(query, params)
+    
+    return redirect('/')
+
+
 if __name__ == '__main__':
     app.run(debug=True)
