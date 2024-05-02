@@ -12,18 +12,22 @@ def create_connection(db_file: str) -> None:
 
 
 def create_table(db_file: str) -> None:
-    """ Create a table for users """
+    """ Create a table for users with additional fields """
     query = '''
         CREATE TABLE IF NOT EXISTS users (
             username TEXT PRIMARY KEY,
             password TEXT NOT NULL,
-            email TEXT
+            email TEXT NOT NULL,
+            fullname TEXT NOT NULL,
+            age INTEGER NOT NULL,
+            location TEXT NOT NULL
         );
     ''' 
 
     with contextlib.closing(sqlite3.connect(db_file)) as conn:
         with conn:
             conn.execute(query)
+
 
 
 def setup_database(name: str) -> None:

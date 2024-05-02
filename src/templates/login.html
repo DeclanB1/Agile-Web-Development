@@ -6,6 +6,16 @@
     <link rel="stylesheet" href="{{url_for('static', filename='main.css')}}">
     <title>Login</title>
 </head>
+
+{% extends "base.html" %}
+
+{% block title %}
+Register
+{% endblock %}
+
+{% block content %}
+
+
 <body>
     <form id="user-form" class="round-corners" action="/login" method="post">
         <div class="form-item">
@@ -31,3 +41,5 @@
     </form>
 </body>
 </html>
+
+{% endblock %}

@@ -4,12 +4,11 @@
 
 body {
     font-family: Arial, sans-serif;
-    background: snow;
+    margin: 0;
+    padding: 0;
     display: flex;
-    justify-content: center;
-    align-items: center;
     flex-direction: column;
-    height: 100vh;
+    min-height: 100vh;
 }
 
 .text-link {
@@ -18,14 +17,19 @@ body {
 
 #user-form {
     background: white;
-    padding: max(4vmin, 15px);
-    width: min(90vw, 275px);
-    box-shadow: 0 0 20px rgba(5, 50, 50, 0.1);
+    padding: max(4vmin, 20px);
+    width: min(90vw, 300px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     display: flex;
     justify-content: center;
     flex-direction: column;
     align-items: center;
-    gap: 2vh;
+    gap: 20px;
+    position: absolute;  /* Positioning relative to the nearest positioned ancestor */
+    top: 50%;            /* Center vertically */
+    left: 50%;           /* Center horizontally */
+    transform: translate(-50%, -50%); /* Adjust the position to truly center the form */
+    border-radius: var(--border-radius);
 }
 
 .form-item {
@@ -84,4 +88,44 @@ h1 {
     background: -webkit-linear-gradient(dodgerblue, purple);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+}
+
+
+nav {
+    width: 100%;
+    background-color: #333;
+    position: fixed; /* Makes the navbar fixed to the top of the viewport */
+    top: 0; /* Ensures it stays at the very top */
+    left: 0; /* Aligns it to the left edge of the viewport */
+    z-index: 1000; /* Ensures it stays on top of other content */
+}
+
+.navbar {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: flex-end;
+    height: 50px; /* Set a fixed height for the navbar */
+}
+
+.navbar li {
+    display: block;
+}
+
+.navbar li a {
+    display: block;
+    color: white;
+    padding: 14px 20px;
+    text-decoration: none;
+}
+
+.navbar li a:hover {
+    background-color: #ddd;
+    color: black;
+}
+
+/* Adds padding-top to the main content to avoid being hidden behind the fixed navbar */
+.content {
+    padding-top: 60px; /* Should be more than the height of the navbar */
 }

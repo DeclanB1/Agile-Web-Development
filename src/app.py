@@ -20,6 +20,22 @@ database = "users.db"
 setup_database(name=database)
 
 
+@app.route('/profile')
+@login_required
+def profile():
+    return render_template('profile.html')
+
+@app.route('/post_request', methods=['GET', 'POST'])
+@login_required
+def post_request():
+    # handle the post request logic here
+    return render_template('post_request.html')
+
+@app.route('/dashboard')
+@login_required
+def dashboard():
+    return render_template('dashboard.html')
+
 @app.route('/')
 @login_required
 def index():
@@ -85,10 +101,13 @@ def register():
         return render_template('register.html')
     
     # Store data to variables 
+    username = request.form.get('username')
     password = request.form.get('password')
     confirm_password = request.form.get('confirm-password')
-    username = request.form.get('username')
     email = request.form.get('email')
+    fullname = request.form.get('fullname')
+    age = request.form.get('age')
+    location = request.form.get('location')
 
     # Verify data
     if len(password) < 8:
@@ -111,12 +130,20 @@ def register():
     pw = PasswordHasher()
     hashed_password = pw.hash(password)
 
-    query = 'insert into users(username, password, email) values (:username, :password, :email);'
+    query = '''
+        INSERT INTO users(username, password, email, fullname, age, location) 
+        VALUES (:username, :password, :email, :fullname, :age, :location);
+    '''
     params = {
         'username': username,
         'password': hashed_password,
-        'email': email
+        'email': email,
+        'fullname': fullname,
+        'age': int(age),
+        'location': location
     }
+
+
 
     with contextlib.closing(sqlite3.connect(database)) as conn:
         with conn:

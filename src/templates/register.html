@@ -6,23 +6,51 @@
     <link rel="stylesheet" href="{{url_for('static', filename='main.css')}}">
     <title>Register</title>
 </head>
+
+{% extends "base.html" %}
+
+{% block title %}
+Register
+{% endblock %}
+
+{% block content %}
 <body>
     <form id="user-form" class="round-corners" action="/register" method="post">
+        <!-- Full Name -->
+        <div class="form-item">
+            <label for="register-fullname">Full Name:</label>
+            <input id="register-fullname" class="form-input round-corners" type="text" name="fullname" required>
+        </div>
+        <!-- Age with Scroll Bar -->
+        <div class="form-item">
+            <label for="register-age">Age:</label>
+            <input id="register-age" class="form-input round-corners" type="range" name="age" min="17" max="35" value="17" oninput="this.nextElementSibling.value = this.value">
+            <output>17</output>
+        </div>
+        <!-- Preferred Location -->
+        <div class="form-item">
+            <label for="register-location">Preferred Location:</label>
+            <input id="register-location" class="form-input round-corners" type="text" name="location" required>
+        </div>
+        <!-- Username -->
         <div class="form-item">
             <label for="register-username">Username:</label>
             <input id="register-username" class="form-input round-corners" type="text" name="username" required>
         </div>
+        <!-- Email -->
         <div class="form-item">
             <label for="register-email">Email:</label>
             <input id="register-email" class="form-input round-corners" type="email" name="email" required>
         </div>
+        <!-- Password -->
         <div class="form-item">
-            <label for="register-password">Password:</label>
-            <input id="register-password" class="form-input round-corners" type="password" name="password" required>
+            <label for="register-password1">Password:</label>
+            <input id="register-password1" class="form-input round-corners" type="password" name="password" required>
         </div>
+        <!-- Confirm Password -->
         <div class="form-item">
-            <label for="register-password">Confirm Password:</label>
-            <input id="register-password" class="form-input round-corners" type="password" name="confirm-password" required>
+            <label for="register-password2">Confirm Password:</label>
+            <input id="register-password2" class="form-input round-corners" type="password" name="confirm-password" required>
         </div>
 
         {% if error %}<p id="error-msg">{{error}}</p>{% endif %}
@@ -35,3 +63,5 @@
     </form>
 </body>
 </html>
+
+{% endblock %}
