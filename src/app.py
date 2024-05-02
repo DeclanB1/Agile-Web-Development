@@ -25,11 +25,15 @@ Team_Data = Team_Data()
 Person_Data = Person_Data()
 
 
+# @app.route('/')
+# @login_required
+# def index():
+#     print(f'User data: {session}')
+#     return render_template('index.html', username=session.get('username'))
 @app.route('/')
-@login_required
-def index():
-    print(f'User data: {session}')
-    return render_template('index.html', username=session.get('username'))
+@app.route('/dashboard')
+def dashboard():
+    return render_template('dashboard.html', team_data=Team_Data, person_data=Person_Data)
 
 
 @app.route('/logout')
@@ -130,10 +134,6 @@ def register():
     # We can log the user in right away since no email verification
     set_session( username=username, email=email)
     return redirect('/')
-
-@app.route('/dashboard')
-def dashboard():
-    return render_template('dashboard.html', team_data=Team_Data, person_data=Person_Data)
 
 @app.route('/team-basketball')
 def team_basketball():

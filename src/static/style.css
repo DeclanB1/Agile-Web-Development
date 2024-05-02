@@ -69,3 +69,68 @@ body::before {
       "Lucida Sans", Arial, sans-serif;
   }
 }
+
+.details-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+.details-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.details-h1 {
+  color: #333;
+  font-size: 36px;
+  margin-bottom: 10px;
+}
+
+p.details-subtitle {
+  color: #666;
+  font-size: 18px;
+}
+
+.team-info {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 30px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.team-info img {
+  max-width: 100%;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  margin-top: -40px;
+}
+
+.team-info p {
+  margin: 0 0 15px;
+  font-size: 18px;
+}
+
+.team-info p.ul-content {
+  margin-bottom: 10px;
+}
+
+.team-info ul li {
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+.team-info ul li:last-child {
+  margin-bottom: 0;
+}
+
+.image {
+  width: 80%;
+}
+
+.team-baseball-image {
+  width: 90%;
+}
+
+.player-golf-image {
+  width: 90%;
+}

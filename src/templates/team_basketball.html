@@ -1,42 +1,43 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title> - Looking for Players</title>
-  <link rel="stylesheet" href="{{url_for('static', filename='details.css')}}">
-</head>
-<body>
-  <div class="container">
-    <header>
-        <h1>{{team_data[0].team_name}}</h1>
-        <p class="lead">Looking for Players</p>
+{% extends 'layout.html' %} {% block body %}
+<section id="team-basketball" class="pt-5">
+  <div class="container details-container">
+    <header class="details-header">
+      <h1 class="details-h1">{{team_data[0].team_name}}</h1>
+      <p class="lead details-subtitle">Looking for Players</p>
     </header>
-    
+
     <div class="team-info">
-        <img src="https://sportsvenuecalculator.com/wp-content/uploads/2022/11/Sponsor-4.jpg" alt="Basketball Court">
-        <p><strong>Sport:</strong> {{team_data[0].sport}}</p>
-        <p><strong>Location:</strong> {{team_data[0].location}}</p>
-        <p><strong>Skill Level Required:</strong> {{team_data[0].skill_level}}</p>
-        <p><strong>Number of Players Needed:</strong> {{team_data[0].number_of_players_needed}}</p>
-        <p class="ul-content"><strong>Availability:</strong></p>
-        <ul>
-            <li>{{team_data[0].availability[0]}}</li>
-            <li>{{team_data[0].availability[1]}}</li>
-        </ul>
-        <p class="ul-content"><strong>Additional Requirements or Preferences:</strong></p>
-        <ul>
-            <li>{{team_data[0].requirements[0]}}</li>
-            <li>{{team_data[0].requirements[1]}}</li>
-            <li>{{team_data[0].requirements[2]}}</li>
-            <li>{{team_data[0].requirements[3]}}</li>
-        </ul>
-        <p class="ul-content"><strong>Contact Information:</strong></p>
-        <ul>
-            <li>{{team_data[0].contact[0]}}</li>
-            <li>{{team_data[0].contact[1]}}</li>
-        </ul>
+      <img
+        src="https://sportsvenuecalculator.com/wp-content/uploads/2022/11/Sponsor-4.jpg"
+        alt="Basketball Court"
+      />
+      <p><strong>Sport:</strong> {{team_data[0].sport}}</p>
+      <p><strong>Location:</strong> {{team_data[0].location}}</p>
+      <p><strong>Skill Level Required:</strong> {{team_data[0].skill_level}}</p>
+      <p>
+        <strong>Number of Players Needed:</strong>
+        {{team_data[0].number_of_players_needed}}
+      </p>
+      <p class="ul-content"><strong>Availability:</strong></p>
+      <ul>
+        <li>{{team_data[0].availability[0]}}</li>
+        <li>{{team_data[0].availability[1]}}</li>
+      </ul>
+      <p class="ul-content">
+        <strong>Additional Requirements or Preferences:</strong>
+      </p>
+      <ul>
+        <li>{{team_data[0].requirements[0]}}</li>
+        <li>{{team_data[0].requirements[1]}}</li>
+        <li>{{team_data[0].requirements[2]}}</li>
+        <li>{{team_data[0].requirements[3]}}</li>
+      </ul>
+      <p class="ul-content"><strong>Contact Information:</strong></p>
+      <ul>
+        <li>{{team_data[0].contact[0]}}</li>
+        <li>{{team_data[0].contact[1]}}</li>
+      </ul>
     </div>
   </div>
-</body>
-</html>
+</section>
+{% endblock %}
