@@ -36,12 +36,10 @@ def dashboard():
     return render_template('dashboard.html', team_data=Team_Data, person_data=Person_Data)
 
 
-@app.route('/logout')
+@app.route('/logout', methods=['POST'])
 def logout():
     session.clear()
-    session.permanent = False
-    return redirect('/login')
-
+    return redirect(request.referrer or '/')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -158,6 +156,7 @@ def person_tennis():
 @app.route('/person-golf')
 def person_golf():
     return render_template('person_golf.html', person_data=Person_Data)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
