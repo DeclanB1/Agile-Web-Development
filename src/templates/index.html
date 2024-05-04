@@ -6,13 +6,7 @@
     <link rel="stylesheet" href="{{url_for('static', filename='main.css')}}">
     <title>Home</title>
 </head>
-{% extends "base.html" %}
 
-{% block title %}
-Register
-{% endblock %}
-
-{% block content %}
 <body>
     {% if username %}
         <h1>Welcome <span class="gradiant-text">{{username}}</span>!</h1>
