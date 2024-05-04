@@ -25,19 +25,21 @@ Team_Data = Team_Data()
 Person_Data = Person_Data()
 
 
+# @app.route('/')
+# @login_required
+# def index():
+#     print(f'User data: {session}')
+#     return render_template('index.html', username=session.get('username'))
 @app.route('/')
-@login_required
-def index():
-    print(f'User data: {session}')
-    return render_template('index.html', username=session.get('username'))
+@app.route('/dashboard')
+def dashboard():
+    return render_template('dashboard.html', team_data=Team_Data, person_data=Person_Data)
 
 
-@app.route('/logout')
+@app.route('/logout', methods=['POST'])
 def logout():
     session.clear()
-    session.permanent = False
-    return redirect('/login')
-
+    return redirect(request.referrer or '/')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -131,10 +133,6 @@ def register():
     set_session( username=username, email=email)
     return redirect('/')
 
-@app.route('/dashboard')
-def dashboard():
-    return render_template('dashboard.html', team_data=Team_Data, person_data=Person_Data)
-
 @app.route('/team-basketball')
 def team_basketball():
     return render_template('team_basketball.html', team_data=Team_Data)
@@ -158,6 +156,7 @@ def person_tennis():
 @app.route('/person-golf')
 def person_golf():
     return render_template('person_golf.html', person_data=Person_Data)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

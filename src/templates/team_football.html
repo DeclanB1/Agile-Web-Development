@@ -1,42 +1,43 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{team_data[1].team_name}} - Looking for Players</title>
-  <link rel="stylesheet" href="{{url_for('static', filename='details.css')}}">
-</head>
-<body>
-  <div class="container">
-    <header>
-        <h1>{{team_data[1].team_name}}</h1>
-        <p class="lead">Looking for Players</p>
+{% extends 'layout.html' %} {% block body %}
+<section id="team-football" class="pt-5">
+  <div class="container details-container">
+    <header class="details-header">
+      <h1 class="details-h1">{{team_data[1].team_name}}</h1>
+      <p class="lead details-subtitle">Looking for Players</p>
     </header>
-    
+
     <div class="team-info">
-        <img src="https://wesport.asia/wp-content/uploads/2019/12/thanh-tung.jpg" alt="Football Court">
-        <p><strong>Sport:</strong> {{team_data[1].sport}}</p>
-        <p><strong>Location:</strong> {{team_data[1].location}}</p>
-        <p><strong>Skill Level Required:</strong> {{team_data[1].skill_level}}</p>
-        <p><strong>Number of Players Needed:</strong> {{team_data[1].number_of_players_needed}}</p>
-        <p class="ul-content"><strong>Availability:</strong></p>
-        <ul>
-            <li>{{team_data[1].availability[0]}}</li>
-            <li>{{team_data[1].availability[1]}}</li>
-        </ul>
-        <p class="ul-content"><strong>Additional Requirements or Preferences:</strong></p>
-        <ul>
-            <li>{{team_data[1].requirements[0]}}</li>
-            <li>{{team_data[1].requirements[1]}}</li>
-            <li>{{team_data[1].requirements[2]}}</li>
-            <li>{{team_data[1].requirements[3]}}</li>
-        </ul>
-        <p class="ul-content"><strong>Contact Information:</strong></p>
-        <ul>
-            <li>{{team_data[1].contact[0]}}</li>
-            <li>{{team_data[1].contact[1]}}</li>
-        </ul>
+      <img
+        src="https://wesport.asia/wp-content/uploads/2019/12/thanh-tung.jpg"
+        alt="Football Court"
+      />
+      <p><strong>Sport:</strong> {{team_data[1].sport}}</p>
+      <p><strong>Location:</strong> {{team_data[1].location}}</p>
+      <p><strong>Skill Level Required:</strong> {{team_data[1].skill_level}}</p>
+      <p>
+        <strong>Number of Players Needed:</strong>
+        {{team_data[1].number_of_players_needed}}
+      </p>
+      <p class="ul-content"><strong>Availability:</strong></p>
+      <ul>
+        <li>{{team_data[1].availability[0]}}</li>
+        <li>{{team_data[1].availability[1]}}</li>
+      </ul>
+      <p class="ul-content">
+        <strong>Additional Requirements or Preferences:</strong>
+      </p>
+      <ul>
+        <li>{{team_data[1].requirements[0]}}</li>
+        <li>{{team_data[1].requirements[1]}}</li>
+        <li>{{team_data[1].requirements[2]}}</li>
+        <li>{{team_data[1].requirements[3]}}</li>
+      </ul>
+      <p class="ul-content"><strong>Contact Information:</strong></p>
+      <ul>
+        <li>{{team_data[1].contact[0]}}</li>
+        <li>{{team_data[1].contact[1]}}</li>
+      </ul>
     </div>
   </div>
-</body>
-</html>
+</section>
+{% endblock %}
