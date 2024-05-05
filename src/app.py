@@ -157,6 +157,10 @@ def person_tennis():
 def person_golf():
     return render_template('person_golf.html', person_data=Person_Data)
 
+@app.route('/how-it-works')
+def how_it_works():
+    return render_template('how_it_works.html')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
