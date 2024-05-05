@@ -6,13 +6,28 @@ from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
 from flask import (
     Flask, render_template, 
-    request, session, redirect
+    request, session, redirect, url_for
 )
 
 from create_database import setup_database
 from utils import login_required, set_session
 from data_team import Team_Data
 from data_person import Person_Data
+
+from wtforms import StringField, SelectField, IntegerField, SubmitField, TextAreaField
+from wtforms.validators import DataRequired, Length
+from flask_wtf import FlaskForm
+
+class EventForm(FlaskForm):
+    title = StringField('Event Title', validators=[DataRequired()])
+    sport_type = SelectField('Sport Type', choices=[('basketball', 'Basketball'), ('soccer', 'Soccer'), ('rugby', 'Rugby')], validators=[DataRequired()])
+    num_players = IntegerField('Number of Players Needed', validators=[DataRequired()])
+    start_time = StringField('Event Start Time (e.g., DD/MM/YYYY HH:MM)', validators=[DataRequired()])
+    end_time = StringField('Event End Time (e.g., DD/MM/YYYY HH:MM)', validators=[DataRequired()])
+    location = StringField('Event Location', validators=[DataRequired()])
+    description = TextAreaField('Description of Event', validators=[DataRequired(), Length(max=200)])
+    gender_preference = SelectField('Gender Preference', choices=[('male', 'Male'), ('female', 'Female'), ('mixed', 'Mixed')], validators=[DataRequired()])
+    submit = SubmitField('Post Event')
 
 
 app = Flask(__name__)
@@ -160,6 +175,26 @@ def person_golf():
 @app.route('/how-it-works')
 def how_it_works():
     return render_template('how_it_works.html')
+
+@app.route('/post-an-event', methods=['GET', 'POST'])
+def post_event():
+    form = EventForm()
+    if form.validate_on_submit():
+        event = {
+            'title': form.title.data,
+            'sport_type': form.sport_type.data,
+            'num_players': form.num_players.data,
+            'start_time': form.start_time.data,
+            'end_time': form.end_time.data,
+            'location': form.location.data,
+            'description': form.description.data,
+            'gender_preference': form.gender_preference.data
+        }
+        # Assuming saving to database is handled elsewhere
+
+        return render_template('event_posted_successfully.html', event=event)
+
+    return render_template('post_an_event.html', form=form)
 
 
 if __name__ == '__main__':
