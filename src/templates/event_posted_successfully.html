@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<div class="container mt-5">
+    <h2>Event Posted Successfully! (No input data has been saved to database yet)</h2>
+    <p>Here are the details of your event:</p>
+    <ul>
+        <li><strong>Title:</strong> {{ event.title }}</li>
+        <li><strong>Sport Type:</strong> {{ event.sport_type }}</li>
+        <li><strong>Number of Players Needed:</strong> {{ event.num_players }}</li>
+        <li><strong>Start Time:</strong> {{ event.start_time }}</li>
+        <li><strong>End Time:</strong> {{ event.end_time }}</li>
+        <li><strong>Location:</strong> {{ event.location }}</li>
+        <li><strong>Description:</strong> {{ event.description }}</li>
+        <li><strong>Gender Preference:</strong> {{ event.gender_preference }}</li>
+    </ul>
+
+    <a href="{{ url_for('dashboard') }}" class="btn btn-primary mt-3">Back to Home</a>
+</div>
+{% endblock %}
