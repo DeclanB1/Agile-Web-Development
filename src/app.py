@@ -177,6 +177,7 @@ def how_it_works():
     return render_template('how_it_works.html')
 
 @app.route('/post-an-event', methods=['GET', 'POST'])
+@login_required
 def post_event():
     form = EventForm()
     if form.validate_on_submit():
