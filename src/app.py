@@ -105,48 +105,57 @@ def login():
 def register():
     if request.method == 'GET':
         return render_template('register.html')
-    
-    # Store data to variables 
+
+    # Store data from the form
+    username = request.form.get('username')
     password = request.form.get('password')
     confirm_password = request.form.get('confirm-password')
-    username = request.form.get('username')
     email = request.form.get('email')
+    fullname = request.form.get('fullname')  # Retrieve Full Name
+    age = request.form.get('age')  # Retrieve Age
+    preferredlocation = request.form.get('preferredlocation')  # Retrieve Preferred Location
 
-    # Verify data
-    if len(password) < 8:
-        return render_template('register.html', error='Your password must be 8 or more characters')
+    # Validation checks
     if password != confirm_password:
         return render_template('register.html', error='Passwords do not match')
+    if len(password) < 8:
+        return render_template('register.html', error='Password must be at least 8 characters long')
     if not re.match(r'^[a-zA-Z0-9]+$', username):
-        return render_template('register.html', error='Username must only be letters and numbers')
+        return render_template('register.html', error='Username must only contain letters and numbers')
     if not 3 < len(username) < 26:
         return render_template('register.html', error='Username must be between 4 and 25 characters')
 
-    query = 'select username from users where username = :username;'
+    # Check if username already exists
+    query = 'SELECT username FROM users WHERE username = :username;'
     with contextlib.closing(sqlite3.connect(database)) as conn:
         with conn:
             result = conn.execute(query, {'username': username}).fetchone()
     if result:
         return render_template('register.html', error='Username already exists')
 
-    # Create password hash
+    # Hash the password
     pw = PasswordHasher()
     hashed_password = pw.hash(password)
 
-    query = 'insert into users(username, password, email) values (:username, :password, :email);'
+    # Insert the new user data into the database
+    query = 'INSERT INTO users (username, password, email, fullname, age, preferredlocation) VALUES (:username, :password, :email, :fullname, :age, :preferredlocation);'
     params = {
         'username': username,
         'password': hashed_password,
-        'email': email
+        'email': email,
+        'fullname': fullname,
+        'age': age,
+        'preferredlocation': preferredlocation
     }
 
     with contextlib.closing(sqlite3.connect(database)) as conn:
         with conn:
-            result = conn.execute(query, params)
+            conn.execute(query, params)
 
-    # We can log the user in right away since no email verification
-    set_session( username=username, email=email)
-    return redirect('/')
+    # Log the user in right after registration
+    set_session(username=username, email=email)
+    return redirect('/dashboard')
+
 
 @app.route('/team-basketball')
 def team_basketball():
