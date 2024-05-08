@@ -6,7 +6,7 @@ from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
 from flask import (
     Flask, render_template, 
-    request, session, redirect, url_for
+    request, session, redirect, url_for, flash
 )
 
 from create_database import setup_database
@@ -14,7 +14,7 @@ from utils import login_required, set_session
 from data_team import Team_Data
 from data_person import Person_Data
 
-from wtforms import StringField, SelectField, IntegerField, SubmitField, TextAreaField
+from wtforms import StringField, SelectField, IntegerField, SubmitField, TextAreaField, PasswordField, BooleanField
 from wtforms.validators import DataRequired, Length
 from flask_wtf import FlaskForm
 
@@ -29,6 +29,12 @@ class EventForm(FlaskForm):
     gender_preference = SelectField('Gender Preference', choices=[('male', 'Male'), ('female', 'Female'), ('mixed', 'Mixed')], validators=[DataRequired()])
     submit = SubmitField('Post Event')
 
+
+class LoginForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    remember = BooleanField('Remember me')
+    submit = SubmitField('Log In')
 
 app = Flask(__name__)
 app.secret_key = 'xpSm7p5bgJY8rNoBjGWiz5yjxM-NEBlW6SIBI62OkLc='
@@ -58,47 +64,36 @@ def logout():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.method == 'GET':
-        return render_template('login.html')
-
-    # Set data to variables
-    username = request.form.get('username')
-    password = request.form.get('password')
-    
-    # Attempt to query associated user data
-    query = 'select username, password, email from users where username = :username'
-
-    with contextlib.closing(sqlite3.connect(database)) as conn:
-        with conn:
-            account = conn.execute(query, {'username': username}).fetchone()
-
-    if not account: 
-        return render_template('login.html', error='Username does not exist')
-
-    # Verify password
-    try:
-        ph = PasswordHasher()
-        ph.verify(account[1], password)
-    except VerifyMismatchError:
-        return render_template('login.html', error='Incorrect password')
-
-    # Check if password hash needs to be updated
-    if ph.check_needs_rehash(account[1]):
-        query = 'update set password = :password where username = :username'
-        params = {'password': ph.hash(password), 'username': account[0]}
+    form = LoginForm()
+    if form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
 
         with contextlib.closing(sqlite3.connect(database)) as conn:
             with conn:
-                conn.execute(query, params)
+                account = conn.execute('SELECT username, password, email FROM users WHERE username = ?', (username,)).fetchone()
 
-    # Set cookie for user session
-    set_session(
-        username=account[0], 
-        email=account[2], 
-        remember_me='remember-me' in request.form
-    )
-    
-    return redirect('/')
+        if not account:
+            flash('Username does not exist', 'error')
+            return render_template('login.html', form=form)
+
+        try:
+            ph = PasswordHasher()
+            if ph.verify(account[1], password):
+                if ph.check_needs_rehash(account[1]):
+                    new_hash = ph.hash(password)
+                    conn.execute('UPDATE users SET password = ? WHERE username = ?', (new_hash, username))
+
+                session['logged_in'] = True 
+                session['username'] = account[0]
+                session['email'] = account[2]
+                return redirect('/')  # Redirect to user dashboard once login successful
+
+        except VerifyMismatchError:
+            flash('Incorrect password', 'error')
+
+    return render_template('login.html', form=form)
+
 
 
 @app.route('/register', methods=['GET', 'POST'])
