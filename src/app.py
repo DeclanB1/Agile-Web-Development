@@ -19,7 +19,7 @@ from wtforms.validators import DataRequired, Length
 from flask_wtf import FlaskForm
 
 class EventForm(FlaskForm):
-    title = StringField('Event Title', validators=[DataRequired()])
+    title = StringField('Team Name (could make optional)', validators=[DataRequired()])
     sport_type = SelectField('Sport Type', choices=[('basketball', 'Basketball'), ('soccer', 'Soccer'), ('rugby', 'Rugby')], validators=[DataRequired()])
     num_players = IntegerField('Number of Players Needed', validators=[DataRequired()])
     start_time = StringField('Event Start Time (e.g., DD/MM/YYYY HH:MM)', validators=[DataRequired()])
