@@ -17,6 +17,19 @@ from data_person import Person_Data
 from wtforms import StringField, SelectField, IntegerField, SubmitField, TextAreaField, PasswordField, BooleanField
 from wtforms.validators import DataRequired, Length
 from flask_wtf import FlaskForm
+from wtforms.validators import Email, EqualTo
+
+
+class RegistrationForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired(), Length(min=4, max=25)])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
+    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
+    fullname = StringField('Full Name', validators=[DataRequired()])
+    age = IntegerField('Age', validators=[DataRequired()])
+    preferredlocation = StringField('Preferred Location', validators=[DataRequired()])
+    submit = SubmitField('Register')
+
 
 class EventForm(FlaskForm):
     title = StringField('Event Title', validators=[DataRequired()])
@@ -87,7 +100,7 @@ def login():
                 session['logged_in'] = True 
                 session['username'] = account[0]
                 session['email'] = account[2]
-                return redirect('/')  # Redirect to user dashboard once login successful
+                return redirect('/')
 
         except VerifyMismatchError:
             flash('Incorrect password', 'error')
@@ -98,58 +111,38 @@ def login():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    if request.method == 'GET':
-        return render_template('register.html')
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        username = form.username.data
+        email = form.email.data
+        password = form.password.data
+        fullname = form.fullname.data
+        age = form.age.data
+        preferredlocation = form.preferredlocation.data
 
-    # Store data from the form
-    username = request.form.get('username')
-    password = request.form.get('password')
-    confirm_password = request.form.get('confirm-password')
-    email = request.form.get('email')
-    fullname = request.form.get('fullname')  # Retrieve Full Name
-    age = request.form.get('age')  # Retrieve Age
-    preferredlocation = request.form.get('preferredlocation')  # Retrieve Preferred Location
+        # Check if username already exists
+        with contextlib.closing(sqlite3.connect(database)) as conn:
+            with conn:
+                if conn.execute('SELECT username FROM users WHERE username = ?', (username,)).fetchone():
+                    flash('Username already exists', 'error')
+                    return render_template('register.html', form=form)
 
-    # Validation checks
-    if password != confirm_password:
-        return render_template('register.html', error='Passwords do not match')
-    if len(password) < 8:
-        return render_template('register.html', error='Password must be at least 8 characters long')
-    if not re.match(r'^[a-zA-Z0-9]+$', username):
-        return render_template('register.html', error='Username must only contain letters and numbers')
-    if not 3 < len(username) < 26:
-        return render_template('register.html', error='Username must be between 4 and 25 characters')
+        # Hash the password
+        hashed_password = PasswordHasher().hash(password)
 
-    # Check if username already exists
-    query = 'SELECT username FROM users WHERE username = :username;'
-    with contextlib.closing(sqlite3.connect(database)) as conn:
-        with conn:
-            result = conn.execute(query, {'username': username}).fetchone()
-    if result:
-        return render_template('register.html', error='Username already exists')
+        # Insert the new user data into the database
+        with contextlib.closing(sqlite3.connect(database)) as conn:
+            with conn:
+                conn.execute('INSERT INTO users (username, password, email, fullname, age, preferredlocation) VALUES (?, ?, ?, ?, ?, ?)',
+                             (username, hashed_password, email, fullname, age, preferredlocation))
 
-    # Hash the password
-    pw = PasswordHasher()
-    hashed_password = pw.hash(password)
+        # Log the user in right after registration
+        session['logged_in'] = True
+        session['username'] = username
+        session['email'] = email
+        return redirect('/dashboard')
 
-    # Insert the new user data into the database
-    query = 'INSERT INTO users (username, password, email, fullname, age, preferredlocation) VALUES (:username, :password, :email, :fullname, :age, :preferredlocation);'
-    params = {
-        'username': username,
-        'password': hashed_password,
-        'email': email,
-        'fullname': fullname,
-        'age': age,
-        'preferredlocation': preferredlocation
-    }
-
-    with contextlib.closing(sqlite3.connect(database)) as conn:
-        with conn:
-            conn.execute(query, params)
-
-    # Log the user in right after registration
-    set_session(username=username, email=email)
-    return redirect('/dashboard')
+    return render_template('register.html', form=form)
 
 
 @app.route('/team-basketball')
