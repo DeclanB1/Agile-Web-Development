@@ -197,6 +197,37 @@ def post_event():
 
     return render_template('post_an_event.html', form=form)
 
+@app.route('/post-type')
+def select_type():
+    return render_template('post_type.html')
+
+
+@app.route('/find-team')
+def find_team():
+    # Code to display form or page to find a team
+    return render_template('find_team.html')
+
+@app.route('/find-players')
+def find_players():
+    # Code to display form or page to find players
+    return render_template('find_players.html')
+
+@app.route('/select-sport-ind')
+def select_sport():
+    # Optional: Fetch the list of sports from a database if not hardcoded
+    return render_template('select_sport_individual.html')
+
+@app.route('/submit-details', methods=['POST'])
+def submit_details():
+    sport = request.form.get('sport')
+    skill_level = request.form.get('skill_level')
+    days_available = request.form.getlist('day[]')  # Get all checked days
+    experience = request.form.get('experience')
+    # Process and store these details in your database
+
+
+    return redirect(url_for('thank_you_page'))
+
 
 if __name__ == '__main__':
     app.run(debug=True)
