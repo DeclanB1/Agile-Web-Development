@@ -1,6 +1,7 @@
 {% extends 'layout.html' %}
 
 {% block body %}
+<form method="post">
 <div class="container text-center mt-5">
     <h1>Which sport are you interested in?</h1>
     <input class="form-control mt-3 mb-4" id="sportSearch" type="text" placeholder="Search for a sport...">
@@ -50,6 +51,7 @@
     </div>
     <button type="submit" class="btn btn-primary mt-3">Submit</button>
 </div>
+</form>
 <script>
 document.getElementById('sportSearch').addEventListener('keyup', function() {
     let input = this.value.toLowerCase();
