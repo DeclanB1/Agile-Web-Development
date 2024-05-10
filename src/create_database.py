@@ -20,7 +20,8 @@ def create_table(db_file: str):
             email TEXT NOT NULL,
             fullname TEXT NOT NULL,
             age INTEGER NOT NULL,
-            preferredlocation TEXT NOT NULL
+            preferredlocation TEXT NOT NULL,
+            profile_picture TEXT
         );
     ''' 
     conn = create_connection(db_file)
@@ -37,5 +38,3 @@ def setup_database(name: str):
     create_table(name)
     print('\033[91m', 'Creating new example database "users.db"', '\033[0m')
 
-# Example usage:
-setup_database("users.db")

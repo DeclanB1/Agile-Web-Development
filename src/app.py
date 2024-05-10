@@ -1,6 +1,13 @@
+##====================================================================================================
+## Import Dependancies
+##====================================================================================================
+
+import os
 import sqlite3
 import contextlib
 import re
+import uuid
+
 
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
@@ -8,6 +15,8 @@ from flask import (
     Flask, render_template, 
     request, session, redirect, url_for, flash
 )
+from werkzeug.utils import secure_filename
+
 
 from create_database import setup_database
 from utils import login_required, set_session
@@ -17,7 +26,15 @@ from data_person import Person_Data
 from wtforms import StringField, SelectField, IntegerField, SubmitField, TextAreaField, PasswordField, BooleanField
 from wtforms.validators import DataRequired, Length
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileField, FileAllowed
 from wtforms.validators import Email, EqualTo
+    
+
+##====================================================================================================
+## Forms Definition
+##====================================================================================================
+
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 
 class RegistrationForm(FlaskForm):
@@ -28,6 +45,7 @@ class RegistrationForm(FlaskForm):
     fullname = StringField('Full Name', validators=[DataRequired()])
     age = IntegerField('Age', validators=[DataRequired()])
     preferredlocation = StringField('Preferred Location', validators=[DataRequired()])
+    profile_picture = FileField('Update Profile Picture', validators=[FileAllowed(ALLOWED_EXTENSIONS)])
     submit = SubmitField('Register')
 
 
@@ -49,8 +67,24 @@ class LoginForm(FlaskForm):
     remember = BooleanField('Remember me')
     submit = SubmitField('Log In')
 
+##====================================================================================================
+## App Configuration
+##====================================================================================================
+
 app = Flask(__name__)
 app.secret_key = 'xpSm7p5bgJY8rNoBjGWiz5yjxM-NEBlW6SIBI62OkLc='
+
+UPLOAD_FOLDER = '/profile-images'  # Update the upload folder path
+
+app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'profile-images')  # Update the upload folder configuration
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)  # Ensure the upload folder exists
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+##====================================================================================================
+## Database Configuration
+##====================================================================================================
 
 database = "users.db"
 setup_database(name=database)
@@ -58,12 +92,11 @@ setup_database(name=database)
 Team_Data = Team_Data()
 Person_Data = Person_Data()
 
+##====================================================================================================
+## Routes Definition
+##====================================================================================================
 
-# @app.route('/')
-# @login_required
-# def index():
-#     print(f'User data: {session}')
-#     return render_template('index.html', username=session.get('username'))
+
 @app.route('/')
 @app.route('/dashboard')
 def dashboard():
@@ -120,21 +153,37 @@ def register():
         age = form.age.data
         preferredlocation = form.preferredlocation.data
 
-        # Check if username already exists
-        with contextlib.closing(sqlite3.connect(database)) as conn:
-            with conn:
-                if conn.execute('SELECT username FROM users WHERE username = ?', (username,)).fetchone():
-                    flash('Username already exists', 'error')
-                    return render_template('register.html', form=form)
+        print(f"Debug: username={username}, email={email}, password={password}, fullname={fullname}, age={age}, preferredlocation={preferredlocation}")
+
+        filename = None
+        if 'profile_picture' in request.files:
+            file = request.files['profile_picture']
+            if file and allowed_file(file.filename):
+                ext = file.filename.rsplit('.', 1)[1].lower()
+                filename = f"{uuid.uuid4().hex}.{ext}"
+                file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                file.save(file_path)
+                print(f"Debug: Saved file to {file_path}")
 
         # Hash the password
         hashed_password = PasswordHasher().hash(password)
 
-        # Insert the new user data into the database
-        with contextlib.closing(sqlite3.connect(database)) as conn:
-            with conn:
-                conn.execute('INSERT INTO users (username, password, email, fullname, age, preferredlocation) VALUES (?, ?, ?, ?, ?, ?)',
-                             (username, hashed_password, email, fullname, age, preferredlocation))
+        # Check if username already exists
+        try:
+            with contextlib.closing(sqlite3.connect(database)) as conn:
+                if conn.execute('SELECT username FROM users WHERE username = ?', (username,)).fetchone():
+                    flash('Username already exists', 'error')
+                    return render_template('register.html', form=form)
+
+                print("Debug: Inserting into database")
+                conn.execute('INSERT INTO users (username, password, email, fullname, age, preferredlocation, profile_picture) VALUES (?, ?, ?, ?, ?, ?, ?)',
+                             (username, hashed_password, email, fullname, age, preferredlocation, filename))
+                conn.commit()
+
+        except sqlite3.Error as e:
+            print(f"SQLite error: {e}")
+            flash(f'A database error occurred: {e}', 'error')
+            return render_template('register.html', form=form)
 
         # Log the user in right after registration
         session['logged_in'] = True
@@ -143,6 +192,8 @@ def register():
         return redirect('/dashboard')
 
     return render_template('register.html', form=form)
+
+
 
 
 @app.route('/team-basketball')
