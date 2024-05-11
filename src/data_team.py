@@ -1,52 +1,46 @@
 def Team_Data():
   team_data = [
-    {
-      'team_id': 1,
-      'sport': 'Basketball',
-      'team_name': 'Downtown Ballers',
-      'skill_level': 'Intermediate',
+    { 
+      'event_title': "Downtown Ballers' basketball event",
+      'sport_type': 'Basketball',
+      'num_players': 2,
+      'skill_level_required': 'Intermediate',
+      'start_time': '25/05/2024 13:00',
+      'end_time': '25/05/2024 15:00',
       'location': 'City Park, Downtown',
-      'number_of_players_needed': 2,
-      'availability': ['Practice: Tuesdays and Thursdays from 6:00 PM to 8:00 PM', 
-                      'Games: Saturdays at 10:00 AM'],
-      'requirements': ['Looking for players aged 18-30',
+      'description': ['Looking for players aged 18-30',
                        'Preferably with experience playing guard or forward positions',
                        'Must be committed to attending practices and games regularly',
                        'Positive attitude and good sportsmanship are essential'],
-      'contact': ['Email: downtownballers@gmail.com', 
-                  'Phone: 0412 123 456']
+      'gender_preference': 'male'
     },
     {
-      'team_id': 2,
-      'sport': 'Football',
-      'team_name': 'City Strikers',
-      'skill_level': 'Advanced',
+      'event_title': "City Strikers 'football event",
+      'sport_type': 'Football',
+      'num_players': 3,
+      'skill_level_required': 'Advanced',
+      'start_time': '24/05/2024 10:00',
+      'end_time': '24/05/2024 12:00',
       'location': 'City Stadium, Downtown',
-      'number_of_players_needed': 3,
-      'availability': ['Practice: Mondays and Wednesdays from 7:00 PM to 9:00 PM', 
-                      'Games: Sundays at 2:00 PM'],
-      'requirements': ['Seeking players with experience in both offense and defense',
+      'description': ['Seeking players with experience in both offense and defense',
                        'Must have excellent communication skills on the field',
                        'Preferably aged between 20-35',
                        'Fitness level must be high to keep up with the intensity of play'],
-      'contact': ['Email: citystrikers@gmail.com', 
-                  'Phone: 0412 223 456']
+      'gender_preference': 'female'
     },
     {
-      'team_id': 3,
-      'sport': 'Baseball',
-      'team_name': 'Diamond Kings',
-      'skill_level': 'Intermediate',
+      'event_title': "Diamond Kings' baseball event",
+      'sport_type': 'Baseball',
+      'num_players': 4,
+      'skill_level_required': 'Beginner',
+      'start_time': '29/05/2024 15:00',
+      'end_time': '29/05/2024 17:00',
       'location': 'Diamond Park, Suburbia',
-      'number_of_players_needed': 4,
-      'availability': ['Practice: Tuesdays and Thursdays from 6:30 PM to 8:30 PM', 
-                      'Games: Saturdays at 1:00 PM'],
-      'requirements': ['Players of all skill levels welcome, beginners encouraged to join',
+      'description': ['Players of all skill levels welcome, beginners encouraged to join',
                        'Must have own baseball glove and appropriate attire',
                        'Age range between 16-60',
                        'Positive attitude and willingness to learn'],
-      'contact': ['Email: diamondkings@gmail.com', 
-                  'Phone: 0412 323 456']
+      'gender_preference': 'mixed'
     }
   ]
 

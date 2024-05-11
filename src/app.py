@@ -18,7 +18,7 @@ from flask import (
 from werkzeug.utils import secure_filename
 
 
-from create_database import setup_database
+from create_database import setup_database, create_event_database, insert_default_data
 from utils import login_required, set_session
 from data_team import Team_Data
 from data_person import Person_Data
@@ -44,20 +44,21 @@ class RegistrationForm(FlaskForm):
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
     fullname = StringField('Full Name', validators=[DataRequired()])
     age = IntegerField('Age', validators=[Optional()])
-    preferredlocation = StringField('Preferred Location', validators=[Optional()])
+    preferred_location = StringField('Preferred Location', validators=[Optional()])
     profile_picture = FileField('Update Profile Picture', validators=[Optional(),FileAllowed(ALLOWED_EXTENSIONS)])
     submit = SubmitField('Register')
 
 
 class EventForm(FlaskForm):
     title = StringField('Event Title', validators=[DataRequired()])
-    sport_type = SelectField('Sport Type', choices=[('basketball', 'Basketball'), ('soccer', 'Soccer'), ('rugby', 'Rugby')], validators=[DataRequired()])
+    sport_type = SelectField('Sport Type', choices=[('Basketball', 'Basketball'), ('Football', 'Football'), ('Baseball', 'Baseball')], validators=[DataRequired()])
     num_players = IntegerField('Number of Players Needed', validators=[DataRequired()])
+    skill_level_required = SelectField('Skill Level Required', choices=[('Beginner', 'Beginner'), ('Intermediate', 'Intermediate'), ('Advanced', 'Advanced')], validators=[DataRequired()])
     start_time = StringField('Event Start Time (e.g., DD/MM/YYYY HH:MM)', validators=[DataRequired()])
     end_time = StringField('Event End Time (e.g., DD/MM/YYYY HH:MM)', validators=[DataRequired()])
     location = StringField('Event Location', validators=[DataRequired()])
     description = TextAreaField('Description of Event', validators=[DataRequired(), Length(max=200)])
-    gender_preference = SelectField('Gender Preference', choices=[('male', 'Male'), ('female', 'Female'), ('mixed', 'Mixed')], validators=[DataRequired()])
+    gender_preference = SelectField('Gender Preference', choices=[('Male', 'Male'), ('Female', 'Female'), ('Mixed', 'Mixed')], validators=[DataRequired()])
     submit = SubmitField('Post Event')
 
 
@@ -88,6 +89,9 @@ def allowed_file(filename):
 
 database = "users.db"
 setup_database(name=database)
+# Create the event database schema and insert default data
+create_event_database()
+insert_default_data()
 
 Team_Data = Team_Data()
 Person_Data = Person_Data()
@@ -151,9 +155,9 @@ def register():
         password = form.password.data
         fullname = form.fullname.data
         age = form.age.data
-        preferredlocation = form.preferredlocation.data
+        preferred_location = form.preferred_location.data
 
-        print(f"Debug: username={username}, email={email}, password={password}, fullname={fullname}, age={age}, preferredlocation={preferredlocation}")
+        print(f"Debug: username={username}, email={email}, password={password}, fullname={fullname}, age={age}, preferred_location={preferred_location}")
 
         filename = None
         if 'profile_picture' in request.files:
@@ -176,8 +180,8 @@ def register():
                     return render_template('register.html', form=form)
 
                 print("Debug: Inserting into database")
-                conn.execute('INSERT INTO users (username, password, email, fullname, age, preferredlocation, profile_picture) VALUES (?, ?, ?, ?, ?, ?, ?)',
-                             (username, hashed_password, email, fullname, age, preferredlocation, filename))
+                conn.execute('INSERT INTO users (username, password, email, fullname, age, preferred_location, profile_picture) VALUES (?, ?, ?, ?, ?, ?, ?)',
+                             (username, hashed_password, email, fullname, age, preferred_location, filename))
                 conn.commit()
 
         except sqlite3.Error as e:
@@ -226,21 +230,40 @@ def how_it_works():
 
 @app.route('/post-an-event', methods=['GET', 'POST'])
 @login_required
-def post_event():
+def post_an_event():
     form = EventForm()
-    if form.validate_on_submit():
+    if request.method =='POST' and form.validate_on_submit():
         event = {
-            'title': form.title.data,
+            'event_title': form.title.data,
             'sport_type': form.sport_type.data,
             'num_players': form.num_players.data,
+            'skill_level_required': form.skill_level_required.data,
             'start_time': form.start_time.data,
             'end_time': form.end_time.data,
             'location': form.location.data,
             'description': form.description.data,
             'gender_preference': form.gender_preference.data
         }
-        # Assuming saving to database is handled elsewhere
 
+        event_title = form.title.data
+        sport_type = form.sport_type.data
+        num_players = form.num_players.data
+        skill_level_required = form.skill_level_required.data
+        start_time = form.start_time.data
+        end_time = form.end_time.data
+        location = form.location.data
+        description = form.description.data
+        gender_preference =form.gender_preference.data
+        
+        conn = sqlite3.connect('events.db')
+        cur = conn.cursor()
+        
+        cur.execute('INSERT INTO events (event_title, sport_type, num_players, skill_level_required, start_time, end_time, location, description, gender_preference) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                      (event_title, sport_type, num_players, skill_level_required, start_time, end_time, location, description, gender_preference))
+        
+        conn.commit()
+        conn.close()
+        
         return render_template('event_posted_successfully.html', event=event)
 
     return render_template('post_an_event.html', form=form)
