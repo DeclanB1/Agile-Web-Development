@@ -100,16 +100,16 @@
 
             <div class="mb-3">
                 {{ form.age.label(class="form-label") }}
-                {{ form.age(class="form-control", id="age") }}
+                {{ form.age(class="form-control", id="age", placeholder="Optional") }}
             </div>
 
             <div class="mb-3">
                 {{ form.preferredlocation.label(class="form-label") }}
-                {{ form.preferredlocation(class="form-control", id="preferredlocation") }}
+                {{ form.preferredlocation(class="form-control", id="preferredlocation", placeholder="Optional") }}
             </div>
 
             <div class="mb-3">
-                <label for="profile_picture" class="form-label">Profile Picture</label>
+                <label for="profile_picture" class="form-label">Profile Picture (Optional)</label>
                 <input type="file" class="form-control file-input" id="profile_picture" name="profile_picture" accept="image/*">
             </div>
 

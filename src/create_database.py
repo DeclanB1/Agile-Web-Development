@@ -19,8 +19,8 @@ def create_table(db_file: str):
             password TEXT NOT NULL,
             email TEXT NOT NULL,
             fullname TEXT NOT NULL,
-            age INTEGER NOT NULL,
-            preferredlocation TEXT NOT NULL,
+            age INTEGER,
+            preferredlocation,
             profile_picture TEXT
         );
     ''' 

@@ -27,7 +27,7 @@ from wtforms import StringField, SelectField, IntegerField, SubmitField, TextAre
 from wtforms.validators import DataRequired, Length
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms.validators import Email, EqualTo
+from wtforms.validators import Email, EqualTo, Optional
     
 
 ##====================================================================================================
@@ -43,9 +43,9 @@ class RegistrationForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
     fullname = StringField('Full Name', validators=[DataRequired()])
-    age = IntegerField('Age', validators=[DataRequired()])
-    preferredlocation = StringField('Preferred Location', validators=[DataRequired()])
-    profile_picture = FileField('Update Profile Picture', validators=[FileAllowed(ALLOWED_EXTENSIONS)])
+    age = IntegerField('Age', validators=[Optional()])
+    preferredlocation = StringField('Preferred Location', validators=[Optional()])
+    profile_picture = FileField('Update Profile Picture', validators=[Optional(),FileAllowed(ALLOWED_EXTENSIONS)])
     submit = SubmitField('Register')
 
 
