@@ -233,40 +233,61 @@ def how_it_works():
 def post_an_event():
     form = EventForm()
     if request.method =='POST' and form.validate_on_submit():
-        event = {
-            'event_title': form.title.data,
-            'sport_type': form.sport_type.data,
-            'num_players': form.num_players.data,
-            'skill_level_required': form.skill_level_required.data,
-            'start_time': form.start_time.data,
-            'end_time': form.end_time.data,
-            'location': form.location.data,
-            'description': form.description.data,
-            'gender_preference': form.gender_preference.data
-        }
-
         event_title = form.title.data
-        sport_type = form.sport_type.data
-        num_players = form.num_players.data
-        skill_level_required = form.skill_level_required.data
-        start_time = form.start_time.data
-        end_time = form.end_time.data
-        location = form.location.data
-        description = form.description.data
-        gender_preference =form.gender_preference.data
         
-        conn = sqlite3.connect('events.db')
-        cur = conn.cursor()
+        # Check if an event with the same title already exists
+        if is_event_title_unique(event_title):
+            event = {
+                'event_title': form.title.data,
+                'sport_type': form.sport_type.data,
+                'num_players': form.num_players.data,
+                'skill_level_required': form.skill_level_required.data,
+                'start_time': form.start_time.data,
+                'end_time': form.end_time.data,
+                'location': form.location.data,
+                'description': form.description.data,
+                'gender_preference': form.gender_preference.data
+            }
+
+            event_title = form.title.data
+            sport_type = form.sport_type.data
+            num_players = form.num_players.data
+            skill_level_required = form.skill_level_required.data
+            start_time = form.start_time.data
+            end_time = form.end_time.data
+            location = form.location.data
+            description = form.description.data
+            gender_preference =form.gender_preference.data
+            
+            conn = sqlite3.connect('events.db')
+            cur = conn.cursor()
+            
+            cur.execute('INSERT INTO events (event_title, sport_type, num_players, skill_level_required, start_time, end_time, location, description, gender_preference) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                        (event_title, sport_type, num_players, skill_level_required, start_time, end_time, location, description, gender_preference))
+            
+            conn.commit()
+            conn.close()
+            
+            return render_template('event_posted_successfully.html', event=event)
         
-        cur.execute('INSERT INTO events (event_title, sport_type, num_players, skill_level_required, start_time, end_time, location, description, gender_preference) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-                      (event_title, sport_type, num_players, skill_level_required, start_time, end_time, location, description, gender_preference))
-        
-        conn.commit()
-        conn.close()
-        
-        return render_template('event_posted_successfully.html', event=event)
+        else:
+            # If the event title is not unique, report a message to the user
+            flash('This event already exists')
+            return render_template('post_an_event.html', form=form)
 
     return render_template('post_an_event.html', form=form)
+
+def is_event_title_unique(event_title):
+    conn = sqlite3.connect('events.db')
+    cur = conn.cursor()
+    
+    # Check if an event with the given title already exists
+    cur.execute('SELECT COUNT(*) FROM events WHERE event_title = ?', (event_title,))
+    count = cur.fetchone()[0]
+    
+    conn.close()
+    
+    return count == 0
 
 
 if __name__ == '__main__':
