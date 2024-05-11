@@ -5,21 +5,17 @@
 import os
 import sqlite3
 import contextlib
-import re
 import uuid
 
-
-from argon2 import PasswordHasher
-from argon2.exceptions import VerifyMismatchError
 from flask import (
     Flask, render_template, 
-    request, session, redirect, url_for, flash
+    request, session, redirect, flash
 )
-from werkzeug.utils import secure_filename
 
+from werkzeug.security import check_password_hash, generate_password_hash
 
 from create_database import setup_database
-from utils import login_required, set_session
+from utils import login_required
 from data_team import Team_Data
 from data_person import Person_Data
 
@@ -34,8 +30,8 @@ from wtforms.validators import Email, EqualTo, Optional
 ## Forms Definition
 ##====================================================================================================
 
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=4, max=25)])
@@ -110,41 +106,31 @@ def logout():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    form = LoginForm()
+    form = LoginForm()  # Assuming LoginForm is defined elsewhere
     if form.validate_on_submit():
         username = form.username.data
         password = form.password.data
 
         with contextlib.closing(sqlite3.connect(database)) as conn:
-            with conn:
-                account = conn.execute('SELECT username, password, email FROM users WHERE username = ?', (username,)).fetchone()
+            account = conn.execute('SELECT username, password, email FROM users WHERE username = ?', (username,)).fetchone()
 
         if not account:
             flash('Username does not exist', 'error')
             return render_template('login.html', form=form)
 
-        try:
-            ph = PasswordHasher()
-            if ph.verify(account[1], password):
-                if ph.check_needs_rehash(account[1]):
-                    new_hash = ph.hash(password)
-                    conn.execute('UPDATE users SET password = ? WHERE username = ?', (new_hash, username))
-
-                session['logged_in'] = True 
-                session['username'] = account[0]
-                session['email'] = account[2]
-                return redirect('/')
-
-        except VerifyMismatchError:
+        if check_password_hash(account[1], password):
+            session['logged_in'] = True
+            session['username'] = account[0]
+            session['email'] = account[2]
+            return redirect('/')
+        else:
             flash('Incorrect password', 'error')
 
     return render_template('login.html', form=form)
 
-
-
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    form = RegistrationForm()
+    form = RegistrationForm()  # Assuming RegistrationForm is defined elsewhere
     if form.validate_on_submit():
         username = form.username.data
         email = form.email.data
@@ -153,48 +139,36 @@ def register():
         age = form.age.data
         preferredlocation = form.preferredlocation.data
 
-        print(f"Debug: username={username}, email={email}, password={password}, fullname={fullname}, age={age}, preferredlocation={preferredlocation}")
-
+        # Process file upload
         filename = None
         if 'profile_picture' in request.files:
             file = request.files['profile_picture']
-            if file and allowed_file(file.filename):
+            if file and allowed_file(file.filename):  # Assuming allowed_file is defined
                 ext = file.filename.rsplit('.', 1)[1].lower()
                 filename = f"{uuid.uuid4().hex}.{ext}"
                 file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
                 file.save(file_path)
-                print(f"Debug: Saved file to {file_path}")
 
-        # Hash the password
-        hashed_password = PasswordHasher().hash(password)
+        # Hash the password using Werkzeug
+        hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
 
-        # Check if username already exists
-        try:
-            with contextlib.closing(sqlite3.connect(database)) as conn:
-                if conn.execute('SELECT username FROM users WHERE username = ?', (username,)).fetchone():
-                    flash('Username already exists', 'error')
-                    return render_template('register.html', form=form)
+        # Insert the new user
+        with contextlib.closing(sqlite3.connect(database)) as conn:
+            if conn.execute('SELECT username FROM users WHERE username = ?', (username,)).fetchone():
+                flash('Username already exists', 'error')
+                return render_template('register.html', form=form)
 
-                print("Debug: Inserting into database")
-                conn.execute('INSERT INTO users (username, password, email, fullname, age, preferredlocation, profile_picture) VALUES (?, ?, ?, ?, ?, ?, ?)',
-                             (username, hashed_password, email, fullname, age, preferredlocation, filename))
-                conn.commit()
+            conn.execute('INSERT INTO users (username, password, email, fullname, age, preferredlocation, profile_picture) VALUES (?, ?, ?, ?, ?, ?, ?)',
+                         (username, hashed_password, email, fullname, age, preferredlocation, filename))
+            conn.commit()
 
-        except sqlite3.Error as e:
-            print(f"SQLite error: {e}")
-            flash(f'A database error occurred: {e}', 'error')
-            return render_template('register.html', form=form)
-
-        # Log the user in right after registration
+        # Log the user in
         session['logged_in'] = True
         session['username'] = username
         session['email'] = email
         return redirect('/dashboard')
 
     return render_template('register.html', form=form)
-
-
-
 
 @app.route('/team-basketball')
 def team_basketball():
