@@ -53,7 +53,7 @@ class EventForm(FlaskForm):
     title = StringField('Event Title', validators=[DataRequired()])
     sport_type = SelectField('Sport Type', choices=[('Basketball', 'Basketball'), ('Football', 'Football'), ('Baseball', 'Baseball')], validators=[DataRequired()])
     num_players = IntegerField('Number of Players Needed', validators=[DataRequired()])
-    skill_level_required = SelectField('Skill Level Required', choices=[('Beginner', 'Beginner'), ('Intermediate', 'Intermediate'), ('Advanced', 'Advanced')], validators=[DataRequired()])
+    playing_level = SelectField('Playing Level', choices=[('Beginner', 'Beginner'), ('Intermediate', 'Intermediate'), ('Advanced', 'Advanced')], validators=[DataRequired()])
     start_time = StringField('Event Start Time (e.g., DD/MM/YYYY HH:MM)', validators=[DataRequired()])
     end_time = StringField('Event End Time (e.g., DD/MM/YYYY HH:MM)', validators=[DataRequired()])
     location = StringField('Event Location', validators=[DataRequired()])
@@ -197,20 +197,17 @@ def register():
 
     return render_template('register.html', form=form)
 
-
-
-
 @app.route('/team-basketball')
 def team_basketball():
-    return render_template('team_basketball.html', team_data=Team_Data)
+    return render_template('team_basketball.html', team_data=Team_Data[0])
 
 @app.route('/team-football')
 def team_football():
-    return render_template('team_football.html', team_data=Team_Data)
+    return render_template('team_football.html', team_data=Team_Data[1])
 
 @app.route('/team-baseball')
 def team_baseball():
-    return render_template('team_baseball.html', team_data=Team_Data)
+    return render_template('team_baseball.html', team_data=Team_Data[2])
 
 @app.route('/person-basketball')
 def person_basketball():
@@ -241,7 +238,7 @@ def post_an_event():
                 'event_title': form.title.data,
                 'sport_type': form.sport_type.data,
                 'num_players': form.num_players.data,
-                'skill_level_required': form.skill_level_required.data,
+                'playing_level': form.playing_level.data,
                 'start_time': form.start_time.data,
                 'end_time': form.end_time.data,
                 'location': form.location.data,
@@ -252,7 +249,7 @@ def post_an_event():
             event_title = form.title.data
             sport_type = form.sport_type.data
             num_players = form.num_players.data
-            skill_level_required = form.skill_level_required.data
+            playing_level = form.playing_level.data
             start_time = form.start_time.data
             end_time = form.end_time.data
             location = form.location.data
@@ -262,8 +259,8 @@ def post_an_event():
             conn = sqlite3.connect('events.db')
             cur = conn.cursor()
             
-            cur.execute('INSERT INTO events (event_title, sport_type, num_players, skill_level_required, start_time, end_time, location, description, gender_preference) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-                        (event_title, sport_type, num_players, skill_level_required, start_time, end_time, location, description, gender_preference))
+            cur.execute('INSERT INTO events (event_title, sport_type, num_players, playing_level, start_time, end_time, location, description, gender_preference) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                        (event_title, sport_type, num_players, playing_level, start_time, end_time, location, description, gender_preference))
             
             conn.commit()
             conn.close()
@@ -289,6 +286,23 @@ def is_event_title_unique(event_title):
     
     return count == 0
 
+
+# @app.route('/event-details/<int:event_id>')
+# def event_details(event_id):
+#     conn = sqlite3.connect('events.db')
+#     cur = conn.cursor()
+
+#     # Retrieve the event from the database based on its event_id
+#     cur.execute('SELECT * FROM events WHERE event_id = ?', (event_id,))
+#     event = cur.fetchone()
+
+#     # Check if the event exists
+#     if event:
+#         # Render the event details template with the retrieved event
+#         return render_template('event_details.html', event=event)
+#     else:
+#         # If the event does not exist, abort with a 404 error
+#         abort(404)
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -51,7 +51,7 @@ def create_event_database():
           event_title TEXT UNIQUE NOT NULL,
           sport_type TEXT NOT NULL,
           num_players INTEGER NOT NULL,
-          skill_level_required TEXT NOT NULL,
+          playing_level TEXT NOT NULL,
           start_time TEXT NOT NULL,
           end_time TEXT NOT NULL,
           location TEXT NOT NULL,
@@ -80,9 +80,9 @@ def insert_default_data():
 
         # Insert each event into the database
         for event in team_data:
-            cur.execute('''INSERT INTO events (event_title, sport_type, num_players, skill_level_required, start_time, end_time, location, description, gender_preference)
+            cur.execute('''INSERT INTO events (event_title, sport_type, num_players, playing_level, start_time, end_time, location, description, gender_preference)
                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)''', 
-                    (event['event_title'], event['sport_type'], event['num_players'], event['skill_level_required'], event['start_time'],
+                    (event['event_title'], event['sport_type'], event['num_players'], event['playing_level'], event['start_time'],
                     '\n'.join(event['end_time']), event['location'], '\n'.join(event['description']), '\n'.join(event['gender_preference'])))
 
     conn.commit()
