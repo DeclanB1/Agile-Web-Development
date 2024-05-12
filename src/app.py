@@ -286,6 +286,47 @@ def is_event_title_unique(event_title):
     
     return count == 0
 
+@app.route('/browse-events')
+def browse_events():
+    conn = sqlite3.connect('events.db')
+    cur = conn.cursor()
+
+    # Retrieve the events from the database based on its event_id
+    result = cur.execute('SELECT * FROM events')
+    events = cur.fetchall()
+    events = convert_event_datatype(events)
+
+    conn.close()
+
+    if result:
+        return render_template('browse_events.html', events=events)
+    else:
+        flash("No event found")
+        return render_template('browse_events.html')
+    
+def convert_event_datatype(events):
+    events_dict = []
+
+    for event_tuple in events:
+        event_dict = {
+            'event_id': event_tuple[0],
+            'event_title': event_tuple[1],
+            'sport_type': event_tuple[2],
+            'num_players': event_tuple[3],
+            'playing_level': event_tuple[4],
+            'start_time': event_tuple[5],
+            'end_time': event_tuple[6],
+            'location': event_tuple[7],
+            'description': event_tuple[8],
+            'gender_preference': event_tuple[9]
+        }
+        events_dict.append(event_dict)
+
+    return events_dict
+
+
+
+
 
 # @app.route('/event-details/<int:event_id>')
 # def event_details(event_id):

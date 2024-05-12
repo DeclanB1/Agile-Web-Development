@@ -94,11 +94,23 @@ def insert_default_data():
 # Function to retrieve event data from the database
 def get_event_data():
     conn = sqlite3.connect('events.db')
-    c = conn.cursor()
+    cur = conn.cursor()
 
     # Retrieve all events from the database
-    c.execute('SELECT * FROM events')
-    events = c.fetchall()
+    cur.execute('SELECT * FROM events')
+    events = cur.fetchall()
+
+    conn.close()
+
+    return events
+
+def get_user_data():
+    conn = sqlite3.connect('users.db')
+    cur = conn.cursor()
+
+    # Retrieve all events from the database
+    cur.execute('SELECT * FROM users')
+    events = cur.fetchall()
 
     conn.close()
 
