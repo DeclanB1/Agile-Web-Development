@@ -1,0 +1,26 @@
+{% extends 'layout.html' %}
+{% block body %}
+<section id="browse-event" class="pt-5">
+  <div class="container details-container">
+    <header class="details-header">
+      <h1 class="details-h1">Sport Type: {{ event[1] }}</h1>
+    </header>
+
+    <div class="team-info">
+      <p><strong>Sport Type:</strong> {{ event[2] }}</p>
+      <p><strong>Number of Players Needed:</strong> {{ event[3] }}</p>
+      <p><strong>Playing Level:</strong> {{ event[4] }}</p>
+      <p><strong>Start Time:</strong> {{ event[5] }}</p>
+      <p><strong>End Time:</strong> {{ event[6] }}</p>
+      <p><strong>Location:</strong> {{ event[7] }}</p>
+      <p class="ul-content"><strong>Description:</strong></p>
+      <ul>
+        {% for description in event[8].split('\n') %}
+          <li>{{ description }}</li>
+        {% endfor %}
+      </ul>
+      <p><strong>Gender Preference:</strong> {{ event[9] }}</p>
+    </div>
+  </div>
+</section>
+{% endblock %}

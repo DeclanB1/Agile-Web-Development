@@ -3,7 +3,7 @@
 {% block body %}
   <section class="browse-events pt-5">
     <div class="container">
-      <h2>Browse Events <small>Welcome {{ session.username }}</small></h2>
+      <h2>Browse Events <small style="color: palevioletred;">Welcome {{ session.username }}</small></h2>
       <a class="btn btn-primary" href="/post-an-event">Post your Event</a>
       <hr>
       <table class="table table-striped">
@@ -20,12 +20,12 @@
         <tbody>
           {% for event in events %}
             <tr>
-              <td>{{ event.event_title }}</td>  <!-- event_title -->
-              <td>{{ event.sport_type }}</td>  <!-- sport_type -->
-              <td>{{ event.num_players }}</td>  <!-- num_players -->
-              <td>{{ event.playing_level }}</td>  <!-- playing_level -->
-              <td>{{ event.location }}</td>  <!-- location -->
-              <td><a href="/event-details/{{ event['event_id'] }}" class="btn btn-secondary">Details</a></td>
+              <td>{{ event.event_title }}</td>
+              <td>{{ event.sport_type }}</td>
+              <td>{{ event.num_players }}</td> 
+              <td>{{ event.playing_level }}</td>
+              <td>{{ event.location }}</td>
+              <td><a href="/browse-event/{{ event.event_id }}" class="btn btn-secondary">Details</a></td>
             </tr>
           {% endfor %}
         </tbody>

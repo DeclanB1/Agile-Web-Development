@@ -100,7 +100,7 @@ Person_Data = Person_Data()
 ## Routes Definition
 ##====================================================================================================
 
-
+# Dashboard which is also the home page
 @app.route('/')
 @app.route('/dashboard')
 def dashboard():
@@ -197,6 +197,7 @@ def register():
 
     return render_template('register.html', form=form)
 
+# Browse events on dashboard
 @app.route('/team-basketball')
 def team_basketball():
     return render_template('team_basketball.html', team_data=Team_Data[0])
@@ -225,6 +226,7 @@ def person_golf():
 def how_it_works():
     return render_template('how_it_works.html')
 
+# Post an event
 @app.route('/post-an-event', methods=['GET', 'POST'])
 @login_required
 def post_an_event():
@@ -232,7 +234,7 @@ def post_an_event():
     if request.method =='POST' and form.validate_on_submit():
         event_title = form.title.data
         
-        # Check if an event with the same title already exists
+        # Check if an event with the same title already exists to avoid duplicate one
         if is_event_title_unique(event_title):
             event = {
                 'event_title': form.title.data,
@@ -269,16 +271,17 @@ def post_an_event():
         
         else:
             # If the event title is not unique, report a message to the user
+            # Message is not reported correctly, needs to fix
             flash('This event already exists')
             return render_template('post_an_event.html', form=form)
 
     return render_template('post_an_event.html', form=form)
 
+# Check if an event with the given title already exists
 def is_event_title_unique(event_title):
     conn = sqlite3.connect('events.db')
     cur = conn.cursor()
     
-    # Check if an event with the given title already exists
     cur.execute('SELECT COUNT(*) FROM events WHERE event_title = ?', (event_title,))
     count = cur.fetchone()[0]
     
@@ -286,24 +289,48 @@ def is_event_title_unique(event_title):
     
     return count == 0
 
+# Browse all events
 @app.route('/browse-events')
 def browse_events():
     conn = sqlite3.connect('events.db')
     cur = conn.cursor()
 
-    # Retrieve the events from the database based on its event_id
     result = cur.execute('SELECT * FROM events')
     events = cur.fetchall()
     events = convert_event_datatype(events)
 
     conn.close()
 
+    # Check if the event exists
     if result:
         return render_template('browse_events.html', events=events)
     else:
         flash("No event found")
         return render_template('browse_events.html')
-    
+
+# Browse single event
+@app.route('/browse-event/<int:event_id>')
+def event_details(event_id):
+    conn = sqlite3.connect('events.db')
+    cur = conn.cursor()
+
+    # Retrieve the event from the database based on its event_id
+    cur.execute('SELECT * FROM events WHERE event_id = ?', (event_id,))
+    event = cur.fetchone()
+
+    conn.close()
+
+    # Check if the event exists
+    if event:
+        return render_template('browse_event.html', event=event)
+    else:
+        flash("Event not found")
+        # Pass None for event when the event is not found
+        return render_template('browse_event.html', event=None)
+
+
+
+# Convert events data from list of tuples into dictionary
 def convert_event_datatype(events):
     events_dict = []
 
@@ -323,27 +350,6 @@ def convert_event_datatype(events):
         events_dict.append(event_dict)
 
     return events_dict
-
-
-
-
-
-# @app.route('/event-details/<int:event_id>')
-# def event_details(event_id):
-#     conn = sqlite3.connect('events.db')
-#     cur = conn.cursor()
-
-#     # Retrieve the event from the database based on its event_id
-#     cur.execute('SELECT * FROM events WHERE event_id = ?', (event_id,))
-#     event = cur.fetchone()
-
-#     # Check if the event exists
-#     if event:
-#         # Render the event details template with the retrieved event
-#         return render_template('event_details.html', event=event)
-#     else:
-#         # If the event does not exist, abort with a 404 error
-#         abort(404)
 
 if __name__ == '__main__':
     app.run(debug=True)
