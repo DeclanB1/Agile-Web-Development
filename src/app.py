@@ -299,11 +299,24 @@ def browse_events():
     events = cur.fetchall()
     events = convert_event_datatype(events)
 
+    # Fetch distinct values for sport type, playing level, and location
+    cur.execute('SELECT DISTINCT sport_type FROM events')
+    sport_types = [row[0] for row in cur.fetchall()]
+
+    cur.execute('SELECT DISTINCT num_players FROM events')
+    num_players = [row[0] for row in cur.fetchall()]
+
+    cur.execute('SELECT DISTINCT playing_level FROM events')
+    playing_levels = [row[0] for row in cur.fetchall()]
+
+    cur.execute('SELECT DISTINCT location FROM events')
+    locations = [row[0] for row in cur.fetchall()]
+
     conn.close()
 
     # Check if the event exists
     if result:
-        return render_template('browse_events.html', events=events)
+        return render_template('browse_events.html', events=events, sport_types=sport_types, num_players=num_players, playing_levels=playing_levels, locations=locations)
     else:
         flash("No event found")
         return render_template('browse_events.html')

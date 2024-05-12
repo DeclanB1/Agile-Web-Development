@@ -3,10 +3,51 @@
 {% block body %}
   <section class="browse-events pt-5">
     <div class="container">
-      <h2>Browse Events <small style="color: palevioletred;">Welcome {{ session.username }}</small></h2>
-      <div class="row">
+      <div class="row align-items-center">
+        <!-- Search bar -->
         <div class="col-md-3">
-          <input type="text" class="form-control" id="search" placeholder="Search for an Event">
+          <input type="text" class="form-control mt-4" id="search" placeholder="Search for an Event">
+        </div>
+        <!-- Filter Options -->
+        <div class="col-md-9">
+          <div class="row">
+            <div class="col-md-3">
+              <label for="sport-filter"">Sport Type:</label>
+              <select id="sport-filter" class="form-control">
+                <option value="all">All</option>
+                {% for sport_type in sport_types %}
+                  <option value="{{ sport_type }}">{{ sport_type }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label for="num-players-filter"">Number of Players:</label>
+              <select id="num-players-filter" class="form-control">
+                <option value="all">All</option>
+                {% for num_player in num_players %}
+                  <option value="{{ num_player }}">{{ num_player }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label for="level-filter"">Playing Level:</label>
+              <select id="level-filter" class="form-control">
+                <option value="all">All</option>
+                {% for playing_level in playing_levels %}
+                  <option value="{{ playing_level }}">{{ playing_level }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label for="location-filter"">Location:</label>
+              <select id="location-filter" class="form-control">
+                <option value="all">All</option>
+                {% for location in locations %}
+                  <option value="{{ location }}">{{ location }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
         </div>
       </div>
       <hr>
