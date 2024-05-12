@@ -12,7 +12,7 @@ def Team_Data():
                        'Preferably with experience playing guard or forward positions',
                        'Must be committed to attending practices and games regularly',
                        'Positive attitude and good sportsmanship are essential'],
-      'gender_preference': 'Male'
+      'gender_preference': 'Female'
     },
     {
       'event_title': "City Strikers' event",
@@ -26,7 +26,7 @@ def Team_Data():
                        'Must have excellent communication skills on the field',
                        'Preferably aged between 20-35',
                        'Fitness level must be high to keep up with the intensity of play'],
-      'gender_preference': 'Female'
+      'gender_preference': 'Male'
     },
     {
       'event_title': "Diamond Kings' event",

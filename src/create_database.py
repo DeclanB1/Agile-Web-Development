@@ -80,10 +80,12 @@ def insert_default_data():
 
         # Insert each event into the database
         for event in team_data:
+            # Convert the description list to a string
+            description = '\n'.join(event['description'])
+
             cur.execute('''INSERT INTO events (event_title, sport_type, num_players, playing_level, start_time, end_time, location, description, gender_preference)
                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)''', 
-                    (event['event_title'], event['sport_type'], event['num_players'], event['playing_level'], event['start_time'],
-                    '\n'.join(event['end_time']), event['location'], '\n'.join(event['description']), '\n'.join(event['gender_preference'])))
+                    (event['event_title'], event['sport_type'], event['num_players'], event['playing_level'], event['start_time'], event['end_time'], event['location'], description, event['gender_preference']))
 
     conn.commit()
     conn.close()
