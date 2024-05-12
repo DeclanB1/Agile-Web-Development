@@ -4,7 +4,11 @@
   <section class="browse-events pt-5">
     <div class="container">
       <h2>Browse Events <small style="color: palevioletred;">Welcome {{ session.username }}</small></h2>
-      <a class="btn btn-primary" href="/post-an-event">Post your Event</a>
+      <div class="row">
+        <div class="col-md-3">
+          <input type="text" class="form-control" id="search" placeholder="Search for an Event">
+        </div>
+      </div>
       <hr>
       <table class="table table-striped">
         <thead>
@@ -30,6 +34,8 @@
           {% endfor %}
         </tbody>
       </table>
+      <hr>
+      <a class="btn btn-primary" href="/post-an-event">Post your Event</a>
     </div>
   </section>
 {% endblock %}
