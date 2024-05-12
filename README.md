@@ -17,7 +17,7 @@ Follow these steps to get the Flask application running locally on your machine:
    Open your terminal and run the following commands:
 
    ```bash
-   python -m venv venv
+   python3 -m venv venv
    source venv/bin/activate
 
    ```
@@ -25,17 +25,31 @@ Follow these steps to get the Flask application running locally on your machine:
 2. **Install Required Dependencies**
 
 ```bash
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 ```
 
-3. **Navigate the Source Directory**
+3. **Create Secret Key**
+
+Create new .env file
+
+Generate secret key
+
+```bash
+python3
+import os
+os.urandom(24)
+```
+
+Save generated secret key to variable SECRET_KEY in .env
+
+4. **Navigate the Source Directory**
 
 ```bash
 cd src
 ```
 
-4. **Launch Application**
+5. **Launch Application**
 
 ```bash
-python app.py
+python3 app.py
 ```

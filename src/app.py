@@ -11,6 +11,7 @@ from flask import (
     Flask, render_template, 
     request, session, redirect, flash
 )
+from config import Config
 
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -68,7 +69,8 @@ class LoginForm(FlaskForm):
 ##====================================================================================================
 
 app = Flask(__name__)
-app.secret_key = 'xpSm7p5bgJY8rNoBjGWiz5yjxM-NEBlW6SIBI62OkLc='
+app.config.from_object(Config)
+
 
 UPLOAD_FOLDER = '/profile-images'  # Update the upload folder path
 
