@@ -30,9 +30,9 @@ pip3 install -r requirements.txt
 
 3. **Create Secret Key**
 
-Create new .env file
+a) Create new .env file
 
-Generate secret key
+b) Generate secret key
 
 ```bash
 python3
@@ -40,7 +40,7 @@ import os
 os.urandom(24)
 ```
 
-Save generated secret key to variable SECRET_KEY in .env
+c) Save generated secret key to variable SECRET_KEY in .env
 
 4. **Navigate the Source Directory**
 

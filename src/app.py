@@ -1,176 +1,155 @@
-##====================================================================================================
-## Import Dependancies
-##====================================================================================================
-
+from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_wtf import FlaskForm
+from werkzeug.utils import secure_filename
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, TextAreaField, validators
+from pathlib import Path
 import os
-import sqlite3
-import contextlib
-import uuid
 
-from flask import (
-    Flask, render_template, 
-    request, session, redirect, flash
-)
-from config import Config
-
-from werkzeug.security import check_password_hash, generate_password_hash
-
-from create_database import setup_database
-from utils import login_required
 from data_team import Team_Data
 from data_person import Person_Data
-
-from wtforms import StringField, SelectField, IntegerField, SubmitField, TextAreaField, PasswordField, BooleanField
-from wtforms.validators import DataRequired, Length
-from flask_wtf import FlaskForm
-from flask_wtf.file import FileField, FileAllowed
-from wtforms.validators import Email, EqualTo, Optional
-    
-
-##====================================================================================================
-## Forms Definition
-##====================================================================================================
-
-
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-
-class RegistrationForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired(), Length(min=4, max=25)])
-    email = StringField('Email', validators=[DataRequired(), Email()])
-    password = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
-    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
-    fullname = StringField('Full Name', validators=[DataRequired()])
-    age = IntegerField('Age', validators=[Optional()])
-    preferredlocation = StringField('Preferred Location', validators=[Optional()])
-    profile_picture = FileField('Update Profile Picture', validators=[Optional(),FileAllowed(ALLOWED_EXTENSIONS)])
-    submit = SubmitField('Register')
-
-
-class EventForm(FlaskForm):
-    title = StringField('Event Title', validators=[DataRequired()])
-    sport_type = SelectField('Sport Type', choices=[('basketball', 'Basketball'), ('soccer', 'Soccer'), ('rugby', 'Rugby')], validators=[DataRequired()])
-    num_players = IntegerField('Number of Players Needed', validators=[DataRequired()])
-    start_time = StringField('Event Start Time (e.g., DD/MM/YYYY HH:MM)', validators=[DataRequired()])
-    end_time = StringField('Event End Time (e.g., DD/MM/YYYY HH:MM)', validators=[DataRequired()])
-    location = StringField('Event Location', validators=[DataRequired()])
-    description = TextAreaField('Description of Event', validators=[DataRequired(), Length(max=200)])
-    gender_preference = SelectField('Gender Preference', choices=[('male', 'Male'), ('female', 'Female'), ('mixed', 'Mixed')], validators=[DataRequired()])
-    submit = SubmitField('Post Event')
-
-
-class LoginForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    remember = BooleanField('Remember me')
-    submit = SubmitField('Log In')
-
-##====================================================================================================
-## App Configuration
-##====================================================================================================
-
-app = Flask(__name__)
-app.config.from_object(Config)
-
-
-UPLOAD_FOLDER = '/profile-images'  # Update the upload folder path
-
-app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'profile-images')  # Update the upload folder configuration
-os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)  # Ensure the upload folder exists
-
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-##====================================================================================================
-## Database Configuration
-##====================================================================================================
-
-database = "users.db"
-setup_database(name=database)
 
 Team_Data = Team_Data()
 Person_Data = Person_Data()
 
-##====================================================================================================
-## Routes Definition
-##====================================================================================================
+# Initialize Flask App
+app = Flask(__name__)
+app.config['SECRET_KEY'] = 'your_secret_key_here'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+# Initialize SQLAlchemy
+db = SQLAlchemy(app)
 
+# Set the folder for profile pictures
+UPLOAD_FOLDER = 'profile-pictures'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+# Ensure the upload directory exists
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+# User Model Definition
+class User(db.Model):
+    __tablename__ = 'users'
+    
+    username = db.Column(db.String, primary_key=True)
+    password = db.Column(db.String, nullable=False)
+    email = db.Column(db.String, nullable=False)
+    fullname = db.Column(db.String, nullable=False)
+    age = db.Column(db.Integer)
+    preferredlocation = db.Column(db.String)
+    profile_picture = db.Column(db.String)
+
+    def __repr__(self):
+        return f"<User(username='{self.username}', email='{self.email}', fullname='{self.fullname}')>"
+
+# LoginForm Definition
+class LoginForm(FlaskForm):
+    username = StringField('Username', [validators.DataRequired()])
+    password = PasswordField('Password', [validators.DataRequired()])
+    remember = BooleanField('Remember Me')
+    submit = SubmitField('Login')
+
+# RegistrationForm Definition
+class RegistrationForm(FlaskForm):
+    username = StringField('Username', [validators.Length(min=4, max=25), validators.DataRequired()])
+    password = PasswordField('Password', [validators.DataRequired(), validators.Length(min=8)])
+    confirm_password = PasswordField('Confirm Password', [validators.EqualTo('password'), validators.DataRequired()])
+    email = StringField('Email', [validators.DataRequired(), validators.Email()])
+    fullname = StringField('Full Name', [validators.DataRequired()])
+    age = IntegerField('Age', [validators.Optional()])
+    preferredlocation = StringField('Preferred Location', [validators.Optional()])
+    profile_picture = StringField('Profile Picture', [validators.Optional()])
+    submit = SubmitField('Register')
+
+# EventForm Definition
+class EventForm(FlaskForm):
+    title = StringField('Title', [validators.DataRequired()])
+    sport_type = StringField('Sport Type', [validators.DataRequired()])
+    num_players = IntegerField('Number of Players', [validators.DataRequired()])
+    start_time = StringField('Start Time', [validators.DataRequired()])
+    end_time = StringField('End Time', [validators.DataRequired()])
+    location = StringField('Location', [validators.DataRequired()])
+    description = TextAreaField('Description', [validators.DataRequired()])
+    gender_preference = StringField('Gender Preference', [validators.DataRequired()])
+    submit = SubmitField('Post Event')
+
+# Routes and Logic
 @app.route('/')
 @app.route('/dashboard')
 def dashboard():
     return render_template('dashboard.html', team_data=Team_Data, person_data=Person_Data)
 
-
-@app.route('/logout', methods=['POST'])
-def logout():
-    session.clear()
-    return redirect(request.referrer or '/')
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    form = LoginForm()  # Assuming LoginForm is defined elsewhere
+    form = LoginForm()
     if form.validate_on_submit():
-        username = form.username.data
-        password = form.password.data
-
-        with contextlib.closing(sqlite3.connect(database)) as conn:
-            account = conn.execute('SELECT username, password, email FROM users WHERE username = ?', (username,)).fetchone()
-
-        if not account:
-            flash('Username does not exist', 'error')
-            return render_template('login.html', form=form)
-
-        if check_password_hash(account[1], password):
+        user = User.query.filter_by(username=form.username.data).first()
+        
+        if user and check_password_hash(user.password, form.password.data):
             session['logged_in'] = True
-            session['username'] = account[0]
-            session['email'] = account[2]
-            return redirect('/')
+            session['username'] = user.username
+            session['email'] = user.email
+            if form.remember.data:
+                session.permanent = True
+            return redirect(url_for('dashboard'))
         else:
-            flash('Incorrect password', 'error')
-
+            flash('Login Unsuccessful. Please check username and password', 'error')
+    
     return render_template('login.html', form=form)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    form = RegistrationForm()  # Assuming RegistrationForm is defined elsewhere
+    form = RegistrationForm()
+
     if form.validate_on_submit():
         username = form.username.data
+        password = generate_password_hash(form.password.data, method='pbkdf2:sha256')
         email = form.email.data
-        password = form.password.data
         fullname = form.fullname.data
         age = form.age.data
         preferredlocation = form.preferredlocation.data
+        
+        # Process the uploaded file
+        file = request.files['profile_picture']
+        if file and file.filename != '':
+            filename = secure_filename(file.filename)
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(file_path)
+        else:
+            file_path = None  # Use a default image path or handle as no image
 
-        # Process file upload
-        filename = None
-        if 'profile_picture' in request.files:
-            file = request.files['profile_picture']
-            if file and allowed_file(file.filename):  # Assuming allowed_file is defined
-                ext = file.filename.rsplit('.', 1)[1].lower()
-                filename = f"{uuid.uuid4().hex}.{ext}"
-                file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                file.save(file_path)
-
-        # Hash the password using Werkzeug
-        hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
-
-        # Insert the new user
-        with contextlib.closing(sqlite3.connect(database)) as conn:
-            if conn.execute('SELECT username FROM users WHERE username = ?', (username,)).fetchone():
-                flash('Username already exists', 'error')
-                return render_template('register.html', form=form)
-
-            conn.execute('INSERT INTO users (username, password, email, fullname, age, preferredlocation, profile_picture) VALUES (?, ?, ?, ?, ?, ?, ?)',
-                         (username, hashed_password, email, fullname, age, preferredlocation, filename))
-            conn.commit()
-
-        # Log the user in
-        session['logged_in'] = True
-        session['username'] = username
-        session['email'] = email
-        return redirect('/dashboard')
+        new_user = User(
+            username=username,
+            password=password,
+            email=email,
+            fullname=fullname,
+            age=age,
+            preferredlocation=preferredlocation,
+            profile_picture=file_path
+        )
+        db.session.add(new_user)
+        db.session.commit()
+        flash('User registered successfully!')
+        return redirect(url_for('login'))
 
     return render_template('register.html', form=form)
+
+@app.route('/logout', methods=['POST'])
+def logout():
+    session.clear()
+    return redirect(url_for('dashboard'))
+
+@app.route('/post-an-event', methods=['GET', 'POST'])
+def post_event():
+    form = EventForm()
+    if form.validate_on_submit():
+        # Process the form data and potentially save it to the database
+        flash('Event posted successfully!')
+        return render_template('event_posted_successfully.html', event=form.data)
+
+    return render_template('post_an_event.html', form=form)
 
 @app.route('/team-basketball')
 def team_basketball():
@@ -200,27 +179,8 @@ def person_golf():
 def how_it_works():
     return render_template('how_it_works.html')
 
-@app.route('/post-an-event', methods=['GET', 'POST'])
-@login_required
-def post_event():
-    form = EventForm()
-    if form.validate_on_submit():
-        event = {
-            'title': form.title.data,
-            'sport_type': form.sport_type.data,
-            'num_players': form.num_players.data,
-            'start_time': form.start_time.data,
-            'end_time': form.end_time.data,
-            'location': form.location.data,
-            'description': form.description.data,
-            'gender_preference': form.gender_preference.data
-        }
-        # Assuming saving to database is handled elsewhere
-
-        return render_template('event_posted_successfully.html', event=event)
-
-    return render_template('post_an_event.html', form=form)
-
-
+# Main Entry Point
 if __name__ == '__main__':
+    with app.app_context():
+        db.create_all()
     app.run(debug=True)
