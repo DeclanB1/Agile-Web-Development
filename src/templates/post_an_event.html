@@ -6,13 +6,16 @@
     <form method="post">
         {{ form.hidden_tag() }}
         <div class="form-group mb-3">
-            {{ form.title.label }} {{ form.title(class="form-control") }}
+            {{ form.event_title.label }} {{ form.event_title(class="form-control") }}
         </div>
         <div class="form-group mb-3">
             {{ form.sport_type.label }} {{ form.sport_type(class="form-control") }}
         </div>
         <div class="form-group mb-3">
             {{ form.num_players.label }} {{ form.num_players(class="form-control") }}
+        </div>
+        <div class="form-group mb-3">
+            {{ form.playing_level.label }} {{ form.playing_level(class="form-control") }}
         </div>
         <div class="form-group mb-3">
             {{ form.start_time.label }} {{ form.start_time(class="form-control", placeholder="DD/MM/YYYY HH:MM") }}
@@ -28,6 +31,9 @@
         </div>
         <div class="form-group mb-3">
             {{ form.gender_preference.label }} {{ form.gender_preference(class="form-control") }}
+        </div>
+        <div class="form-group mb-3">
+            {{ form.contact_information.label }} {{ form.contact_information(class="form-control") }}
         </div>
         <div class="form-group mb-3">
             {{ form.submit(class="btn btn-primary") }}

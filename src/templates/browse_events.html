@@ -1,0 +1,83 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+  <section class="browse-events pt-5">
+    <div class="container">
+      <h2 class="mb-3">Browse Events</h2>
+      <div class="row align-items-center">
+        <!-- Search bar -->
+        <div class="col-md-3">
+          <input type="text" class="form-control mt-4" id="search" placeholder="Search for an Event">
+        </div>
+        <!-- Filter Options -->
+        <div class="col-md-9">
+          <div class="row">
+            <div class="col-md-3">
+              <label for="sport-filter"">Sport Type:</label>
+              <select id="sport-filter" class="form-control">
+                <option value="all">All</option>
+                {% for sport_type in sport_types %}
+                  <option value="{{ sport_type }}">{{ sport_type }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label for="num-players-filter"">Number of Players:</label>
+              <select id="num-players-filter" class="form-control">
+                <option value="all">All</option>
+                {% for num_player in num_players %}
+                  <option value="{{ num_player }}">{{ num_player }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label for="level-filter"">Playing Level:</label>
+              <select id="level-filter" class="form-control">
+                <option value="all">All</option>
+                {% for playing_level in playing_levels %}
+                  <option value="{{ playing_level }}">{{ playing_level }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label for="location-filter"">Location:</label>
+              <select id="location-filter" class="form-control">
+                <option value="all">All</option>
+                {% for location in locations %}
+                  <option value="{{ location }}">{{ location }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <hr>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Event Title</th>
+            <th>Sport Type</th>
+            <th>Number of Players</th>
+            <th>Playing Level</th>
+            <th>Location</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for event in events %}
+            <tr>
+              <td>{{ event.event_title }}</td>
+              <td>{{ event.sport_type }}</td>
+              <td>{{ event.num_players }}</td> 
+              <td>{{ event.playing_level }}</td>
+              <td>{{ event.location }}</td>
+              <td><a href="/browse-event/{{ event.event_id }}" class="btn btn-secondary">Details</a></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <hr>
+      <a class="btn btn-primary" href="/post-an-event">Post your Event</a>
+    </div>
+  </section>
+{% endblock %}
