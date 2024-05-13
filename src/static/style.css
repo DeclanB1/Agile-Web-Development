@@ -34,9 +34,19 @@ body::before {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-.elements a:hover {
-  color: red;
-  padding: 7px;
+.elements a:hover,
+.card-title a:hover {
+  color: rgb(21, 116, 231); /* Harmonized hover color */
+  padding: 7px; /* Consistent padding */
+}
+
+a:hover {
+  color: rgb(21, 116, 231); /* Change this color to whatever you prefer */
+}
+
+.card-title a {
+  text-decoration: none;
+  color: inherit;
 }
 
 .text-warning {
@@ -58,9 +68,6 @@ body::before {
   width: 80%;
 }
 
-.player-golf-image {
-  width: 90%;
-}
 
 @media (max-width: 992px) {
   .font {
@@ -127,17 +134,10 @@ p.details-subtitle {
   width: 80%;
 }
 
-.team-baseball-image {
-  width: 90%;
-}
-
-.player-golf-image {
-  width: 90%;
-}
-
 .button-container .btn {
   width: 50%; /* Adjust width to your preference */
   display: block;
   margin: 0 auto; /* Center align the buttons */
 }
+
 
