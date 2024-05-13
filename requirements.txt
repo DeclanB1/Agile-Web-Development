@@ -13,4 +13,3 @@ pycparser==2.22
 werkzeug==3.0.2
 wtforms==3.1.2
 zipp==3.18.1
-email_validator
