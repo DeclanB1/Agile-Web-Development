@@ -1,13 +1,5 @@
 # SportsSync Application
 
-## SportSync's Purpose
-
-SportsSync is a web-based platform created using Flask, designed to solve common issues in organizing social sports activities. It addresses problems like those at the University of Western Australia (UWA), where social sport teams often forfeit matches due to a lack of substitutes, incurring fees. 
-
-The platform connects sports enthusiasts, allowing them to browse, join, and create events, making it easier to find and manage teams. It offers customisable profiles, enhancing user experience, and provides tools for straightforward communication and event management.
-
-Ultimately, SportsSync aims to foster a vibrant community sport environment at all levels, bringing people together through the love of the game.
-
 ## Group Members
 
 | Student Name   | Student Number | Github Username |
@@ -16,11 +8,6 @@ Ultimately, SportsSync aims to foster a vibrant community sport environment at a
 | Declan Barrett | 23074941       | DeclanB1        |
 | Edward Le      | 23020568       | edwardisintou   |
 | Matthew Chew   | 22974046       | mattcw9090      |
-
-
-## Summary of the Architecture
-
-> **TODO: Needs to be completed before submission**
 
 ## Quick Start Guide
 
@@ -52,7 +39,3 @@ cd src
 ```bash
 python app.py
 ```
-
-## How to run tests
-
-> **TODO: Needs to be completed before submission**
