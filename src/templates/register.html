@@ -3,35 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{url_for('static', filename='main.css')}}">
     <title>Register</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f4f4f4;
+            font-family: 'Arial', sans-serif;
+        }
+        .register-container {
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            background: white;
+            width: 100%;
+            max-width: 400px;
+        }
+        .form-label {
+            font-weight: bold;
+            color: #333;
+        }
+        .form-submit {
+            background-color: #0056b3;
+            border-color: #004494;
+        }
+        .form-submit:hover {
+            background-color: #004494;
+        }
+        .text-link {
+            color: #0066ee;
+        }
+        .text-link:hover {
+            text-decoration: underline;
+        }
+        .error {
+            color: red;
+            font-size: 0.85em;
+        }
+        .flash {
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .flash.error {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+        .flash.info {
+            background-color: #d1ecf1;
+            border-color: #bee5eb;
+            color: #0c5460;
+        }
+    </style>
 </head>
-<body>
-    <form id="user-form" class="round-corners" action="/register" method="post">
-        <div class="form-item">
-            <label for="register-username">Username:</label>
-            <input id="register-username" class="form-input round-corners" type="text" name="username" required>
-        </div>
-        <div class="form-item">
-            <label for="register-email">Email:</label>
-            <input id="register-email" class="form-input round-corners" type="email" name="email" required>
-        </div>
-        <div class="form-item">
-            <label for="register-password">Password:</label>
-            <input id="register-password" class="form-input round-corners" type="password" name="password" required>
-        </div>
-        <div class="form-item">
-            <label for="register-password">Confirm Password:</label>
-            <input id="register-password" class="form-input round-corners" type="password" name="confirm-password" required>
-        </div>
+<body class="d-flex align-items-center justify-content-center vh-100">
+    <div class="register-container">
+        <form class="register-form" action="{{ url_for('register') }}" method="post" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
 
-        {% if error %}<p id="error-msg">{{error}}</p>{% endif %}
+            <div class="mb-3">
+                {{ form.username.label(class="form-label") }}
+                {{ form.username(class="form-control", id="username") }}
+                {% for error in form.username.errors %}
+                    <div class="error">{{ error }}</div>
+                {% endfor %}
+            </div>
 
-        <input id="form-submit" class="form-item round-corners" type="submit" value="Register">
+            <div class="mb-3">
+                {{ form.email.label(class="form-label") }}
+                {{ form.email(class="form-control", id="email") }}
+                {% for error in form.email.errors %}
+                    <div class="error">{{ error }}</div>
+                {% endfor %}
+            </div>
 
-        <div id="switch-form">
-            <p>Already have an account? <a class="text-link" href="/login">Login</a></p>
-        </div>
-    </form>
+            <div class="mb-3">
+                {{ form.password.label(class="form-label") }}
+                {{ form.password(class="form-control", id="password") }}
+                {% for error in form.password.errors %}
+                    <div class="error">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <div class="mb-3">
+                {{ form.confirm_password.label(class="form-label") }}
+                {{ form.confirm_password(class="form-control", id="confirm_password") }}
+                {% for error in form.confirm_password.errors %}
+                    <div class="error">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <div class="mb-3">
+                {{ form.fullname.label(class="form-label") }}
+                {{ form.fullname(class="form-control", id="fullname") }}
+            </div>
+
+            <div class="mb-3">
+                {{ form.age.label(class="form-label") }}
+                {{ form.age(class="form-control", id="age", placeholder="Optional") }}
+            </div>
+
+            <div class="mb-3">
+                {{ form.preferredlocation.label(class="form-label") }}
+                {{ form.preferredlocation(class="form-control", id="preferredlocation", placeholder="Optional") }}
+            </div>
+
+            <div class="mb-3">
+                <label for="profile_picture" class="form-label">Profile Picture (Optional)</label>
+                <input type="file" class="form-control file-input" id="profile_picture" name="profile_picture" accept="image/*">
+            </div>
+
+            <div class="mb-4">
+                {{ form.submit(class="btn btn-primary form-submit w-100") }}
+            </div>
+
+            <div class="text-center">
+                Already have an account? <a href="{{ url_for('login') }}" class="text-link">Log in</a>
+            </div>
+        </form>
+    </div>
 </body>
 </html>
