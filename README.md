@@ -20,7 +20,7 @@ Ultimately, SportsSync aims to foster a vibrant community sport environment at a
 
 ## Summary of the Architecture
 
-<span style="background-color: #FFFF00">**TBU**</span>
+> **TODO: Needs to be completed before submission**
 
 ## Quick Start Guide
 
@@ -55,4 +55,4 @@ python app.py
 
 ## How to run tests
 
-<span style="background-color: #FFFF00">**TBU**</span>
+> **TODO: Needs to be completed before submission**
