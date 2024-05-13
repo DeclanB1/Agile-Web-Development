@@ -93,8 +93,6 @@ setup_database(name=database)
 create_event_database()
 insert_default_data()
 
-Team_Data = Team_Data()
-Person_Data = Person_Data()
 
 ##====================================================================================================
 ## Routes Definition
@@ -104,7 +102,7 @@ Person_Data = Person_Data()
 @app.route('/')
 @app.route('/dashboard')
 def dashboard():
-    return render_template('dashboard.html', team_data=Team_Data, person_data=Person_Data)
+    return render_template('dashboard.html')
 
 
 @app.route('/logout', methods=['POST'])
@@ -197,30 +195,6 @@ def register():
 
     return render_template('register.html', form=form)
 
-# Browse events on dashboard
-@app.route('/team-basketball')
-def team_basketball():
-    return render_template('team_basketball.html', team_data=Team_Data[0])
-
-@app.route('/team-football')
-def team_football():
-    return render_template('team_football.html', team_data=Team_Data[1])
-
-@app.route('/team-baseball')
-def team_baseball():
-    return render_template('team_baseball.html', team_data=Team_Data[2])
-
-@app.route('/person-basketball')
-def person_basketball():
-    return render_template('person_basketball.html', person_data=Person_Data)
-
-@app.route('/person-tennis')
-def person_tennis():
-    return render_template('person_tennis.html', person_data=Person_Data)
-
-@app.route('/person-golf')
-def person_golf():
-    return render_template('person_golf.html', person_data=Person_Data)
 
 @app.route('/how-it-works')
 def how_it_works():

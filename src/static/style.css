@@ -134,3 +134,10 @@ p.details-subtitle {
 .player-golf-image {
   width: 90%;
 }
+
+.button-container .btn {
+  width: 50%; /* Adjust width to your preference */
+  display: block;
+  margin: 0 auto; /* Center align the buttons */
+}
+
