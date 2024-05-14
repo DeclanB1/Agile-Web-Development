@@ -8,20 +8,28 @@
 </head>
 <body>
     <form id="user-form" class="round-corners" action="/login" method="post">
+        {{ form.hidden_tag() }}
+
         <div class="form-item">
-            <label for="user-username">Username:</label>
-            <input id="user-username" class="form-input round-corners" type="text" id="username" name="username" required>
+            {{ form.username.label }}
+            {{ form.username(class="form-input round-corners") }}
+            {% for error in form.username.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
         </div>
         <div class="form-item">
-            <label for="user-password">Password:</label>
-            <input id="user-password" class="form-input round-corners" type="password" id="password" name="password" required>
+            {{ form.password.label }}
+            {{ form.password(class="form-input round-corners") }}
+            {% for error in form.password.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
         </div>
         <div class="form-item">
-            <input type="checkbox" id="remember-me" name="remember-me">
-            <label for="remember-me">Remember me</label>
+            {{ form.remember.label }}
+            {{ form.remember() }}
         </div>
 
-        {% if error %}<p id="error-msg">{{error}}</p>{% endif %}
+        {% if error %}<p id="error-msg">{{ error }}</p>{% endif %}
 
         <input id="form-submit" class="form-item round-corners" type="submit" value="Login">
 

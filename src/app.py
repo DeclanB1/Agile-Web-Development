@@ -123,6 +123,7 @@ def login():
 
         if not account:
             flash('Username does not exist', 'error')
+            print("Debug: Username does not exist")
             return render_template('login.html', form=form)
 
         try:
@@ -130,17 +131,29 @@ def login():
             if ph.verify(account[1], password):
                 if ph.check_needs_rehash(account[1]):
                     new_hash = ph.hash(password)
-                    conn.execute('UPDATE users SET password = ? WHERE username = ?', (new_hash, username))
+                    with contextlib.closing(sqlite3.connect(database)) as conn:
+                        with conn:
+                            conn.execute('UPDATE users SET password = ? WHERE username = ?', (new_hash, username))
 
                 session['logged_in'] = True 
                 session['username'] = account[0]
                 session['email'] = account[2]
-                return redirect('/')
+                print("Debug: Login successful, redirecting to /dashboard")
+                return redirect('/dashboard')
 
         except VerifyMismatchError:
             flash('Incorrect password', 'error')
+            print("Debug: Incorrect password")
+
+    # Debugging: print form errors
+    print("Debug: Form not validated")
+    for fieldName, errorMessages in form.errors.items():
+        for err in errorMessages:
+            print(f"Debug: {fieldName} - {err}")
 
     return render_template('login.html', form=form)
+
+
 
 
 
