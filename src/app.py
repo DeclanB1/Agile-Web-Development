@@ -211,35 +211,42 @@ def post_an_event():
     form = EventForm()
 
     if form.validate_on_submit():
-        event_title = form.event_title.data
-        sport_type = form.sport_type.data
-        num_players = form.num_players.data
-        playing_level = form.playing_level.data
-        event_date = datetime.strptime(form.event_date.data, '%Y-%m-%d').strftime('%Y/%m/%d')
-        start_time = datetime.strptime(form.start_time.data, '%H:%M').strftime('%I:%M %p')
-        end_time = datetime.strptime(form.end_time.data, '%H:%M').strftime('%I:%M %p')
-        location = form.location.data
-        description = form.description.data
-        gender_preference = form.gender_preference.data
-        contact_information = form.contact_information.data
+        try:
+            event_title = form.event_title.data
+            sport_type = form.sport_type.data
+            num_players = form.num_players.data
+            playing_level = form.playing_level.data
+            event_date = datetime.strptime(form.event_date.data, '%Y-%m-%d').strftime('%Y/%m/%d')
+            start_time = datetime.strptime(form.start_time.data, '%H:%M').strftime('%I:%M %p')
+            end_time = datetime.strptime(form.end_time.data, '%H:%M').strftime('%I:%M %p')
+            location = form.location.data
+            description = form.description.data
+            gender_preference = form.gender_preference.data
+            contact_information = form.contact_information.data
+                
+            event = Events(
+                event_title=event_title,
+                sport_type=sport_type,
+                num_players=num_players,
+                playing_level=playing_level,
+                event_date=event_date,
+                start_time=start_time,
+                end_time=end_time,
+                location=location,
+                description=description,
+                gender_preference=gender_preference,
+                contact_information=contact_information
+            )
             
-        event = Events(
-            event_title=event_title,
-            sport_type=sport_type,
-            num_players=num_players,
-            playing_level=playing_level,
-            event_date=event_date,
-            start_time=start_time,
-            end_time=end_time,
-            location=location,
-            description=description,
-            gender_preference=gender_preference,
-            contact_information=contact_information
-        )
+            db.session.add(event)
+            db.session.commit()
+            flash('Event successfully created', 'success')
+            return render_template('event_posted_successfully.html', event=event)
         
-        db.session.add(event)
-        db.session.commit()
-        return render_template('event_posted_successfully.html', event=event)
+        except IntegrityError:
+            db.session.rollback()
+            flash('Event title is already in use. Please choose a different title.', 'danger')
+    
     
     return render_template('post_an_event.html', form=form)
 
