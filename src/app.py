@@ -10,6 +10,7 @@ from utils import login_required
 import os
 
 
+
 # Initialize Flask App
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '\xdb\xe9>\xa6\x19\xd7EG\xb7\xe5\x0bK\x83\xbf\x92\xdc;\xc5+_\xf9\x9f\xb5%'
@@ -50,6 +51,7 @@ class Events(db.Model):
     sport_type = db.Column(db.Integer, nullable=False)
     num_players = db.Column(db.Integer, nullable=False)
     playing_level = db.Column(db.String, nullable=False)
+    event_date = db.Column(db.String, nullable=False)
     start_time = db.Column(db.String, nullable=False)
     end_time = db.Column(db.String, nullable=False)
     location = db.Column(db.String, nullable=False)
@@ -63,7 +65,7 @@ class Events(db.Model):
     )
 
     def __repr__(self):
-        return f"<Events(event_id='{self.event_id}', event_title='{self.event_title}', sport_type='{self.sport_type}', num_players='{self.num_players}', start_time='{self.start_time}', end_time='{self.end_time}', location='{self.location}', description='{self.description}', gender_preference='{self.gender_preference}', contact_information='{self.contact_information}')>"
+        return f"<Events(event_id='{self.event_id}', event_title='{self.event_title}', sport_type='{self.sport_type}', num_players='{self.num_players}', event_date='{self.event_date}', start_time='{self.start_time}', end_time='{self.end_time}', location='{self.location}', description='{self.description}', gender_preference='{self.gender_preference}', contact_information='{self.contact_information}')>"
 
 # LoginForm Definition
 class LoginForm(FlaskForm):
@@ -85,18 +87,50 @@ class RegistrationForm(FlaskForm):
     submit = SubmitField('Register')
 
 # EventForm
+from flask_wtf import FlaskForm
+from wtforms import StringField, SelectField, SubmitField
+from wtforms.validators import DataRequired
+from datetime import datetime, timedelta
+
+from flask_wtf import FlaskForm
+from wtforms import StringField, SelectField, SubmitField
+from wtforms.validators import DataRequired
+from datetime import datetime, timedelta
+
 class EventForm(FlaskForm):
-    event_title = StringField('Event Title', [validators.DataRequired()])
-    sport_type = SelectField('Sport Type', choices=[('Basketball', 'Basketball'), ('Football', 'Football'), ('Baseball', 'Baseball')])
-    num_players = IntegerField('Number of Players Needed', [validators.DataRequired()])
-    playing_level = SelectField('Playing Level', choices=[('Beginner', 'Beginner'), ('Intermediate', 'Intermediate'), ('Advanced', 'Advanced')])
-    start_time = StringField('Event Start Time (e.g., DD/MM/YYYY HH:MM)', [validators.DataRequired()])
-    end_time = StringField('Event End Time (e.g., DD/MM/YYYY HH:MM)', [validators.DataRequired()])
-    location = StringField('Event Location', [validators.DataRequired()])
-    description = TextAreaField('Description of Event', [validators.DataRequired()])
-    gender_preference = SelectField('Gender Preference', choices=[('Male', 'Male'), ('Female', 'Female'), ('Mixed', 'Mixed')])
-    contact_information = StringField('Contact Information', [validators.DataRequired()])
+    event_title = StringField('Event Title', validators=[DataRequired()])
+    sport_type = SelectField('Sport Type', choices=[('Basketball', 'Basketball'), ('Football', 'Football'), ('Baseball', 'Baseball')], validators=[DataRequired()])
+    num_players = StringField('Number of Players Needed', validators=[DataRequired()])
+    playing_level = SelectField('Playing Level', choices=[('Beginner', 'Beginner'), ('Intermediate', 'Intermediate'), ('Advanced', 'Advanced')], validators=[DataRequired()])
+    event_date = StringField('Event Date', validators=[DataRequired()], render_kw={'type': 'date'})
+    start_time = SelectField('Event Start Time', choices=[], validators=[DataRequired()])
+    end_time = SelectField('Event End Time', choices=[], validators=[DataRequired()])
+    location = StringField('Event Location', validators=[DataRequired()])
+    description = StringField('Description of Event', validators=[DataRequired()])
+    gender_preference = SelectField('Gender Preference', choices=[('Male', 'Male'), ('Female', 'Female'), ('Mixed', 'Mixed')], validators=[DataRequired()])
+    contact_information = StringField('Contact Information', validators=[DataRequired()])
     submit = SubmitField('Post Event')
+
+    def __init__(self, *args, **kwargs):
+        super(EventForm, self).__init__(*args, **kwargs)
+
+        # Populate time choices for start time and end time fields
+        self.start_time.choices = self._generate_time_choices()
+        self.end_time.choices = self._generate_time_choices()
+
+    def _generate_time_choices(self):
+        # Generate time options in 30-minute intervals
+        choices = []
+        start_time = datetime.strptime('00:00', '%H:%M')
+        end_time = datetime.strptime('23:30', '%H:%M')
+
+        while start_time <= end_time:
+            choices.append((start_time.strftime('%H:%M'), start_time.strftime('%I:%M %p')))
+            start_time += timedelta(minutes=30)
+
+        return choices
+
+
 
 # Routes and Logic
 @app.route('/')
@@ -179,6 +213,7 @@ def post_an_event():
         sport_type = form.sport_type.data
         num_players = form.num_players.data
         playing_level = form.playing_level.data
+        event_date = form.event_date.data
         start_time = form.start_time.data
         end_time = form.end_time.data
         location = form.location.data
@@ -191,6 +226,7 @@ def post_an_event():
             sport_type=sport_type,
             num_players=num_players,
             playing_level=playing_level,
+            event_date=event_date,
             start_time=start_time,
             end_time=end_time,
             location=location,
@@ -253,5 +289,7 @@ def browse_event(event_id):
 # Main Entry Point
 if __name__ == '__main__':
     with app.app_context():
+        # Drop existing tables if needed
+
         db.create_all()
     app.run(debug=True)
