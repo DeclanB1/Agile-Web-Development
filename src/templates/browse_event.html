@@ -3,7 +3,7 @@
 <section id="browse-event" class="pt-5">
   <div class="container details-container">
     <header class="details-header">
-      <h1 class="details-h1">Sport Type: {{ event[1] }}</h1>
+      <h1 class="details-h1">Event: {{ event.event_title }}</h1>
     </header>
 
     <div class="team-info">
@@ -31,7 +31,7 @@
           <li>{{ description }}</li>
         {% endfor %}
       </ul>
-      <p><strong>Gender Preference:</strong> {{ event[9] }}</p>
+      <p><strong>Gender Preference:</strong> {{ event.gender_preference }}</p>
     </div>
   </div>
 </section>
