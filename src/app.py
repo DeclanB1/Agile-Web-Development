@@ -13,9 +13,8 @@ import os
 
 # Initialize Flask App
 app = Flask(__name__)
-app.config['SECRET_KEY'] = '\xdb\xe9>\xa6\x19\xd7EG\xb7\xe5\x0bK\x83\xbf\x92\xdc;\xc5+_\xf9\x9f\xb5%'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///events.db'
+app.config['SECRET_KEY'] = '\xf6]\x06}\xdch\xea\x85\xb0:*\xe5\xda\xdd\x9bC\x88?\x98s/\xa3\xc9\xad'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sport_sync.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize SQLAlchemy
@@ -269,23 +268,23 @@ def browse_events():
         return render_template('browse_events.html')
 
 # Browse single event
-@app.route('/browse-event/<int:event_id>')
-def browse_event(event_id):
+@app.route('/browse-single-event/<int:event_id>')
+def browse_single_event(event_id):
     try:
         # Retrieve the event from the database based on its event_id
         event = Events.query.filter_by(event_id=event_id).first()
 
         # Check if the event exists
         if event:
-            return render_template('browse_event.html', event=event)
+            return render_template('browse_single_event.html', event=event)
         else:
             flash("Event not found")
             # Pass None for event when the event is not found
-            return render_template('browse_event.html', event=None)
+            return render_template('browse_single_event.html', event=None)
         
     except Exception as e:
         flash("Error occurred while fetching event details")
-        return render_template('browse_event.html', event=None)
+        return render_template('browse_single_event.html', event=None)
 
 # Main Entry Point
 if __name__ == '__main__':
