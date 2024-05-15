@@ -9,8 +9,6 @@ from pathlib import Path
 from utils import login_required
 import os
 
-
-
 # Initialize Flask App
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key_here'
@@ -21,7 +19,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 # Set the folder for profile pictures
-UPLOAD_FOLDER = 'profile-pictures'
+UPLOAD_FOLDER = 'static/profile-pictures'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Ensure the upload directory exists
@@ -41,7 +39,8 @@ class User(db.Model):
 
     def __repr__(self):
         return f"<User(username='{self.username}', email='{self.email}', fullname='{self.fullname}')>"
-    
+
+# Event Model Definition
 class Events(db.Model):
     __tablename__ = 'events'
 
@@ -171,8 +170,9 @@ def register():
             filename = secure_filename(file.filename)
             file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(file_path)
+            profile_picture_path = f'profile-pictures/{filename}'
         else:
-            file_path = None  # Use a default image path or handle as no image
+            profile_picture_path = None
 
         new_user = User(
             username=username,
@@ -181,7 +181,7 @@ def register():
             fullname=fullname,
             age=age,
             preferredlocation=preferredlocation,
-            profile_picture=file_path
+            profile_picture=profile_picture_path
         )
         db.session.add(new_user)
         db.session.commit()

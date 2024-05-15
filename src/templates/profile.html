@@ -19,7 +19,7 @@
                 <p><strong>Preferred Location:</strong> {{ user.preferredlocation }}</p>
                 {% if user.profile_picture %}
                     <p><strong>Profile Picture:</strong></p>
-                    <img src="{{ url_for('static', filename='../profile-pictures/' ~ user.profile_picture) }}" alt="Profile Picture" style="max-width: 200px;">
+                    <img src="{{ url_for('static', filename=user.profile_picture) }}" alt="Profile Picture" style="max-width: 200px;">
                 {% else %}
                     <p>No profile picture available.</p>
                 {% endif %}
