@@ -163,8 +163,6 @@ def register():
         fullname = form.fullname.data
         age = form.age.data
         preferredlocation = form.preferredlocation.data
-        
-        # Process the uploaded file
         file = request.files['profile_picture']
         if file and file.filename != '':
             filename = secure_filename(file.filename)
