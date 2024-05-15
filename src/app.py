@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import UniqueConstraint
+from sqlalchemy.exc import IntegrityError
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_wtf import FlaskForm
 from werkzeug.utils import secure_filename
@@ -150,13 +151,13 @@ def login():
             return redirect(url_for('dashboard'))
         else:
             flash('Login Unsuccessful. Please check username and password', 'error')
-    
     return render_template('login.html', form=form)
+
+from sqlalchemy.exc import IntegrityError
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()
-
     if form.validate_on_submit():
         username = form.username.data
         password = generate_password_hash(form.password.data, method='pbkdf2:sha256')
@@ -164,15 +165,14 @@ def register():
         fullname = form.fullname.data
         age = form.age.data
         preferredlocation = form.preferredlocation.data
-        
-        # Process the uploaded file
+
         file = request.files['profile_picture']
         if file and file.filename != '':
             filename = secure_filename(file.filename)
             file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(file_path)
         else:
-            file_path = None  # Use a default image path or handle as no image
+            file_path = None
 
         new_user = User(
             username=username,
@@ -183,12 +183,17 @@ def register():
             preferredlocation=preferredlocation,
             profile_picture=file_path
         )
-        db.session.add(new_user)
-        db.session.commit()
-        flash('User registered successfully!')
-        return redirect(url_for('login'))
 
+        try:
+            db.session.add(new_user)
+            db.session.commit()
+            flash('Registration Successful!', 'success')
+            return redirect(url_for('login'))
+        except IntegrityError:
+            db.session.rollback()
+            flash('Username already taken, please choose a different name.', 'error')
     return render_template('register.html', form=form)
+
 
 @app.route('/logout', methods=['POST'])
 def logout():
