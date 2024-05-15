@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request, redirect, url_for, session, flash, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import UniqueConstraint
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -282,6 +282,19 @@ def browse_single_event(event_id):
     except Exception as e:
         flash("Error occurred while fetching event details")
         return render_template('browse_single_event.html', event=None)
+
+# User Profile
+@app.route('/profile')
+@login_required
+def profile():
+    username = session.get('username')
+    user = User.query.filter_by(username=username).first()
+    
+    if user:
+        return render_template('profile.html', user=user)
+    else:
+        flash('User not found', 'error')
+        return redirect(url_for('dashboard'))
 
 # Main Entry Point
 if __name__ == '__main__':
