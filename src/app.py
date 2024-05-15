@@ -35,10 +35,11 @@ class User(db.Model):
     fullname = db.Column(db.String, nullable=False)
     age = db.Column(db.Integer)
     preferredlocation = db.Column(db.String)
-    profile_picture = db.Column(db.String)
+    profile_picture = db.Column(db.String, default='images/default-profile-pic.png')
 
     def __repr__(self):
         return f"<User(username='{self.username}', email='{self.email}', fullname='{self.fullname}')>"
+
 
 # Event Model Definition
 class Events(db.Model):
@@ -170,7 +171,7 @@ def register():
             file.save(file_path)
             profile_picture_path = f'profile-pictures/{filename}'
         else:
-            profile_picture_path = None
+            profile_picture_path = 'images/default-profile-pic.png'
 
         new_user = User(
             username=username,

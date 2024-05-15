@@ -14,12 +14,8 @@
                 <p><strong>Full Name:</strong> {{ user.fullname }}</p>
                 <p><strong>Age:</strong> {{ user.age }}</p>
                 <p><strong>Preferred Location:</strong> {{ user.preferredlocation }}</p>
-                {% if user.profile_picture %}
-                    <p><strong>Profile Picture:</strong></p>
-                    <img src="{{ url_for('static', filename=user.profile_picture) }}" alt="Profile Picture" style="max-width: 200px;">
-                {% else %}
-                    <p>No profile picture available.</p>
-                {% endif %}
+                <p><strong>Profile Picture:</strong></p>
+                <img src="{{ url_for('static', filename=user.profile_picture) }}" alt="Profile Picture" style="max-width: 200px;">
             </div>
         </div>
         <a href="{{ url_for('dashboard') }}" class="btn btn-primary mt-3">Back to Dashboard</a>
