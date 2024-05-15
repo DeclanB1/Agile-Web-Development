@@ -110,43 +110,26 @@ class EventForm(FlaskForm):
     contact_information = StringField('Contact Information', validators=[DataRequired()])
     submit = SubmitField('Post Event')
 
+    def __init__(self, *args, **kwargs):
+        super(EventForm, self).__init__(*args, **kwargs)
 
-class LoginForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    remember = BooleanField('Remember me')
-    submit = SubmitField('Log In')
+        # Populate time choices for start time and end time fields
+        self.start_time.choices = self._generate_time_choices()
+        self.end_time.choices = self._generate_time_choices()
 
-##====================================================================================================
-## App Configuration
-##====================================================================================================
+    def _generate_time_choices(self):
+        choices = []
+        start_time = datetime.strptime('00:00', '%H:%M')
+        end_time = datetime.strptime('23:30', '%H:%M')
 
-app = Flask(__name__)
-app.secret_key = 'xpSm7p5bgJY8rNoBjGWiz5yjxM-NEBlW6SIBI62OkLc='
+        while start_time <= end_time:
+            formatted_time = start_time.strftime('%I:%M %p')  # Format time as 1 pm
+            choices.append((start_time.strftime('%H:%M'), formatted_time))
+            start_time += timedelta(minutes=30)
 
-UPLOAD_FOLDER = '/profile-images'  # Update the upload folder path
+        return choices
 
-app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'profile-images')  # Update the upload folder configuration
-os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)  # Ensure the upload folder exists
-
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-##====================================================================================================
-## Database Configuration
-##====================================================================================================
-
-database = "users.db"
-setup_database(name=database)
-
-Team_Data = Team_Data()
-Person_Data = Person_Data()
-
-##====================================================================================================
-## Routes Definition
-##====================================================================================================
-
-
+# Routes and Logic
 @app.route('/')
 @app.route('/dashboard')
 def dashboard():
@@ -156,113 +139,61 @@ def dashboard():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        username = form.username.data
-        password = form.password.data
-
-        with contextlib.closing(sqlite3.connect(database)) as conn:
-            with conn:
-                account = conn.execute('SELECT username, password, email FROM users WHERE username = ?', (username,)).fetchone()
-
-        if not account:
-            flash('Username does not exist', 'error')
-            return render_template('login.html', form=form)
-
-        try:
-            ph = PasswordHasher()
-            if ph.verify(account[1], password):
-                if ph.check_needs_rehash(account[1]):
-                    new_hash = ph.hash(password)
-                    conn.execute('UPDATE users SET password = ? WHERE username = ?', (new_hash, username))
-
-                session['logged_in'] = True 
-                session['username'] = account[0]
-                session['email'] = account[2]
-                return redirect('/')
-
-        except VerifyMismatchError:
-            flash('Incorrect password', 'error')
-
+        user = User.query.filter_by(username=form.username.data).first()
+        
+        if user and check_password_hash(user.password, form.password.data):
+            session['logged_in'] = True
+            session['username'] = user.username
+            session['email'] = user.email
+            if form.remember.data:
+                session.permanent = True
+            return redirect(url_for('dashboard'))
+        else:
+            flash('Login Unsuccessful. Please check username and password', 'error')
+    
     return render_template('login.html', form=form)
-
-
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()
+
     if form.validate_on_submit():
         username = form.username.data
+        password = generate_password_hash(form.password.data, method='pbkdf2:sha256')
         email = form.email.data
-        password = form.password.data
         fullname = form.fullname.data
         age = form.age.data
         preferredlocation = form.preferredlocation.data
+        
+        # Process the uploaded file
+        file = request.files['profile_picture']
+        if file and file.filename != '':
+            filename = secure_filename(file.filename)
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(file_path)
+        else:
+            file_path = None  # Use a default image path or handle as no image
 
-        print(f"Debug: username={username}, email={email}, password={password}, fullname={fullname}, age={age}, preferredlocation={preferredlocation}")
-
-        filename = None
-        if 'profile_picture' in request.files:
-            file = request.files['profile_picture']
-            if file and allowed_file(file.filename):
-                ext = file.filename.rsplit('.', 1)[1].lower()
-                filename = f"{uuid.uuid4().hex}.{ext}"
-                file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                file.save(file_path)
-                print(f"Debug: Saved file to {file_path}")
-
-        # Hash the password
-        hashed_password = PasswordHasher().hash(password)
-
-        # Check if username already exists
-        try:
-            with contextlib.closing(sqlite3.connect(database)) as conn:
-                if conn.execute('SELECT username FROM users WHERE username = ?', (username,)).fetchone():
-                    flash('Username already exists', 'error')
-                    return render_template('register.html', form=form)
-
-                print("Debug: Inserting into database")
-                conn.execute('INSERT INTO users (username, password, email, fullname, age, preferredlocation, profile_picture) VALUES (?, ?, ?, ?, ?, ?, ?)',
-                             (username, hashed_password, email, fullname, age, preferredlocation, filename))
-                conn.commit()
-
-        except sqlite3.Error as e:
-            print(f"SQLite error: {e}")
-            flash(f'A database error occurred: {e}', 'error')
-            return render_template('register.html', form=form)
-
-        # Log the user in right after registration
-        session['logged_in'] = True
-        session['username'] = username
-        session['email'] = email
-        return redirect('/dashboard')
+        new_user = User(
+            username=username,
+            password=password,
+            email=email,
+            fullname=fullname,
+            age=age,
+            preferredlocation=preferredlocation,
+            profile_picture=file_path
+        )
+        db.session.add(new_user)
+        db.session.commit()
+        flash('User registered successfully!')
+        return redirect(url_for('login'))
 
     return render_template('register.html', form=form)
 
-
-
-
-@app.route('/team-basketball')
-def team_basketball():
-    return render_template('team_basketball.html', team_data=Team_Data)
-
-@app.route('/team-football')
-def team_football():
-    return render_template('team_football.html', team_data=Team_Data)
-
-@app.route('/team-baseball')
-def team_baseball():
-    return render_template('team_baseball.html', team_data=Team_Data)
-
-@app.route('/person-basketball')
-def person_basketball():
-    return render_template('person_basketball.html', person_data=Person_Data)
-
-@app.route('/person-tennis')
-def person_tennis():
-    return render_template('person_tennis.html', person_data=Person_Data)
-
-@app.route('/person-golf')
-def person_golf():
-    return render_template('person_golf.html', person_data=Person_Data)
+@app.route('/logout', methods=['POST'])
+def logout():
+    session.clear()
+    return redirect(url_for('dashboard'))
 
 @app.route('/how-it-works')
 def how_it_works():
@@ -356,4 +287,5 @@ def browse_single_event(event_id):
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
+
     app.run(debug=True)
