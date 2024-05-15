@@ -13,7 +13,7 @@ import os
 
 # Initialize Flask App
 app = Flask(__name__)
-app.config['SECRET_KEY'] = '\xf6]\x06}\xdch\xea\x85\xb0:*\xe5\xda\xdd\x9bC\x88?\x98s/\xa3\xc9\xad'
+app.config['SECRET_KEY'] = 'your_secret_key_here'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sport_sync.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
