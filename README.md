@@ -1,5 +1,9 @@
 # SportsSync Application
 
+## Purpose of SportsSync
+
+SportsSync is a web-based platform, created using Flask, designed to connect sports enthusiasts by allowing them to browse, join, and create sports events in their community. It enables users to tailor their experience through customisable profiles and facilitates easy communication and management of events. This solution addresses the need for a centralized location where athletes of all levels can find and organize sports activities according to their preferences and skill levels.
+
 ## Group Members
 
 | Student Name   | Student Number | Github Username |
@@ -8,6 +12,23 @@
 | Declan Barrett | 23074941       | DeclanB1        |
 | Edward Le      | 23020568       | edwardisintou   |
 | Matthew Chew   | 22974046       | mattcw9090      |
+
+
+## SportsSync Architecture
+
+>TO_DO Short Description and Screenshot for Each
+
+### Register New Account
+
+### Login
+
+### Post New Event
+
+### Browse Events
+
+### Update User Profile
+
+### Update/Delete Existing Event
 
 ## Quick Start Guide
 
@@ -52,3 +73,7 @@ cd src
 ```bash
 python3 app.py
 ```
+
+## How to run Tests
+
+>TO_DO
