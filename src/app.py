@@ -6,6 +6,7 @@ from flask_wtf import FlaskForm
 from werkzeug.utils import secure_filename
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, TextAreaField, SelectField, validators
 from pathlib import Path
+from utils import login_required
 import os
 
 
@@ -169,6 +170,7 @@ def how_it_works():
 
 # Post an event
 @app.route('/post-an-event', methods=['GET', 'POST'])
+@login_required
 def post_an_event():
     form = EventForm()
 
@@ -234,7 +236,7 @@ def browse_events():
 def browse_event(event_id):
     try:
         # Retrieve the event from the database based on its event_id
-        event = Events.query.filter_by(_event_id=event_id).first()
+        event = Events.query.filter_by(event_id=event_id).first()
 
         # Check if the event exists
         if event:
