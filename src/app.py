@@ -6,6 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_wtf import FlaskForm
 from werkzeug.utils import secure_filename
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, TextAreaField, SelectField, validators
+from wtforms.validators import DataRequired, EqualTo, Email
 from pathlib import Path
 from utils import login_required
 import os
@@ -78,7 +79,8 @@ class LoginForm(FlaskForm):
 class RegistrationForm(FlaskForm):
     username = StringField('Username', [validators.Length(min=4, max=25), validators.DataRequired()])
     password = PasswordField('Password', [validators.DataRequired(), validators.Length(min=8)])
-    confirm_password = PasswordField('Confirm Password', [validators.EqualTo('password'), validators.DataRequired()])
+    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password', message='Password entries do not match. Please try again')
+    ])    
     email = StringField('Email', [validators.DataRequired(), validators.Email()])
     fullname = StringField('Full Name', [validators.DataRequired()])
     age = IntegerField('Age', [validators.Optional()])
@@ -191,7 +193,7 @@ def register():
             return redirect(url_for('login'))
         except IntegrityError:
             db.session.rollback()
-            flash('Username already taken, please choose a different name.', 'error')
+            flash('Username already in use, please choose a different name.', 'error')
     return render_template('register.html', form=form)
 
 
