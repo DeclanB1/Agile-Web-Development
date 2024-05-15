@@ -9,12 +9,12 @@
     <div class="team-info">
       <!-- Display the sport-specific image -->
       <div class="text-center mt-3">
-        {% if event[2] == 'Basketball' %}
+        {% if event.sport_type == 'Basketball' %}
           <img src="/static/images/basketball-court.jpg" alt="Basketball Court">
-        {% elif event[2] == 'Football' %}
-          <img src="/static/images/football-court.jpg" alt="Football Field">
-        {% elif event[2] == 'Baseball' %}
-          <img src="/static/images/baseball-court.jpg" alt="Baseball Field">
+        {% elif event.sport_type == 'Soccer' %}
+          <img src="/static/images/soccer-court.jpg" alt="Soccer Court">
+        {% elif event.sport_type == 'Tennis' %}
+          <img src="/static/images/tennis-court.jpg" alt="Tennis Court">
         {% endif %}
       </div>
 
