@@ -11,7 +11,7 @@ import os
 
 # Initialize Flask App
 app = Flask(__name__)
-app.config['SECRET_KEY'] = '\x1a\xf3\x91F\xe9Y\x85+\xeb\x1a\xf2\xf4\xec\xd2\xe2\xaf\xe8C\xa57\xa5\x1d\xd3X'
+app.config['SECRET_KEY'] = '\xdb\xe9>\xa6\x19\xd7EG\xb7\xe5\x0bK\x83\xbf\x92\xdc;\xc5+_\xf9\x9f\xb5%'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///events.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -212,9 +212,16 @@ def browse_events():
 
         # Fetch distinct values for sport type, num players, playing level, and location
         sport_types = db.session.query(Events.sport_type.distinct()).all()
+        sport_types = [sport_type[0] for sport_type in sport_types]  # Extracting the first element of each tuple
+
         num_players = db.session.query(Events.num_players.distinct()).all()
+        num_players = [num_player[0] for num_player in num_players]
+
         playing_levels = db.session.query(Events.playing_level.distinct()).all()
+        playing_levels = [playing_level[0] for playing_level in playing_levels]
+
         locations = db.session.query(Events.location.distinct()).all()
+        locations = [location[0] for location in locations]
 
         # Pass the data to the template
         return render_template('browse_events.html', events=events, sport_types=sport_types, num_players=num_players, playing_levels=playing_levels, locations=locations, username=session.get('username'))
