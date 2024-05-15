@@ -1,10 +1,12 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import UniqueConstraint
+from sqlalchemy.exc import IntegrityError
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_wtf import FlaskForm
 from werkzeug.utils import secure_filename
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, TextAreaField, SelectField, validators
+from wtforms.validators import DataRequired, EqualTo, Email
 from pathlib import Path
 from utils import login_required
 import os
@@ -77,7 +79,8 @@ class LoginForm(FlaskForm):
 class RegistrationForm(FlaskForm):
     username = StringField('Username', [validators.Length(min=4, max=25), validators.DataRequired()])
     password = PasswordField('Password', [validators.DataRequired(), validators.Length(min=8)])
-    confirm_password = PasswordField('Confirm Password', [validators.EqualTo('password'), validators.DataRequired()])
+    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password', message='Password entries do not match. Please try again')
+    ])    
     email = StringField('Email', [validators.DataRequired(), validators.Email()])
     fullname = StringField('Full Name', [validators.DataRequired()])
     age = IntegerField('Age', [validators.Optional()])
@@ -150,13 +153,13 @@ def login():
             return redirect(url_for('dashboard'))
         else:
             flash('Login Unsuccessful. Please check username and password', 'error')
-    
     return render_template('login.html', form=form)
+
+from sqlalchemy.exc import IntegrityError
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()
-
     if form.validate_on_submit():
         username = form.username.data
         password = generate_password_hash(form.password.data, method='pbkdf2:sha256')
@@ -164,15 +167,14 @@ def register():
         fullname = form.fullname.data
         age = form.age.data
         preferredlocation = form.preferredlocation.data
-        
-        # Process the uploaded file
+
         file = request.files['profile_picture']
         if file and file.filename != '':
             filename = secure_filename(file.filename)
             file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(file_path)
         else:
-            file_path = None  # Use a default image path or handle as no image
+            file_path = None
 
         new_user = User(
             username=username,
@@ -183,12 +185,17 @@ def register():
             preferredlocation=preferredlocation,
             profile_picture=file_path
         )
-        db.session.add(new_user)
-        db.session.commit()
-        flash('User registered successfully!')
-        return redirect(url_for('login'))
 
+        try:
+            db.session.add(new_user)
+            db.session.commit()
+            flash('Registration Successful!', 'success')
+            return redirect(url_for('login'))
+        except IntegrityError:
+            db.session.rollback()
+            flash('Username already in use, please choose a different name.', 'error')
     return render_template('register.html', form=form)
+
 
 @app.route('/logout', methods=['POST'])
 def logout():
@@ -206,35 +213,42 @@ def post_an_event():
     form = EventForm()
 
     if form.validate_on_submit():
-        event_title = form.event_title.data
-        sport_type = form.sport_type.data
-        num_players = form.num_players.data
-        playing_level = form.playing_level.data
-        event_date = datetime.strptime(form.event_date.data, '%Y-%m-%d').strftime('%Y/%m/%d')
-        start_time = datetime.strptime(form.start_time.data, '%H:%M').strftime('%I:%M %p')
-        end_time = datetime.strptime(form.end_time.data, '%H:%M').strftime('%I:%M %p')
-        location = form.location.data
-        description = form.description.data
-        gender_preference = form.gender_preference.data
-        contact_information = form.contact_information.data
+        try:
+            event_title = form.event_title.data
+            sport_type = form.sport_type.data
+            num_players = form.num_players.data
+            playing_level = form.playing_level.data
+            event_date = datetime.strptime(form.event_date.data, '%Y-%m-%d').strftime('%Y/%m/%d')
+            start_time = datetime.strptime(form.start_time.data, '%H:%M').strftime('%I:%M %p')
+            end_time = datetime.strptime(form.end_time.data, '%H:%M').strftime('%I:%M %p')
+            location = form.location.data
+            description = form.description.data
+            gender_preference = form.gender_preference.data
+            contact_information = form.contact_information.data
+                
+            event = Events(
+                event_title=event_title,
+                sport_type=sport_type,
+                num_players=num_players,
+                playing_level=playing_level,
+                event_date=event_date,
+                start_time=start_time,
+                end_time=end_time,
+                location=location,
+                description=description,
+                gender_preference=gender_preference,
+                contact_information=contact_information
+            )
             
-        event = Events(
-            event_title=event_title,
-            sport_type=sport_type,
-            num_players=num_players,
-            playing_level=playing_level,
-            event_date=event_date,
-            start_time=start_time,
-            end_time=end_time,
-            location=location,
-            description=description,
-            gender_preference=gender_preference,
-            contact_information=contact_information
-        )
+            db.session.add(event)
+            db.session.commit()
+            flash('Event successfully created', 'success')
+            return render_template('event_posted_successfully.html', event=event)
         
-        db.session.add(event)
-        db.session.commit()
-        return render_template('event_posted_successfully.html', event=event)
+        except IntegrityError:
+            db.session.rollback()
+            flash('Event title is already in use. Please choose a different title.', 'danger')
+    
     
     return render_template('post_an_event.html', form=form)
 
