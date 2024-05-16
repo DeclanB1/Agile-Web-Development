@@ -1,0 +1,79 @@
+{% extends "layout.html" %}
+
+{% block head %}
+    <title>Edit Event</title>
+    <style>
+        .container {
+            max-width: 700px;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-label {
+            font-weight: bold;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="container mt-5 pt-5">
+        <h1 class="text-center">Edit Event</h1>
+        <div class="card mx-auto">
+            <div class="card-body">
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    <div class="form-group">
+                        {{ form.event_title.label(class="form-label") }}
+                        {{ form.event_title(class_="form-control") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.sport_type.label(class="form-label") }}
+                        {{ form.sport_type(class_="form-control") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.num_players.label(class="form-label") }}
+                        {{ form.num_players(class_="form-control") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.playing_level.label(class="form-label") }}
+                        {{ form.playing_level(class_="form-control") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.event_date.label(class="form-label") }}
+                        {{ form.event_date(class_="form-control") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.start_time.label(class="form-label") }}
+                        {{ form.start_time(class_="form-control") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.end_time.label(class="form-label") }}
+                        {{ form.end_time(class_="form-control") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.location.label(class="form-label") }}
+                        {{ form.location(class_="form-control") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.description.label(class="form-label") }}
+                        {{ form.description(class_="form-control") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.gender_preference.label(class="form-label") }}
+                        {{ form.gender_preference(class_="form-control") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.contact_information.label(class="form-label") }}
+                        {{ form.contact_information(class_="form-control") }}
+                    </div>
+                    <div class="form-group text-center">
+                        {{ form.submit(class_="btn btn-primary") }}
+                    </div>
+                </form>
+                <div class="text-center">
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-secondary mt-3">Cancel</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
