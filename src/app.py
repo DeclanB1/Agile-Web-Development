@@ -1,3 +1,7 @@
+##==============================================================================================================
+## Import Dependancies
+##==============================================================================================================
+
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import UniqueConstraint
@@ -5,21 +9,26 @@ from sqlalchemy.exc import IntegrityError
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_wtf import FlaskForm
 from werkzeug.utils import secure_filename
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, TextAreaField, SelectField, validators
-from wtforms.validators import DataRequired, EqualTo, Email
-from pathlib import Path
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, SelectField, validators
+from wtforms.validators import DataRequired, EqualTo
 from utils import login_required
 import os
+from flask_wtf import FlaskForm
+from wtforms import StringField, SelectField, SubmitField
+from wtforms.validators import DataRequired
+from datetime import datetime, timedelta
 
+##==============================================================================================================
+## Initialise Flask Application and SQLAlchemy
+##==============================================================================================================
 
-
-# Initialize Flask App
+# Initialise Flask App
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key_here'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sport_sync.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Initialize SQLAlchemy
+# Initialise SQLAlchemy
 db = SQLAlchemy(app)
 
 # Set the folder for profile pictures
@@ -29,25 +38,30 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # Ensure the upload directory exists
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-# User Model Definition
+##==============================================================================================================
+## Define User Models
+##==============================================================================================================
+
+# Generates User db Model
 class User(db.Model):
     __tablename__ = 'users'
     
-    username = db.Column(db.String, primary_key=True)
+    username = db.Column(db.String, primary_key=True) # Username is set as Primary Key
     password = db.Column(db.String, nullable=False)
     email = db.Column(db.String, nullable=False)
     fullname = db.Column(db.String, nullable=False)
-    age = db.Column(db.Integer)
-    preferredlocation = db.Column(db.String)
-    profile_picture = db.Column(db.String)
+    age = db.Column(db.Integer) #Optional Field
+    preferredlocation = db.Column(db.String) #Optional Field
+    profile_picture = db.Column(db.String) #Optional Field
 
     def __repr__(self):
         return f"<User(username='{self.username}', email='{self.email}', fullname='{self.fullname}')>"
-    
+
+# Generates Events db Model    
 class Events(db.Model):
     __tablename__ = 'events'
 
-    event_id = db.Column(db.Integer, primary_key=True)
+    event_id = db.Column(db.Integer, primary_key=True) # Event ID is primary key
     event_title = db.Column(db.String, nullable=False)
     sport_type = db.Column(db.Integer, nullable=False)
     num_players = db.Column(db.Integer, nullable=False)
@@ -67,6 +81,10 @@ class Events(db.Model):
 
     def __repr__(self):
         return f"<Events(event_id='{self.event_id}', event_title='{self.event_title}', sport_type='{self.sport_type}', num_players='{self.num_players}', event_date='{self.event_date}', start_time='{self.start_time}', end_time='{self.end_time}', location='{self.location}', description='{self.description}', gender_preference='{self.gender_preference}', contact_information='{self.contact_information}')>"
+
+##==============================================================================================================
+## Forms Definition
+##==============================================================================================================
 
 # LoginForm Definition
 class LoginForm(FlaskForm):
@@ -88,16 +106,7 @@ class RegistrationForm(FlaskForm):
     profile_picture = StringField('Profile Picture', [validators.Optional()])
     submit = SubmitField('Register')
 
-# EventForm
-from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField, SubmitField
-from wtforms.validators import DataRequired
-from datetime import datetime, timedelta
-
-from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField, SubmitField
-from wtforms.validators import DataRequired
-from datetime import datetime, timedelta
+# EventForm Definition
 
 class EventForm(FlaskForm):
     event_title = StringField('Event Title', validators=[DataRequired()])
@@ -131,6 +140,10 @@ class EventForm(FlaskForm):
             start_time += timedelta(minutes=30)
 
         return choices
+
+##==============================================================================================================
+## Define Routes and Logic
+##==============================================================================================================
 
 # Routes and Logic
 @app.route('/')
@@ -206,7 +219,6 @@ def logout():
 def how_it_works():
     return render_template('how_it_works.html')
 
-# Post an event
 @app.route('/post-an-event', methods=['GET', 'POST'])
 @login_required
 def post_an_event():
@@ -297,7 +309,9 @@ def browse_single_event(event_id):
         flash("Error occurred while fetching event details")
         return render_template('browse_single_event.html', event=None)
 
-# Main Entry Point
+##==============================================================================================================
+## Main Entry Point
+##==============================================================================================================
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
