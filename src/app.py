@@ -306,11 +306,11 @@ def browse_single_event(event_id):
 def profile():
     username = session.get('username')
     user = User.query.filter_by(username=username).first()
-    events = Events.query.filter_by(username=username).all()
+    user_events = Events.query.filter_by(username=username).all()
     remove_picture_form = RemoveProfilePictureForm()
-
+    
     if user:
-        return render_template('profile.html', user=user, events=events, form=remove_picture_form)
+        return render_template('profile.html', user=user, events=user_events, form=remove_picture_form)
     else:
         flash('User not found', 'error')
         return redirect(url_for('dashboard'))
@@ -399,6 +399,45 @@ def remove_profile_picture():
     else:
         flash('Failed to remove profile picture.', 'error')
         return redirect(url_for('profile'))
+
+@app.route('/edit_event/<int:event_id>', methods=['GET', 'POST'])
+@login_required
+def edit_event(event_id):
+    event = Events.query.get_or_404(event_id)
+    form = EventForm(obj=event)
+
+    # Ensure time choices are populated
+    form.start_time.choices = form._generate_time_choices()
+    form.end_time.choices = form._generate_time_choices()
+
+    if form.validate_on_submit():
+        event.event_title = form.event_title.data
+        event.sport_type = form.sport_type.data
+        event.num_players = form.num_players.data
+        event.playing_level = form.playing_level.data
+        event.event_date = form.event_date.data
+        event.start_time = form.start_time.data
+        event.end_time = form.end_time.data
+        event.location = form.location.data
+        event.description = form.description.data
+        event.gender_preference = form.gender_preference.data
+        event.contact_information = form.contact_information.data
+        
+        db.session.commit()
+        flash('Event updated successfully!', 'success')
+        return redirect(url_for('profile'))
+    
+    return render_template('edit_event.html', form=form, event=event)
+
+
+@app.route('/delete_event/<int:event_id>', methods=['POST'])
+@login_required
+def delete_event(event_id):
+    event = Events.query.get_or_404(event_id)
+    db.session.delete(event)
+    db.session.commit()
+    flash('Event deleted successfully!', 'success')
+    return redirect(url_for('profile'))
 
 
 # Main Entry Point
