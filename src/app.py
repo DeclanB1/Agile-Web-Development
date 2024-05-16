@@ -90,6 +90,11 @@ class EditProfileForm(FlaskForm):
     preferredlocation = StringField('Preferred Location', [validators.Optional()])
     submit = SubmitField('Save Changes')
 
+from flask_wtf.file import FileField, FileAllowed
+
+class EditProfilePictureForm(FlaskForm):
+    profile_picture = FileField('Profile Picture', validators=[FileAllowed(['jpg', 'jpeg', 'png'], 'Images only!')])
+    submit = SubmitField('Upload Picture')
 
 from flask_wtf import FlaskForm
 from wtforms import StringField, SelectField, SubmitField
@@ -325,6 +330,30 @@ def edit_profile():
         return redirect(url_for('profile'))
 
     return render_template('edit_profile.html', form=form)
+
+# Edit User Profile Picture
+from werkzeug.utils import secure_filename
+
+@app.route('/edit_profile_picture', methods=['GET', 'POST'])
+@login_required
+def edit_profile_picture():
+    form = EditProfilePictureForm()
+    username = session.get('username')
+    user = User.query.filter_by(username=username).first()
+
+    if request.method == 'POST' and form.validate_on_submit():
+        file = form.profile_picture.data
+        if file:
+            filename = secure_filename(file.filename)
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(file_path)
+            profile_picture_path = f'profile-pictures/{filename}'
+            user.profile_picture = profile_picture_path
+            db.session.commit()
+            flash('Your profile picture has been updated.', 'success')
+            return redirect(url_for('profile'))
+
+    return render_template('edit_profile_picture.html', form=form)
 
 # Main Entry Point
 if __name__ == '__main__':

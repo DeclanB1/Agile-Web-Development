@@ -2,6 +2,36 @@
 
 {% block head %}
     <title>My Profile</title>
+    <style>
+        .profile-picture-container {
+            position: relative;
+            display: inline-block;
+            max-width: 200px;
+        }
+        .profile-picture-container img {
+            width: 100%;
+        }
+        .edit-picture-button {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+        }
+        .profile-picture-container:hover .edit-picture-button {
+            opacity: 1;
+        }
+    </style>
 {% endblock %}
 
 {% block body %}
@@ -14,8 +44,10 @@
                 <p><strong>Full Name:</strong> {{ user.fullname }}</p>
                 <p><strong>Age:</strong> {{ user.age }}</p>
                 <p><strong>Preferred Location:</strong> {{ user.preferredlocation }}</p>
-                <p><strong>Profile Picture:</strong></p>
-                <img src="{{ url_for('static', filename=user.profile_picture) }}" alt="Profile Picture" style="max-width: 200px;">
+                <div class="profile-picture-container">
+                    <img src="{{ url_for('static', filename=user.profile_picture) }}" alt="Profile Picture">
+                    <a href="{{ url_for('edit_profile_picture') }}" class="edit-picture-button">Edit Picture</a>
+                </div>
             </div>
         </div>
         <a href="{{ url_for('edit_profile') }}" class="btn btn-secondary mt-3">Edit Profile</a>
