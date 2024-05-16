@@ -1,55 +1,65 @@
-{% extends 'layout.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>How It Works - SportsSync</title>
+    <link rel="stylesheet" href="path/to/your/styles.css">
+</head>
+<body>
+    {% extends 'layout.html' %}
 
-{% block body %}
-<div class="container mt-5">
-    <!-- Hero Section -->
-    <div class="text-center hero-section mb-5">
-        <h1>How SportsSync Works!</h1>
-        <p class="lead">
-            Connect, play, and enjoy sports in your community with ease.
-        </p>
-    </div>
-    
-    <div class="card shadow-sm mb-4">
-        <div class="card-body">
-            <a href="/user-profile" class="card-title">
-                <h5><i class="bi bi-gear-fill"></i> Customize Your Profile</h5>
-            </a>
-            <p class="card-text">Once logged in, add a bio, your sports preferences, and skill levels...</p>
+    {% block body %}
+    <div class="container mt-5">
+        <!-- Hero Section -->
+        <div class="text-center hero-section mb-5">
+            <h1>How SportsSync Works!</h1>
+            <p class="lead">
+                Connect, play, and enjoy sports in your community with ease.
+            </p>
+        </div>
+        
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <a href="/user-profile" class="card-title">
+                    <h5><i class="bi bi-gear-fill"></i> Customize Your Profile</h5>
+                </a>
+                <p class="card-text">Once logged in, add a bio, your sports preferences, and skill levels...</p>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <a href="/browse-events" class="card-title">
+                    <h5><i class="bi bi-search"></i> Browse Events</h5>
+                </a>
+                <p class="card-text">Use the “Browse Events" navigation tab to browse through ongoing sports events or matches. You can search based on sport, playing level, suburb, time, and location. This makes it easy to find exactly what you’re looking for or discover something new!</p>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <a href="/post-an-event" class="card-title">
+                    <h5><i class="bi bi-plus-circle-fill"></i> Post an Event</h5>
+                </a>
+                <p class="card-text">Go to the “Post an Event" navigation tab to set up a new event. Provide details like the event title, sport type, playing level, number of players needed, time, and location. Once published, other users can find and join your event.</p>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <a href="/user-profile" class="card-title">
+                    <h5><i class="bi bi-calendar-event-fill"></i> Manage Your Events under My Profile</h5>
+                </a>
+                <p class="card-text">Check your “My Profile" page to view and manage the events you’ve posted or joined. You can edit details, communicate with participants, or cancel events if necessary.</p>
+            </div>
+        </div>
+
+        <div class="call-to-action text-center mb-5">
+            <h2 class="mb-3">Ready to Play?</h2>
+            <p class="lead mb-4">Join the SportsSync community today and transform your sports experience.</p>
+            <a href="/register" class="btn btn-lg btn-success">Sign Up Now</a>
         </div>
     </div>
-
-    <div class="card shadow-sm mb-4">
-        <div class="card-body">
-            <a href="/browse-events" class="card-title">
-                <h5><i class="bi bi-search"></i> Browse Events</h5>
-            </a>
-            <p class="card-text">Use the “Browse Events" navigation tab to browse through ongoing sports events or matches. You can search based on sport, playing level, suburb, time, and location. This makes it easy to find exactly what you’re looking for or discover something new!</p>
-        </div>
-    </div>
-
-    <div class="card shadow-sm mb-4">
-        <div class="card-body">
-            <a href="/post-an-event" class="card-title">
-                <h5><i class="bi bi-plus-circle-fill"></i> Post an Event</h5>
-            </a>
-            <p class="card-text">Go to the “Post an Event" navigation tab to set up a new event. Provide details like the event title, sport type, playing level, number of players needed, time, and location. Once published, other users can find and join your event.</p>
-        </div>
-    </div>
-
-    <div class="card shadow-sm mb-4">
-        <div class="card-body">
-            <a href="/user-profile" class="card-title">
-                <h5><i class="bi bi-calendar-event-fill"></i> Manage Your Events under My Profile</h5>
-            </a>
-            <p class="card-text">Check your “My Profile" page to view and manage the events you’ve posted or joined. You can edit details, communicate with participants, or cancel events if necessary.</p>
-        </div>
-    </div>
-
-    <div class="call-to-action text-center mb-5">
-        <h2 class="mb-3">Ready to Play?</h2>
-        <p class="lead mb-4">Join the SportsSync community today and transform your sports experience.</p>
-        <a href="/register" class="btn btn-lg btn-success">Sign Up Now</a>
-    </div>
-</div>
-{% endblock %}
+    {% endblock %}
+</body>
+</html>
