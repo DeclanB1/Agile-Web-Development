@@ -1,30 +1,31 @@
-##==============================================================================================================
+##===============================================================================================================================
 ## Import Dependancies
-##==============================================================================================================
+##===============================================================================================================================
 
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+import os
+from datetime import datetime, timedelta
+from config import Config
+
+from flask import Flask, flash, redirect, render_template, request, session, url_for
 from flask_sqlalchemy import SQLAlchemy
+from flask_wtf import FlaskForm
 from sqlalchemy import UniqueConstraint
 from sqlalchemy.exc import IntegrityError
-from werkzeug.security import generate_password_hash, check_password_hash
-from flask_wtf import FlaskForm
+from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, SelectField, validators
+from wtforms import BooleanField, IntegerField, PasswordField, SelectField, StringField, SubmitField, validators
 from wtforms.validators import DataRequired, EqualTo
-from utils import login_required
-import os
-from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField, SubmitField
-from wtforms.validators import DataRequired
-from datetime import datetime, timedelta
 
-##==============================================================================================================
+from utils import login_required
+
+
+##===============================================================================================================================
 ## Initialise Flask Application and SQLAlchemy
-##==============================================================================================================
+##===============================================================================================================================
 
 # Initialise Flask App
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'your_secret_key_here'
+app.config.from_object(Config)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sport_sync.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -38,9 +39,9 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # Ensure the upload directory exists
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-##==============================================================================================================
+##===============================================================================================================================
 ## Define User Models
-##==============================================================================================================
+##===============================================================================================================================
 
 # Generates User db Model
 class User(db.Model):
@@ -82,9 +83,9 @@ class Events(db.Model):
     def __repr__(self):
         return f"<Events(event_id='{self.event_id}', event_title='{self.event_title}', sport_type='{self.sport_type}', num_players='{self.num_players}', event_date='{self.event_date}', start_time='{self.start_time}', end_time='{self.end_time}', location='{self.location}', description='{self.description}', gender_preference='{self.gender_preference}', contact_information='{self.contact_information}')>"
 
-##==============================================================================================================
+##===============================================================================================================================
 ## Forms Definition
-##==============================================================================================================
+##===============================================================================================================================
 
 # LoginForm Definition
 class LoginForm(FlaskForm):
@@ -95,11 +96,11 @@ class LoginForm(FlaskForm):
 
 # RegistrationForm Definition
 class RegistrationForm(FlaskForm):
-    username = StringField('Username', [validators.Length(min=4, max=25), validators.DataRequired()])
-    password = PasswordField('Password', [validators.DataRequired(), validators.Length(min=8)])
+    username = StringField('Username', [validators.Length(min=4, max=25), validators.DataRequired()]) #minimum username length set to 4 char, max 25 char
+    password = PasswordField('Password', [validators.DataRequired(), validators.Length(min=8)]) #minimum password length 8 char
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password', message='Password entries do not match. Please try again') #Flash Error Message
     ])    
-    email = StringField('Email', [validators.DataRequired(), validators.Email()])
+    email = StringField('Email', [validators.DataRequired(), validators.Email()]) # ensure valid email entry
     fullname = StringField('Full Name', [validators.DataRequired()])
     age = IntegerField('Age', [validators.Optional()])
     preferredlocation = StringField('Preferred Location', [validators.Optional()])
@@ -140,11 +141,11 @@ class EventForm(FlaskForm):
 
         return choices
 
-##==============================================================================================================
+##===============================================================================================================================
 ## Define Routes and Logic
-##==============================================================================================================
+##===============================================================================================================================
 
-# Home Page/ Dashboard Route
+# Home Page/ Dashboard Route as default
 @app.route('/')
 @app.route('/dashboard')
 def dashboard():
@@ -153,23 +154,32 @@ def dashboard():
 # Register New Account Route
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    # Create an instance of the registration form
     form = RegistrationForm()
+    
+    # Check if the form is submitted and valid
     if form.validate_on_submit():
+        # Retrieve form data
         username = form.username.data
-        password = generate_password_hash(form.password.data, method='pbkdf2:sha256') #Hash-based Message Authentication Code
+        # Hash the password using PBKDF2 with SHA-256
+        password = generate_password_hash(form.password.data, method='pbkdf2:sha256')
         email = form.email.data
         fullname = form.fullname.data
         age = form.age.data
         preferredlocation = form.preferredlocation.data
 
+        # Handle profile picture upload
         file = request.files['profile_picture']
         if file and file.filename != '':
+            # Secure the filename and save the file to the upload folder
             filename = secure_filename(file.filename)
             file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(file_path)
         else:
+            # If no file is uploaded, set file_path to None
             file_path = None
 
+        # Create a new user instance with the form data and file path
         new_user = User(
             username=username,
             password=password,
@@ -181,38 +191,62 @@ def register():
         )
 
         try:
+            # Add the new user to the database
             db.session.add(new_user)
             db.session.commit()
-            flash('Registration Successful!', 'success') # Flash Success Message
+            # Flash success message and redirect to login page
+            flash('Registration Successful!', 'success')
             return redirect(url_for('login'))
         except IntegrityError:
+            # Rollback the session in case of an integrity error (e.g., username already exists)
             db.session.rollback()
-            flash('Username already in use, please choose a different name.', 'error') # Flash Error Message
+            # Flash error message
+            flash('Username already in use, please choose a different name.', 'error')
+    
+    # Render the registration template with the form
     return render_template('register.html', form=form)
 
 # Login Route
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    # Create an instance of the login form
     form = LoginForm()
+    
+    # Check if the form is submitted and valid
     if form.validate_on_submit():
+        # Query the database for a user with the provided username
         user = User.query.filter_by(username=form.username.data).first()
         
+        # Check if the user exists and if the password is correct
         if user and check_password_hash(user.password, form.password.data):
+            # Set session variables to indicate the user is logged in
             session['logged_in'] = True
             session['username'] = user.username
             session['email'] = user.email
+            
+            # Handle 'remember me' functionality
             if form.remember.data:
                 session.permanent = True
+            
+            # Redirect to the dashboard after successful login
             return redirect(url_for('dashboard'))
         else:
-            flash('Login Unsuccessful. Please check username and password', 'error') # Flash Error Message
+            # Flash error message if login is unsuccessful
+            flash('Login Unsuccessful. Please check username and password', 'error')
+    
+    # Render the login template with the form
     return render_template('login.html', form=form)
+
 
 # Logout Route
 @app.route('/logout', methods=['POST'])
 def logout():
+    # Clear all data stored in the session
     session.clear()
+    
+    # Redirect to the dashboard page after logging out
     return redirect(url_for('dashboard'))
+
 
 # How it Works Route
 @app.route('/how-it-works')
@@ -221,12 +255,16 @@ def how_it_works():
 
 # Post an Event Route
 @app.route('/post-an-event', methods=['GET', 'POST'])
+# Login required for user to post an event
 @login_required
 def post_an_event():
+    # Create an instance of the event form
     form = EventForm()
 
+    # Check if the form is submitted and valid
     if form.validate_on_submit():
         try:
+            # Retrieve form data
             event_title = form.event_title.data
             sport_type = form.sport_type.data
             num_players = form.num_players.data
@@ -238,7 +276,8 @@ def post_an_event():
             description = form.description.data
             gender_preference = form.gender_preference.data
             contact_information = form.contact_information.data
-                
+
+            # Create a new event instance with the form data
             event = Events(
                 event_title=event_title,
                 sport_type=sport_type,
@@ -253,16 +292,20 @@ def post_an_event():
                 contact_information=contact_information
             )
             
+            # Add the new event to the database
             db.session.add(event)
             db.session.commit()
+            # Flash success message and render success template
             flash('Event successfully created', 'success')
             return render_template('event_posted_successfully.html', event=event)
         
         except IntegrityError:
+            # Rollback the session in case of an integrity error (e.g., event title already exists)
             db.session.rollback()
-            flash('Event title is already in use. Please choose a different title.', 'danger') #Flash Error Message
+            # Flash error message
+            flash('Event title is already in use. Please choose a different title.', 'danger')
     
-    
+    # Render the event posting template with the form
     return render_template('post_an_event.html', form=form)
 
 # Browse all events Route
@@ -310,9 +353,9 @@ def browse_single_event(event_id):
         flash("Error occurred while fetching event details") #Flash Error Message
         return render_template('browse_single_event.html', event=None)
 
-##==============================================================================================================
+##===============================================================================================================================
 ## Main Entry Point
-##==============================================================================================================
+##===============================================================================================================================
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
