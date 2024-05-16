@@ -25,8 +25,8 @@ from utils import login_required
 
 # Initialise Flask App
 app = Flask(__name__)
-app.config.from_object(Config)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sport_sync.db'
+app.config.from_object(Config) # Import Secret Key from .env file
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sport_sync.db' # Label Application db as sport_sync.db 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialise SQLAlchemy
