@@ -9,6 +9,7 @@ from config import Config
 from flask import Flask, flash, redirect, render_template, request, session, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
+from flask_migrate import Migrate
 from sqlalchemy import UniqueConstraint
 from sqlalchemy.exc import IntegrityError
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -31,6 +32,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialise SQLAlchemy
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 # Set the folder for profile pictures
 UPLOAD_FOLDER = 'profile-pictures'
