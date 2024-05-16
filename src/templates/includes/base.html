@@ -28,13 +28,10 @@
 
       <ul class="navbar-nav ms-auto">
         {% if session.logged_in %}
-        <li class="nav-item">
+        <li class="nav-item d-none d-lg-block">
           <span class="nav-link font" style="cursor:default;">Hello, {{ session.username }}</span>
         </li>
         <li class="nav-item elements">
-          <a class="nav-link font" href="/profile">My Profile</a>
-        </li>
-        <li class="nav-item">
           <a class="nav-link font" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Log Out</a>
           <form id="logout-form" action="/logout" method="POST" style="display: none;">
             <!-- CSRF Token can be included here if needed -->

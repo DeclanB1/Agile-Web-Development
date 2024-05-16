@@ -1,10 +1,13 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 from sqlalchemy import UniqueConstraint
+from sqlalchemy.exc import IntegrityError
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_wtf import FlaskForm
 from werkzeug.utils import secure_filename
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, TextAreaField, SelectField, validators
+from wtforms.validators import DataRequired, EqualTo, Email
 from pathlib import Path
 from utils import login_required
 import os
@@ -12,12 +15,13 @@ import time
 
 # Initialize Flask App
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'q/q7\xff\xc2\x00\x81\xc0+a\xc4\x85\xa1J\xc16\xe6Y\xc7\x1b\xcb[\x98'
+app.config['SECRET_KEY'] = 'your_secret_key_here'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sport_sync.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize SQLAlchemy
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 # Set the folder for profile pictures
 UPLOAD_FOLDER = 'static/profile-pictures'
@@ -77,7 +81,8 @@ class LoginForm(FlaskForm):
 class RegistrationForm(FlaskForm):
     username = StringField('Username', [validators.Length(min=4, max=25), validators.DataRequired()])
     password = PasswordField('Password', [validators.DataRequired(), validators.Length(min=8)])
-    confirm_password = PasswordField('Confirm Password', [validators.EqualTo('password'), validators.DataRequired()])
+    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password', message='Password entries do not match. Please try again')
+    ])    
     email = StringField('Email', [validators.DataRequired(), validators.Email()])
     fullname = StringField('Full Name', [validators.DataRequired()])
     age = IntegerField('Age', [validators.Optional()])
@@ -165,13 +170,13 @@ def login():
             return redirect(url_for('dashboard'))
         else:
             flash('Login Unsuccessful. Please check username and password', 'error')
-    
     return render_template('login.html', form=form)
+
+from sqlalchemy.exc import IntegrityError
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()
-
     if form.validate_on_submit():
         username = form.username.data
         password = generate_password_hash(form.password.data, method='pbkdf2:sha256')
@@ -179,6 +184,8 @@ def register():
         fullname = form.fullname.data
         age = form.age.data
         preferredlocation = form.preferredlocation.data
+        
+        # Process the uploaded file
         file = request.files['profile_picture']
         if file and file.filename != '':
             ext = os.path.splitext(file.filename)[1]
@@ -187,7 +194,7 @@ def register():
             file.save(file_path)
             profile_picture_path = f'profile-pictures/{filename}'
         else:
-            profile_picture_path = 'images/default-profile-pic.png'
+            file_path = None  # Use a default image path or handle as no image
 
         new_user = User(
             username=username,
@@ -198,12 +205,17 @@ def register():
             preferredlocation=preferredlocation,
             profile_picture=profile_picture_path
         )
-        db.session.add(new_user)
-        db.session.commit()
-        flash('User registered successfully!')
-        return redirect(url_for('login'))
 
+        try:
+            db.session.add(new_user)
+            db.session.commit()
+            flash('Registration Successful!', 'success')
+            return redirect(url_for('login'))
+        except IntegrityError:
+            db.session.rollback()
+            flash('Username already in use, please choose a different name.', 'error')
     return render_template('register.html', form=form)
+
 
 @app.route('/logout', methods=['POST'])
 def logout():
@@ -233,7 +245,7 @@ def post_an_event():
         description = form.description.data
         gender_preference = form.gender_preference.data
         contact_information = form.contact_information.data
-
+            
         event = Events(
             event_title=event_title,
             sport_type=sport_type,
@@ -245,14 +257,13 @@ def post_an_event():
             location=location,
             description=description,
             gender_preference=gender_preference,
-            contact_information=contact_information,
-            username=username
+            contact_information=contact_information
         )
-
+        
         db.session.add(event)
         db.session.commit()
         return render_template('event_posted_successfully.html', event=event)
-
+    
     return render_template('post_an_event.html', form=form)
 
 # Browse all events
@@ -264,16 +275,17 @@ def browse_events():
 
         # Fetch distinct values for sport type, num players, playing level, and location
         sport_types = db.session.query(Events.sport_type.distinct()).all()
-        sport_types = [sport_type[0] for sport_type in sport_types]  # Extracting the first element of each tuple
+        sport_types = sorted([sport_type[0] for sport_type in sport_types])  # Extracting the first element of each tuple
 
         num_players = db.session.query(Events.num_players.distinct()).all()
-        num_players = [num_player[0] for num_player in num_players]
+        num_players = sorted([num_player[0] for num_player in num_players])
 
+        custom_order = {'Beginner': 0, 'Intermediate': 1, 'Advanced': 2}
         playing_levels = db.session.query(Events.playing_level.distinct()).all()
-        playing_levels = [playing_level[0] for playing_level in playing_levels]
+        playing_levels = sorted([playing_level[0] for playing_level in playing_levels], key=lambda x: custom_order.get(x))
 
         locations = db.session.query(Events.location.distinct()).all()
-        locations = [location[0] for location in locations]
+        locations = sorted([location[0] for location in locations])
 
         # Pass the data to the template
         return render_template('browse_events.html', events=events, sport_types=sport_types, num_players=num_players, playing_levels=playing_levels, locations=locations, username=session.get('username'))
