@@ -2,32 +2,47 @@
 
 {% block head %}
     <title>Edit Profile</title>
+    <style>
+        .container {
+            max-width: 600px;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+    </style>
 {% endblock %}
 
 {% block body %}
     <div class="container mt-5 pt-5">
-        <h1>Edit Profile</h1>
-        <form method="POST" action="{{ url_for('edit_profile') }}">
-            {{ form.hidden_tag() }}
-            <div class="form-group">
-                {{ form.email.label(class="form-label") }}
-                {{ form.email(class="form-control") }}
+        <h1 class="text-center">Edit Profile</h1>
+        <div class="card mx-auto">
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('edit_profile') }}">
+                    {{ form.hidden_tag() }}
+                    <div class="form-group">
+                        {{ form.email.label(class="form-label") }}
+                        {{ form.email(class="form-control") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.fullname.label(class="form-label") }}
+                        {{ form.fullname(class="form-control") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.age.label(class="form-label") }}
+                        {{ form.age(class="form-control") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.preferredlocation.label(class="form-label") }}
+                        {{ form.preferredlocation(class="form-control") }}
+                    </div>
+                    <div class="form-group text-center">
+                        {{ form.submit(class="btn btn-primary") }}
+                    </div>
+                </form>
+                <div class="text-center">
+                    <a href="{{ url_for('profile') }}" class="btn btn-secondary mt-3">Cancel</a>
+                </div>
             </div>
-            <div class="form-group">
-                {{ form.fullname.label(class="form-label") }}
-                {{ form.fullname(class="form-control") }}
-            </div>
-            <div class="form-group">
-                {{ form.age.label(class="form-label") }}
-                {{ form.age(class="form-control") }}
-            </div>
-            <div class="form-group">
-                {{ form.preferredlocation.label(class="form-label") }}
-                {{ form.preferredlocation(class="form-control") }}
-            </div>
-            <div class="form-group">
-                {{ form.submit(class="btn btn-primary") }}
-            </div>
-        </form>
+        </div>
     </div>
 {% endblock %}
