@@ -61,8 +61,8 @@ class User(db.Model):
 class Events(db.Model):
     __tablename__ = 'events'
 
-    event_id = db.Column(db.Integer, primary_key=True) # Event ID is primary key
-    event_title = db.Column(db.String, nullable=False)
+    event_id = db.Column(db.Integer, primary_key=True) # Event ID is a primary key
+    event_title = db.Column(db.String, nullable=False) # All Fields are necessary not optional
     sport_type = db.Column(db.Integer, nullable=False)
     num_players = db.Column(db.Integer, nullable=False)
     playing_level = db.Column(db.String, nullable=False)
@@ -97,7 +97,7 @@ class LoginForm(FlaskForm):
 class RegistrationForm(FlaskForm):
     username = StringField('Username', [validators.Length(min=4, max=25), validators.DataRequired()])
     password = PasswordField('Password', [validators.DataRequired(), validators.Length(min=8)])
-    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password', message='Password entries do not match. Please try again')
+    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password', message='Password entries do not match. Please try again') #Flash Error Message
     ])    
     email = StringField('Email', [validators.DataRequired(), validators.Email()])
     fullname = StringField('Full Name', [validators.DataRequired()])
@@ -107,7 +107,6 @@ class RegistrationForm(FlaskForm):
     submit = SubmitField('Register')
 
 # EventForm Definition
-
 class EventForm(FlaskForm):
     event_title = StringField('Event Title', validators=[DataRequired()])
     sport_type = SelectField('Sport Type', choices=[('Basketball', 'Basketball'), ('Soccer', 'Soccer'), ('Tennis', 'Tennis')], validators=[DataRequired()])
@@ -145,37 +144,19 @@ class EventForm(FlaskForm):
 ## Define Routes and Logic
 ##==============================================================================================================
 
-# Routes and Logic
+# Home Page/ Dashboard Route
 @app.route('/')
 @app.route('/dashboard')
 def dashboard():
     return render_template('dashboard.html')
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    form = LoginForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
-        
-        if user and check_password_hash(user.password, form.password.data):
-            session['logged_in'] = True
-            session['username'] = user.username
-            session['email'] = user.email
-            if form.remember.data:
-                session.permanent = True
-            return redirect(url_for('dashboard'))
-        else:
-            flash('Login Unsuccessful. Please check username and password', 'error')
-    return render_template('login.html', form=form)
-
-from sqlalchemy.exc import IntegrityError
-
+# Register New Account Route
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()
     if form.validate_on_submit():
         username = form.username.data
-        password = generate_password_hash(form.password.data, method='pbkdf2:sha256')
+        password = generate_password_hash(form.password.data, method='pbkdf2:sha256') #Hash-based Message Authentication Code
         email = form.email.data
         fullname = form.fullname.data
         age = form.age.data
@@ -202,23 +183,43 @@ def register():
         try:
             db.session.add(new_user)
             db.session.commit()
-            flash('Registration Successful!', 'success')
+            flash('Registration Successful!', 'success') # Flash Success Message
             return redirect(url_for('login'))
         except IntegrityError:
             db.session.rollback()
-            flash('Username already in use, please choose a different name.', 'error')
+            flash('Username already in use, please choose a different name.', 'error') # Flash Error Message
     return render_template('register.html', form=form)
 
+# Login Route
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=form.username.data).first()
+        
+        if user and check_password_hash(user.password, form.password.data):
+            session['logged_in'] = True
+            session['username'] = user.username
+            session['email'] = user.email
+            if form.remember.data:
+                session.permanent = True
+            return redirect(url_for('dashboard'))
+        else:
+            flash('Login Unsuccessful. Please check username and password', 'error') # Flash Error Message
+    return render_template('login.html', form=form)
 
+# Logout Route
 @app.route('/logout', methods=['POST'])
 def logout():
     session.clear()
     return redirect(url_for('dashboard'))
 
+# How it Works Route
 @app.route('/how-it-works')
 def how_it_works():
     return render_template('how_it_works.html')
 
+# Post an Event Route
 @app.route('/post-an-event', methods=['GET', 'POST'])
 @login_required
 def post_an_event():
@@ -259,12 +260,12 @@ def post_an_event():
         
         except IntegrityError:
             db.session.rollback()
-            flash('Event title is already in use. Please choose a different title.', 'danger')
+            flash('Event title is already in use. Please choose a different title.', 'danger') #Flash Error Message
     
     
     return render_template('post_an_event.html', form=form)
 
-# Browse all events
+# Browse all events Route
 @app.route('/browse-events')
 def browse_events():
     try:
@@ -287,7 +288,7 @@ def browse_events():
         # Pass the data to the template
         return render_template('browse_events.html', events=events, sport_types=sport_types, num_players=num_players, playing_levels=playing_levels, locations=locations, username=session.get('username'))
     except Exception as e:
-        flash("Error occurred while fetching events")
+        flash("Error occurred while fetching events") #Flash Error Message
         return render_template('browse_events.html')
 
 # Browse single event
@@ -301,12 +302,12 @@ def browse_single_event(event_id):
         if event:
             return render_template('browse_single_event.html', event=event)
         else:
-            flash("Event not found")
+            flash("Event not found") #Flash Error Message
             # Pass None for event when the event is not found
             return render_template('browse_single_event.html', event=None)
         
     except Exception as e:
-        flash("Error occurred while fetching event details")
+        flash("Error occurred while fetching event details") #Flash Error Message
         return render_template('browse_single_event.html', event=None)
 
 ##==============================================================================================================
