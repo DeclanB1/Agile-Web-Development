@@ -341,9 +341,17 @@ def edit_profile_picture():
     username = session.get('username')
     user = User.query.filter_by(username=username).first()
 
-    if request.method == 'POST' and form.validate_on_submit():
-        file = form.profile_picture.data
-        if file:
+    if form.validate_on_submit():
+        file = request.files['profile_picture']
+        if file and file.filename != '':
+            # Delete the old profile picture if it's not the default picture
+            old_picture = user.profile_picture
+            if old_picture != 'images/default-profile-pic.png':
+                old_picture_path = os.path.join(app.config['UPLOAD_FOLDER'], os.path.basename(old_picture))
+                if os.path.exists(old_picture_path):
+                    os.remove(old_picture_path)
+
+            # Save the new profile picture
             filename = secure_filename(file.filename)
             file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(file_path)
