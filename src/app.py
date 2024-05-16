@@ -263,16 +263,17 @@ def browse_events():
 
         # Fetch distinct values for sport type, num players, playing level, and location
         sport_types = db.session.query(Events.sport_type.distinct()).all()
-        sport_types = [sport_type[0] for sport_type in sport_types]  # Extracting the first element of each tuple
+        sport_types = sorted([sport_type[0] for sport_type in sport_types])  # Extracting the first element of each tuple
 
         num_players = db.session.query(Events.num_players.distinct()).all()
-        num_players = [num_player[0] for num_player in num_players]
+        num_players = sorted([num_player[0] for num_player in num_players])
 
+        custom_order = {'Beginner': 0, 'Intermediate': 1, 'Advanced': 2}
         playing_levels = db.session.query(Events.playing_level.distinct()).all()
-        playing_levels = [playing_level[0] for playing_level in playing_levels]
+        playing_levels = sorted([playing_level[0] for playing_level in playing_levels], key=lambda x: custom_order.get(x))
 
         locations = db.session.query(Events.location.distinct()).all()
-        locations = [location[0] for location in locations]
+        locations = sorted([location[0] for location in locations])
 
         # Pass the data to the template
         return render_template('browse_events.html', events=events, sport_types=sport_types, num_players=num_players, playing_levels=playing_levels, locations=locations, username=session.get('username'))
