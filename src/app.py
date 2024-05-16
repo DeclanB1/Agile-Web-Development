@@ -12,7 +12,7 @@ import time
 
 # Initialize Flask App
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'your_secret_key_here'
+app.config['SECRET_KEY'] = 'q/q7\xff\xc2\x00\x81\xc0+a\xc4\x85\xa1J\xc16\xe6Y\xc7\x1b\xcb[\x98'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sport_sync.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -443,6 +443,10 @@ def delete_event(event_id):
 # Main Entry Point
 if __name__ == '__main__':
     with app.app_context():
+        # Drop existing tables if needed
+        db.drop_all()
+
+        # Create new tables
         db.create_all()
 
     app.run(debug=True)
