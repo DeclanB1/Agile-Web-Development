@@ -307,10 +307,9 @@ def profile():
     username = session.get('username')
     user = User.query.filter_by(username=username).first()
     user_events = Events.query.filter_by(username=username).all()
-    remove_picture_form = RemoveProfilePictureForm()
     
     if user:
-        return render_template('profile.html', user=user, events=user_events, form=remove_picture_form)
+        return render_template('profile.html', user=user, events=user_events)
     else:
         flash('User not found', 'error')
         return redirect(url_for('dashboard'))
@@ -348,6 +347,7 @@ from werkzeug.utils import secure_filename
 @login_required
 def edit_profile_picture():
     form = EditProfilePictureForm()
+    remove_form = RemoveProfilePictureForm()
     username = session.get('username')
     user = User.query.filter_by(username=username).first()
 
@@ -372,7 +372,7 @@ def edit_profile_picture():
             flash('Your profile picture has been updated.', 'success')
             return redirect(url_for('profile'))
 
-    return render_template('edit_profile_picture.html', form=form)
+    return render_template('edit_profile_picture.html', form=form, remove_form=remove_form)
 
 # Remove User Profile Picture
 @app.route('/remove_profile_picture', methods=['POST'])
