@@ -57,5 +57,23 @@
             <button type="submit" class="btn btn-danger">Remove Profile Picture</button>
         </form>
         <a href="{{ url_for('dashboard') }}" class="btn btn-secondary mt-3">Back to Dashboard</a>
+        
+        <h2 class="mt-5">My Posted Events</h2>
+        {% if events %}
+            <ul class="list-group mt-3">
+                {% for event in events %}
+                    <li class="list-group-item">
+                        <h5>{{ event.event_title }}</h5>
+                        <p>{{ event.description }}</p>
+                        <p><strong>Sport Type:</strong> {{ event.sport_type }}</p>
+                        <p><strong>Date:</strong> {{ event.event_date }}</p>
+                        <p><strong>Time:</strong> {{ event.start_time }} - {{ event.end_time }}</p>
+                        <p><strong>Location:</strong> {{ event.location }}</p>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No events posted.</p>
+        {% endif %}
     </div>
 {% endblock %}

@@ -57,7 +57,8 @@ class Events(db.Model):
     location = db.Column(db.String, nullable=False)
     description = db.Column(db.String, nullable=False)
     gender_preference = db.Column(db.String, nullable=False)
-    contact_information = db.Column(db.String, nullable=False)   
+    contact_information = db.Column(db.String, nullable=False)
+    username = db.Column(db.String, db.ForeignKey('users.username'), nullable=False)
 
     __table_args__ = (
         UniqueConstraint('event_id'),
@@ -65,7 +66,7 @@ class Events(db.Model):
     )
 
     def __repr__(self):
-        return f"<Events(event_id='{self.event_id}', event_title='{self.event_title}', sport_type='{self.sport_type}', num_players='{self.num_players}', event_date='{self.event_date}', start_time='{self.start_time}', end_time='{self.end_time}', location='{self.location}', description='{self.description}', gender_preference='{self.gender_preference}', contact_information='{self.contact_information}')>"
+        return f"<Events(event_id='{self.event_id}', event_title='{self.event_title}', sport_type='{self.sport_type}', num_players='{self.num_players}', event_date='{self.event_date}', start_time='{self.start_time}', end_time='{self.end_time}', location='{self.location}', description='{self.description}', gender_preference='{self.gender_preference}', contact_information='{self.contact_information}', username='{self.username}')>"
 
 class LoginForm(FlaskForm):
     username = StringField('Username', [validators.DataRequired()])
@@ -218,6 +219,7 @@ def how_it_works():
 @login_required
 def post_an_event():
     form = EventForm()
+    username = session.get('username')
 
     if form.validate_on_submit():
         event_title = form.event_title.data
@@ -231,7 +233,7 @@ def post_an_event():
         description = form.description.data
         gender_preference = form.gender_preference.data
         contact_information = form.contact_information.data
-            
+
         event = Events(
             event_title=event_title,
             sport_type=sport_type,
@@ -243,13 +245,14 @@ def post_an_event():
             location=location,
             description=description,
             gender_preference=gender_preference,
-            contact_information=contact_information
+            contact_information=contact_information,
+            username=username
         )
-        
+
         db.session.add(event)
         db.session.commit()
         return render_template('event_posted_successfully.html', event=event)
-    
+
     return render_template('post_an_event.html', form=form)
 
 # Browse all events
@@ -303,10 +306,11 @@ def browse_single_event(event_id):
 def profile():
     username = session.get('username')
     user = User.query.filter_by(username=username).first()
+    events = Events.query.filter_by(username=username).all()
     remove_picture_form = RemoveProfilePictureForm()
-    
+
     if user:
-        return render_template('profile.html', user=user, form=remove_picture_form)
+        return render_template('profile.html', user=user, events=events, form=remove_picture_form)
     else:
         flash('User not found', 'error')
         return redirect(url_for('dashboard'))
