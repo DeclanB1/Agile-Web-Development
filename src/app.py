@@ -8,6 +8,7 @@ from wtforms import StringField, PasswordField, SubmitField, BooleanField, Integ
 from pathlib import Path
 from utils import login_required
 import os
+import time
 
 # Initialize Flask App
 app = Flask(__name__)
@@ -179,7 +180,8 @@ def register():
         preferredlocation = form.preferredlocation.data
         file = request.files['profile_picture']
         if file and file.filename != '':
-            filename = secure_filename(file.filename)
+            ext = os.path.splitext(file.filename)[1]
+            filename = secure_filename(f"{username}_{int(time.time())}{ext}")
             file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(file_path)
             profile_picture_path = f'profile-pictures/{filename}'
@@ -355,8 +357,9 @@ def edit_profile_picture():
                 if os.path.exists(old_picture_path):
                     os.remove(old_picture_path)
 
-            # Save the new profile picture
-            filename = secure_filename(file.filename)
+            # Save the new profile picture with a unique filename
+            ext = os.path.splitext(file.filename)[1]
+            filename = secure_filename(f"{username}_{int(time.time())}{ext}")
             file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(file_path)
             profile_picture_path = f'profile-pictures/{filename}'
