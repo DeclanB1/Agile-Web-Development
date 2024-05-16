@@ -66,14 +66,12 @@ class Events(db.Model):
     def __repr__(self):
         return f"<Events(event_id='{self.event_id}', event_title='{self.event_title}', sport_type='{self.sport_type}', num_players='{self.num_players}', event_date='{self.event_date}', start_time='{self.start_time}', end_time='{self.end_time}', location='{self.location}', description='{self.description}', gender_preference='{self.gender_preference}', contact_information='{self.contact_information}')>"
 
-# LoginForm Definition
 class LoginForm(FlaskForm):
     username = StringField('Username', [validators.DataRequired()])
     password = PasswordField('Password', [validators.DataRequired()])
     remember = BooleanField('Remember Me')
     submit = SubmitField('Login')
 
-# RegistrationForm Definition
 class RegistrationForm(FlaskForm):
     username = StringField('Username', [validators.Length(min=4, max=25), validators.DataRequired()])
     password = PasswordField('Password', [validators.DataRequired(), validators.Length(min=8)])
@@ -85,7 +83,14 @@ class RegistrationForm(FlaskForm):
     profile_picture = StringField('Profile Picture', [validators.Optional()])
     submit = SubmitField('Register')
 
-# EventForm
+class EditProfileForm(FlaskForm):
+    email = StringField('Email', [validators.DataRequired(), validators.Email()])
+    fullname = StringField('Full Name', [validators.DataRequired()])
+    age = IntegerField('Age', [validators.Optional()])
+    preferredlocation = StringField('Preferred Location', [validators.Optional()])
+    submit = SubmitField('Save Changes')
+
+
 from flask_wtf import FlaskForm
 from wtforms import StringField, SelectField, SubmitField
 from wtforms.validators import DataRequired
@@ -282,7 +287,7 @@ def browse_single_event(event_id):
         flash("Error occurred while fetching event details")
         return render_template('browse_single_event.html', event=None)
 
-# User Profile
+# Display User Profile
 @app.route('/profile')
 @login_required
 def profile():
@@ -294,6 +299,32 @@ def profile():
     else:
         flash('User not found', 'error')
         return redirect(url_for('dashboard'))
+
+# Edit User Profile
+@app.route('/edit_profile', methods=['GET', 'POST'])
+@login_required
+def edit_profile():
+    form = EditProfileForm()
+    username = session.get('username')
+    user = User.query.filter_by(username=username).first()
+
+    if request.method == 'GET':
+        form.email.data = user.email
+        form.fullname.data = user.fullname
+        form.age.data = user.age
+        form.preferredlocation.data = user.preferredlocation
+
+    if form.validate_on_submit():
+        user.email = form.email.data
+        user.fullname = form.fullname.data
+        user.age = form.age.data
+        user.preferredlocation = form.preferredlocation.data
+
+        db.session.commit()
+        flash('Your profile has been updated.', 'success')
+        return redirect(url_for('profile'))
+
+    return render_template('edit_profile.html', form=form)
 
 # Main Entry Point
 if __name__ == '__main__':

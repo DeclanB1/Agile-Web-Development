@@ -18,6 +18,7 @@
                 <img src="{{ url_for('static', filename=user.profile_picture) }}" alt="Profile Picture" style="max-width: 200px;">
             </div>
         </div>
+        <a href="{{ url_for('edit_profile') }}" class="btn btn-secondary mt-3">Edit Profile</a>
         <a href="{{ url_for('dashboard') }}" class="btn btn-primary mt-3">Back to Dashboard</a>
     </div>
 {% endblock %}
