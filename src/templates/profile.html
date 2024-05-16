@@ -44,13 +44,18 @@
                 <p><strong>Full Name:</strong> {{ user.fullname }}</p>
                 <p><strong>Age:</strong> {{ user.age }}</p>
                 <p><strong>Preferred Location:</strong> {{ user.preferredlocation }}</p>
+                <p><strong>Profile Picture:</strong></p>
                 <div class="profile-picture-container">
                     <img src="{{ url_for('static', filename=user.profile_picture) }}" alt="Profile Picture">
-                    <a href="{{ url_for('edit_profile_picture') }}" class="edit-picture-button">Edit Picture</a>
+                    <a href="{{ url_for('edit_profile_picture') }}" class="edit-picture-button">Edit</a>
                 </div>
             </div>
         </div>
-        <a href="{{ url_for('edit_profile') }}" class="btn btn-secondary mt-3">Edit Profile</a>
-        <a href="{{ url_for('dashboard') }}" class="btn btn-primary mt-3">Back to Dashboard</a>
+        <a href="{{ url_for('edit_profile') }}" class="btn btn-primary mt-3">Edit Profile Information</a>
+        <form method="POST" action="{{ url_for('remove_profile_picture') }}" class="mt-3">
+            {{ form.hidden_tag() }}
+            <button type="submit" class="btn btn-danger">Remove Profile Picture</button>
+        </form>
+        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary mt-3">Back to Dashboard</a>
     </div>
 {% endblock %}

@@ -96,6 +96,9 @@ class EditProfilePictureForm(FlaskForm):
     profile_picture = FileField('Profile Picture', validators=[FileAllowed(['jpg', 'jpeg', 'png'], 'Images only!')])
     submit = SubmitField('Upload Picture')
 
+class RemoveProfilePictureForm(FlaskForm):
+    submit = SubmitField('Remove Profile Picture')
+
 from flask_wtf import FlaskForm
 from wtforms import StringField, SelectField, SubmitField
 from wtforms.validators import DataRequired
@@ -298,9 +301,10 @@ def browse_single_event(event_id):
 def profile():
     username = session.get('username')
     user = User.query.filter_by(username=username).first()
+    remove_picture_form = RemoveProfilePictureForm()
     
     if user:
-        return render_template('profile.html', user=user)
+        return render_template('profile.html', user=user, form=remove_picture_form)
     else:
         flash('User not found', 'error')
         return redirect(url_for('dashboard'))
@@ -362,6 +366,33 @@ def edit_profile_picture():
             return redirect(url_for('profile'))
 
     return render_template('edit_profile_picture.html', form=form)
+
+# Remove User Profile Picture
+@app.route('/remove_profile_picture', methods=['POST'])
+@login_required
+def remove_profile_picture():
+    form = RemoveProfilePictureForm()
+    if form.validate_on_submit():
+        username = session.get('username')
+        user = User.query.filter_by(username=username).first()
+        
+        if user:
+            # Delete the old profile picture if it's not the default picture
+            if user.profile_picture != 'images/default-profile-pic.png':
+                old_picture_path = os.path.join(app.config['UPLOAD_FOLDER'], os.path.basename(user.profile_picture))
+                if os.path.exists(old_picture_path):
+                    os.remove(old_picture_path)
+            
+            # Set the profile picture to the default picture
+            user.profile_picture = 'images/default-profile-pic.png'
+            db.session.commit()
+            flash('Profile picture has been removed.', 'success')
+        
+        return redirect(url_for('profile'))
+    else:
+        flash('Failed to remove profile picture.', 'error')
+        return redirect(url_for('profile'))
+
 
 # Main Entry Point
 if __name__ == '__main__':
