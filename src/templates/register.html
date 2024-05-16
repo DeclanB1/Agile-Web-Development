@@ -1,99 +1,89 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Register</title>
-    <link rel="stylesheet" href="static/styles.css">
-</head>
-<body>
-    {% extends "layout.html" %}
+{% extends "layout.html" %}
 
-    {% block body %}
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <h2>Register</h2>
+{% block body %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h2>Register</h2>
 
-                <!-- Top Flash messages section -->
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                        <div id="flash-messages">
-                            {% for category, message in messages %}
-                                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                                    {{ message }}
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                </div>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                {% endwith %}
-
-                <!-- Top form-specific error messages -->
-                <div id="form-errors">
-                    {% for field, errors in form.errors.items() %}
-                        {% for error in errors %}
-                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                {{ error }}
+            <!-- Top Flash messages section -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div id="flash-messages">
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                {{ message }}
                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                             </div>
                         {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <!-- Top form-specific error messages -->
+            <div id="form-errors">
+                {% for field, errors in form.errors.items() %}
+                    {% for error in errors %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            {{ error }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
                     {% endfor %}
+                {% endfor %}
+            </div>
+
+            <form class="register-form" action="{{ url_for('register') }}" method="post" enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+
+                <div class="form-group mb-3">
+                    {{ form.username.label(class="form-label") }}
+                    {{ form.username(class="form-control", id="username") }}
                 </div>
 
-                <form class="register-form" action="{{ url_for('register') }}" method="post" enctype="multipart/form-data">
-                    {{ form.hidden_tag() }}
+                <div class="form-group mb-3">
+                    {{ form.email.label(class="form-label") }}
+                    {{ form.email(class="form-control", id="email") }}
+                </div>
 
-                    <div class="form-group mb-3">
-                        {{ form.username.label(class="form-label") }}
-                        {{ form.username(class="form-control", id="username") }}
-                    </div>
+                <div class="form-group mb-3">
+                    {{ form.password.label(class="form-label") }}
+                    {{ form.password(class="form-control", id="password") }}
+                </div>
 
-                    <div class="form-group mb-3">
-                        {{ form.email.label(class="form-label") }}
-                        {{ form.email(class="form-control", id="email") }}
-                    </div>
+                <div class="form-group mb-3">
+                    {{ form.confirm_password.label(class="form-label") }}
+                    {{ form.confirm_password(class="form-control", id="confirm_password") }}
+                </div>
 
-                    <div class="form-group mb-3">
-                        {{ form.password.label(class="form-label") }}
-                        {{ form.password(class="form-control", id="password") }}
-                    </div>
+                <div class="form-group mb-3">
+                    {{ form.fullname.label(class="form-label") }}
+                    {{ form.fullname(class="form-control", id="fullname") }}
+                </div>
 
-                    <div class="form-group mb-3">
-                        {{ form.confirm_password.label(class="form-label") }}
-                        {{ form.confirm_password(class="form-control", id="confirm_password") }}
-                    </div>
+                <div class="form-group mb-3">
+                    {{ form.age.label(class="form-label") }}
+                    {{ form.age(class="form-control", id="age", placeholder="Optional") }}
+                </div>
 
-                    <div class="form-group mb-3">
-                        {{ form.fullname.label(class="form-label") }}
-                        {{ form.fullname(class="form-control", id="fullname") }}
-                    </div>
+                <div class="form-group mb-3">
+                    {{ form.preferredlocation.label(class="form-label") }}
+                    {{ form.preferredlocation(class="form-control", id="preferred_location", placeholder="Optional") }}
+                </div>
 
-                    <div class="form-group mb-3">
-                        {{ form.age.label(class="form-label") }}
-                        {{ form.age(class="form-control", id="age", placeholder="Optional") }}
-                    </div>
+                <div class="form-group mb-3">
+                    <label for="profile_picture" class="form-label">Profile Picture (Optional)</label>
+                    <input type="file" class="form-control file-input" id="profile_picture" name="profile_picture" accept="image/*">
+                </div>
 
-                    <div class="form-group mb-3">
-                        {{ form.preferredlocation.label(class="form-label") }}
-                        {{ form.preferredlocation(class="form-control", id="preferred_location", placeholder="Optional") }}
-                    </div>
+                <div class="form-group mb-4">
+                    {{ form.submit(class="btn btn-primary form-submit w-100") }}
+                </div>
 
-                    <div class="form-group mb-3">
-                        <label for="profile_picture" class="form-label">Profile Picture (Optional)</label>
-                        <input type="file" class="form-control file-input" id="profile_picture" name="profile_picture" accept="image/*">
-                    </div>
-
-                    <div class="form-group mb-4">
-                        {{ form.submit(class="btn btn-primary form-submit w-100") }}
-                    </div>
-
-                    <div class="text-center">
-                        Already have an account? <a href="{{ url_for('login') }}" class="text-link">Log in</a>
-                    </div>
-                </form>
-            </div>
+                <div class="text-center">
+                    Already have an account? <a href="{{ url_for('login') }}" class="text-link">Log in</a>
+                </div>
+            </form>
         </div>
     </div>
-    {% endblock %}
-</body>
-</html>
+</div>
+{% endblock %}
