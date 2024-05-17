@@ -64,8 +64,9 @@ quit()
 
    c) Save generated secret key to variable SECRET_KEY in .env
 
-   
+<img width="1214" alt="Screenshot 2024-05-17 at 2 50 10 pm" src="https://github.com/DeclanB1/Agile-Web-Development/assets/128463081/e2c0b633-4d24-4380-95c0-ff09bf7146ee">
 
+Sample SECRET_KEY saved to .env file
 
 5. **Navigate the Source Directory**
 
