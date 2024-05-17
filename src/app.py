@@ -194,7 +194,7 @@ def register():
             file.save(file_path)
             profile_picture_path = f'profile-pictures/{filename}'
         else:
-            file_path = None  # Use a default image path or handle as no image
+            profile_picture_path = profile_picture_path = 'images/default-profile-pic.png'  # Use a default image path or handle as no image
 
         new_user = User(
             username=username,
@@ -257,7 +257,8 @@ def post_an_event():
             location=location,
             description=description,
             gender_preference=gender_preference,
-            contact_information=contact_information
+            contact_information=contact_information,
+            username=username
         )
         
         db.session.add(event)
@@ -455,10 +456,6 @@ def delete_event(event_id):
 # Main Entry Point
 if __name__ == '__main__':
     with app.app_context():
-        # Drop existing tables if needed
-        db.drop_all()
-
-        # Create new tables
         db.create_all()
 
     app.run(debug=True)
