@@ -170,7 +170,7 @@ def register():
         preferredlocation = form.preferredlocation.data
         
         # Process the uploaded file
-        file = request.files['profile_picture']
+        file = form.profile_picture.data
         if file and file.filename != '':
             ext = os.path.splitext(file.filename)[1]
             filename = secure_filename(f"{username}_{int(time.time())}{ext}")
@@ -335,7 +335,7 @@ def edit_profile_picture():
     user = User.query.filter_by(username=username).first()
 
     if form.validate_on_submit():
-        file = request.files['profile_picture']
+        file = form.profile_picture.data
         if file and file.filename != '':
             old_picture = user.profile_picture
             if old_picture != 'images/default-profile-pic.png':
