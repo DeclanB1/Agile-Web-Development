@@ -68,7 +68,7 @@ Select "Choose File", followed by Uploaded Picture
 
 ![Screenshot 2024-05-18 at 2 35 52 pm](https://github.com/DeclanB1/Agile-Web-Development/assets/128463081/2eb2c14e-b70c-409b-b89d-8e9a852a6f63)
 
-_Note: User can also update their profile information
+_Note: User can also update their profile information_
 
 ### Update/Delete Existing Event
 
