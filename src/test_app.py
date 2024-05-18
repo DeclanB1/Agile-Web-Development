@@ -106,7 +106,7 @@ class AppTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'Login Unsuccessful. Please check username and password', response.data)
 
-    # This one passed
+    # This one failed
     def test_post_event(self):
         self.client.post('/login', data=dict(
             username='testuser',
@@ -128,6 +128,51 @@ class AppTest(TestCase):
         ), follow_redirects=True)
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'Event posted successfully', response.data)
+
+    # The following 2 tests should work after test post event works
+    def test_post_event_duplicate_title(self):
+        self.client.post('/login', data=dict(
+            username='testuser',
+            password='password'
+        ), follow_redirects=True)
+        
+        response = self.client.post('/post-an-event', data=dict(
+            event_title='Test Event',
+            sport_type='Basketball',
+            num_players=10,
+            playing_level='Intermediate',
+            event_date='2024-05-29',
+            start_time='08:00',
+            end_time='10:00',
+            location='Morley',
+            description='Bring your water bottle',
+            gender_preference='Mixed',
+            contact_information='Email: email@example.com'
+        ), follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Event title is already in use. Please choose a different title.', response.data)
+
+    def test_post_event_missing_fields(self):
+        self.client.post('/login', data=dict(
+            username='testuser',
+            password='password'
+        ), follow_redirects=True)
+
+        response = self.client.post('/post-an-event', data=dict(
+            event_title='UWA Tennis League',
+            sport_type='Tennis',
+            num_players=10,
+            playing_level='',
+            event_date='2024-05-29',
+            start_time='08:00',
+            end_time='10:00',
+            location='Test Location',
+            description='This is a test event.',
+            gender_preference='Mixed',
+            contact_information='test@example.com'
+        ), follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'This field is required.', response.data)
 
     # This one passed
     def test_browse_events(self):
