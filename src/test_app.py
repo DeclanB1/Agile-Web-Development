@@ -9,7 +9,6 @@ from datetime import datetime
 class AppTest(TestCase):
     def create_app(self):
         # Configure the app for testing
-        app.config['SECRET_KEY'] = 'test_secret_key'
         app.config['TESTING'] = True
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
         app.config['UPLOAD_FOLDER'] = 'test_uploads'
