@@ -64,8 +64,20 @@ class AppTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'Username already in use, please choose a different name.', response.data)     
 
-    # This one failed
+    # This one passed
     def test_registration_duplicate_email(self):
+        # First, register a user
+        self.client.post('/register', data=dict(
+            username='existinguser',
+            email='test@example.com',
+            password='password123',
+            confirm_password='password123',
+            fullname='Existing User',
+            age=30,
+            preferredlocation='Existing Location',
+        ), follow_redirects=True)
+
+        # Try to register another user with the same email
         response = self.client.post('/register', data=dict(
             username='newusername',
             email='test@example.com',
@@ -75,8 +87,10 @@ class AppTest(TestCase):
             age=25,
             preferredlocation='Test Location',
         ), follow_redirects=True)
+        
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b'Email already in use, please choose a different email.', response.data)   
+        self.assertIn(b'Email already in use, please choose a different email.', response.data)
+
 
     # This one passed
     def test_login_user(self):
@@ -105,7 +119,7 @@ class AppTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'Login Unsuccessful. Please check username and password', response.data)
 
-    # This one failed
+    # This one passed
     def test_post_event(self):
         self.client.post('/login', data=dict(
             username='testuser',
@@ -117,24 +131,102 @@ class AppTest(TestCase):
             sport_type='Soccer',
             num_players=10,
             playing_level='Intermediate',
-            event_date='29/05/2024',
-            start_time='10:00 AM',
-            end_time='12:00 PM',
+            event_date='2024-05-29',
+            start_time='08:00',
+            end_time='10:00',
             location='Morley',
             description='Bring your water bottle',
             gender_preference='Mixed',
             contact_information='Email: email@example.com'
         ), follow_redirects=True)
-        
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b'Event posted successfully', response.data)
+        self.assertIn(b'Event successfully created', response.data)
+        self.assertIn(b'Event Posted Successfully!', response.data)
+
+
+    # This one passed
+    def test_post_event_duplicate_title(self):
+        login_response = self.client.post('/login', data=dict(
+            username='testuser',
+            password='password'
+        ), follow_redirects=True)
+        self.assertEqual(login_response.status_code, 200)
+
+        # Post the first event
+        response = self.client.post('/post-an-event', data=dict(
+            event_title='Test Event',
+            sport_type='Soccer',
+            num_players=10,
+            playing_level='Intermediate',
+            event_date='2024-05-29',
+            start_time='08:00',
+            end_time='10:00',
+            location='Morley',
+            description='Bring your water bottle',
+            gender_preference='Mixed',
+            contact_information='Email: email@example.com'
+        ), follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Event successfully created', response.data)
+
+        # Try to post a duplicate event with duplicate title
+        response = self.client.post('/post-an-event', data=dict(
+            event_title='Test Event',
+            sport_type='Soccer',
+            num_players=10,
+            playing_level='Intermediate',
+            event_date='2024-05-30',
+            start_time='08:00',
+            end_time='10:00',
+            location='Morley',
+            description='Bring your water bottle',
+            gender_preference='Mixed',
+            contact_information='Email: email@example.com'
+        ), follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Event title is already in use. Please choose a different title.', response.data)
+
+    # This one passed
+    def test_post_event_missing_fields(self):
+        self.client.post('/login', data=dict(
+            username='testuser',
+            password='password'
+        ), follow_redirects=True)
+
+        response = self.client.post('/post-an-event', data=dict(
+            event_title='UWA Tennis League',
+            sport_type='Tennis',
+            num_players=10,
+            playing_level='',
+            event_date='2024-05-29',
+            start_time='08:00',
+            end_time='10:00',
+            location='Test Location',
+            description='This is a test event.',
+            gender_preference='Mixed',
+            contact_information='test@example.com'
+        ), follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'This field is required.', response.data)
 
     # This one passed
     def test_browse_events(self):
-        event = Events(event_title='Basketball Game', sport_type='Basketball', num_players=5, playing_level='Beginner',
-                       event_date='2024/05/30', start_time='03:00 PM', end_time='05:00 PM', location='Downtown Gym',
-                       description='Just for fun', gender_preference='Male', contact_information='Email: contact@example.com',
-                       username='testuser')
+        event = Events(
+            event_title='Basketball Game', 
+            sport_type='Basketball', 
+            num_players=5, 
+            playing_level='Beginner',
+            event_date='2024-05-30',
+            start_time='15:00',
+            end_time='17:00',
+            location='Downtown Gym',
+            description='Just for fun', 
+            gender_preference='Male', 
+            contact_information='contact@example.com',
+            username='testuser'
+        )
         db.session.add(event)
         db.session.commit()
 
@@ -209,36 +301,50 @@ class AppTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'Profile picture has been removed.', response.data)
 
-    # This one failed
+    # This one passed
     def test_edit_event(self):
-        self.client.post('/login', data=dict(
-            username='testuser',
-            password='password'
-        ), follow_redirects=True)
-        
-        event = Events(event_title='Basketball Game', sport_type='Basketball', num_players=5, playing_level='Beginner',
-                       event_date='30/05/2024', start_time='03:00 PM', end_time='05:00 PM', location='Downtown Gym',
-                       description='Just for fun', gender_preference='Male', contact_information='contact@example.com',
-                       username='testuser')
-        db.session.add(event)
-        db.session.commit()
-        
-        response = self.client.post(f'/edit_event/{event.event_id}', data=dict(
-            event_title='Updated Game',
-            sport_type='Basketball',
-            num_players=5,
-            playing_level='Beginner',
-            event_date='2024/05/30',
-            start_time='03:00 PM',
-            end_time='05:00 PM',
-            location='Downtown Gym',
-            description='Updated description',
-            gender_preference='Male',
-            contact_information='contact@example.com'
-        ), follow_redirects=True)
-        
-        self.assertEqual(response.status_code, 200)
-        self.assertIn(b'Event updated successfully!', response.data)
+        with self.client:
+            self.client.post('/login', data=dict(
+                username='testuser',
+                password='password'
+            ), follow_redirects=True)
+
+            # Create an event to edit
+            with app.app_context():
+                event = Events(
+                    event_title='Basketball Game',
+                    sport_type='Basketball',
+                    num_players=5,
+                    playing_level='Beginner',
+                    event_date='2024-05-30',
+                    start_time='10:00',
+                    end_time='12:00',
+                    location='Downtown Gym',
+                    description='Exciting game!',
+                    gender_preference='Male',
+                    contact_information='contact@example.com',
+                    username='testuser'
+                )
+                db.session.add(event)
+                db.session.commit()
+                event_id = event.event_id
+
+            response = self.client.post(f'/edit_event/{event_id}', data=dict(
+                event_title='Updated Game',
+                sport_type='Basketball',
+                num_players=5,
+                playing_level='Beginner',
+                event_date='2024-05-30',
+                start_time='10:00',
+                end_time='12:00',
+                location='Downtown Gym',
+                description='Updated description',
+                gender_preference='Male',
+                contact_information='contact@example.com'
+            ), follow_redirects=True)
+
+            self.assertEqual(response.status_code, 200)
+            self.assertIn(b'Event updated successfully!', response.data)
 
     # This one passed
     def test_delete_event(self):
@@ -247,10 +353,20 @@ class AppTest(TestCase):
             password='password'
         ), follow_redirects=True)
         
-        event = Events(event_title='Basketball Game', sport_type='Basketball', num_players=5, playing_level='Beginner',
-                       event_date='2024/05/30', start_time='03:00 PM', end_time='05:00 PM', location='Downtown Gym',
-                       description='Just for fun', gender_preference='Male', contact_information='contact@example.com',
-                       username='testuser')
+        event = Events(
+            event_title='Basketball Game', 
+            sport_type='Basketball', 
+            num_players=5, 
+            playing_level='Beginner',
+            event_date='2024-05-30',
+            start_time='15:00',
+            end_time='17:00',
+            location='Downtown Gym',
+            description='Just for fun', 
+            gender_preference='Male', 
+            contact_information='contact@example.com',
+            username='testuser'
+        )
         db.session.add(event)
         db.session.commit()
         

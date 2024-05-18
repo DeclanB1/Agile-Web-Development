@@ -1,8 +1,5 @@
-
-##====================================================================================================================================================================================
-## Import Project Dependencies 
-##====================================================================================================================================================================================
-
+import os
+import time
 from flask import Flask, render_template, request, redirect, url_for, session, flash, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -12,13 +9,11 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_wtf import FlaskForm
 from werkzeug.utils import secure_filename
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, TextAreaField, SelectField, validators
-from wtforms.validators import DataRequired, EqualTo, Email, Optional
+from wtforms.validators import DataRequired, EqualTo, Email, Optional, ValidationError
 from flask_wtf.file import FileField, FileAllowed
 from datetime import datetime, timedelta
 from pathlib import Path
 from utils import login_required
-import os
-import time
 
 ##====================================================================================================================================================================================
 ## Import Flask App and SQLAlchemy
@@ -107,6 +102,11 @@ class RegistrationForm(FlaskForm):
     profile_picture = FileField('Profile Picture', validators=[Optional(), FileAllowed(['jpg', 'jpeg', 'png'], 'Images only!')])
     submit = SubmitField('Register')
 
+    def validate_email(self, email):
+        user = User.query.filter_by(email=email.data).first()
+        if user:
+            raise ValidationError('Email already in use, please choose a different email.')
+
 class EditProfileForm(FlaskForm):
     email = StringField('Email', [validators.DataRequired(), validators.Email()])
     fullname = StringField('Full Name', [validators.DataRequired()])
@@ -145,7 +145,7 @@ class EventForm(FlaskForm):
         start_time = datetime.strptime('00:00', '%H:%M')
         end_time = datetime.strptime('23:30', '%H:%M')
         while start_time <= end_time:
-            formatted_time = start_time.strftime('%I:%M %p') #format time as AM PM
+            formatted_time = start_time.strftime('%H:%M')
             choices.append((start_time.strftime('%H:%M'), formatted_time))
             start_time += timedelta(minutes=30)
         return choices
@@ -172,11 +172,13 @@ def login():
             session['email'] = user.email
             if form.remember.data:
                 session.permanent = True
+            flash('Login successful!', 'success')
             return redirect(url_for('dashboard'))
         else:
             flash('Login Unsuccessful. Please check username and password', 'error')
     return render_template('login.html', form=form)
 
+  
 from sqlalchemy.exc import IntegrityError
 
 # Register
@@ -246,9 +248,9 @@ def post_an_event():
             sport_type = form.sport_type.data
             num_players = form.num_players.data
             playing_level = form.playing_level.data
-            event_date = datetime.strptime(form.event_date.data, '%Y-%m-%d').strftime('%Y/%m/%d')
-            start_time = datetime.strptime(form.start_time.data, '%H:%M').strftime('%I:%M %p')
-            end_time = datetime.strptime(form.end_time.data, '%H:%M').strftime('%I:%M %p')
+            event_date = form.event_date.data
+            start_time = form.start_time.data
+            end_time = form.end_time.data 
             location = form.location.data
             description = form.description.data
             gender_preference = form.gender_preference.data
@@ -273,11 +275,11 @@ def post_an_event():
             db.session.commit()
             flash('Event successfully created', 'success')
             return render_template('event_posted_successfully.html', event=event)
-        
         except IntegrityError:
             db.session.rollback()
             flash('Event title is already in use. Please choose a different title.', 'danger')
-    
+    else:
+        print("Form errors: ", form.errors)
     
     return render_template('post_an_event.html', form=form)
 
@@ -361,9 +363,6 @@ def edit_profile():
         return redirect(url_for('profile'))
 
     return render_template('edit_profile.html', form=form)
-
-# Edit User Profile Picture
-from werkzeug.utils import secure_filename
 
 @app.route('/edit_profile_picture', methods=['GET', 'POST'])
 @login_required
