@@ -178,9 +178,6 @@ def login():
             flash('Login Unsuccessful. Please check username and password', 'error')
     return render_template('login.html', form=form)
 
-  
-from sqlalchemy.exc import IntegrityError
-
 # Register
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -310,10 +307,7 @@ def browse_events():
 @app.route('/browse-single-event/<int:event_id>')
 def browse_single_event(event_id):
     try:
-        # Retrieve the event from the database based on its event_id
-        event = Events.query.filter_by(event_id=event_id).first()
-
-        # Check if the event exists
+        event = db.session.get(Events, event_id)
         if event:
             return render_template('browse_single_event.html', event=event)
         else:
@@ -423,7 +417,11 @@ def remove_profile_picture():
 @app.route('/edit_event/<int:event_id>', methods=['GET', 'POST'])
 @login_required
 def edit_event(event_id):
-    event = Events.query.get_or_404(event_id)
+    event = db.session.get(Events, event_id)
+    if not event:
+        flash("Event not found", "danger")
+        return redirect(url_for('profile'))
+
     form = EventForm(obj=event)
 
     # Ensure time choices are populated
@@ -452,7 +450,11 @@ def edit_event(event_id):
 @app.route('/delete_event/<int:event_id>', methods=['POST'])
 @login_required
 def delete_event(event_id):
-    event = Events.query.get_or_404(event_id)
+    event = db.session.get(Events, event_id)
+    if not event:
+        flash("Event not found", "danger")
+        return redirect(url_for('profile'))
+
     db.session.delete(event)
     db.session.commit()
     flash('Event deleted successfully!', 'success')
