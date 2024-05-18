@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    
+<title>Register</title>
+
+    
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM"
+      crossorigin="anonymous"
+    >
+    
+    <!-- Bootstrap Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css"
+    >
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/style.css">
+
+    <!-- Additional head content (you can add custom internal styles or links here) -->
+    
+  </head>
+  <body>
+    <!-- Navbar -->
+    <!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark py-3 fixed-top" id="main-navbar">
+  <div class="container-fluid mx-3">
+    <!-- Brand -->
+    <a href="/" class="navbar-brand mx-3">SportsSync</a>
+
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navmenu"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navmenu">
+      <ul class="navbar-nav">
+        <li class="nav-item elements">
+          <a href="/how-it-works" class="nav-link mx-1 font">How it Works</a>
+        </li>
+        <li class="nav-item elements">
+          <a href="/browse-events" class="nav-link mx-1 font">Browse Events</a>
+        </li>
+        <li class="nav-item elements">
+          <a href="/post-an-event" class="nav-link mx-1 font">Create Post</a>
+        </li>
+      </ul>
+
+      <ul class="navbar-nav ms-auto">
+        
+        <li class="nav-item elements">
+          <a class="nav-link font" href="/login">Log In</a>
+        </li>
+        <li class="nav-item elements">
+          <a class="nav-link font" href="/register">Register</a>
+        </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <!-- Flash Messages -->
+    
+      
+    
+
+    <!-- Main Body Content -->
+    
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h2>Register</h2>
+
+            <!-- Top form-specific error messages -->
+            <div id="form-errors">
+                
+            </div>
+
+            <form class="register-form" action="/register" method="post" enctype="multipart/form-data">
+                <input id="csrf_token" name="csrf_token" type="hidden" value="IjZjMTE0ODQxZDdiMmUyYzFhZjIwMTk4YzU5YTk4NzI5OGU1NjFkZDYi.ZkjXig.s6ZLd0fsiCUFu6FI9nAi0sWUZ1g">
+
+                <div class="form-group mb-3">
+                    <label class="form-label" for="username">Username</label>
+                    <input class="form-control" id="username" maxlength="25" minlength="4" name="username" required type="text" value="">
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="form-label" for="email">Email</label>
+                    <input class="form-control" id="email" name="email" required type="text" value="">
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="form-label" for="password">Password</label>
+                    <input class="form-control" id="password" minlength="8" name="password" required type="password" value="">
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="form-label" for="confirm_password">Confirm Password</label>
+                    <input class="form-control" id="confirm_password" name="confirm_password" required type="password" value="">
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="form-label" for="fullname">Full Name</label>
+                    <input class="form-control" id="fullname" name="fullname" required type="text" value="">
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="form-label" for="age">Age</label>
+                    <input class="form-control" id="age" name="age" placeholder="Optional" type="number" value="">
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="form-label" for="preferred_location">Preferred Location</label>
+                    <input class="form-control" id="preferred_location" name="preferred_location" placeholder="Optional" type="text" value="">
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="profile_picture" class="form-label">Profile Picture (Optional)</label>
+                    <input type="file" class="form-control file-input" id="profile_picture" name="profile_picture" accept="image/*">
+                </div>
+
+                <div class="form-group mb-4">
+                    <input class="btn btn-primary form-submit w-100" id="submit" name="submit" type="submit" value="Register">
+                </div>
+
+                <div class="text-center">
+                    Already have an account? <a href="/login" class="text-link">Log in</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+    <!-- Bootstrap Bundle with Popper (JavaScript) -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+      crossorigin="anonymous"
+    ></script>
+        
+    <!-- Custom JavaScript -->
+    <script src="/static/main.js"></script>
+  </body>
+</html>

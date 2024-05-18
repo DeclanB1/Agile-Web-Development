@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    
+<title>Edit Profile</title>
+
+    
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM"
+      crossorigin="anonymous"
+    >
+    
+    <!-- Bootstrap Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css"
+    >
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/style.css">
+
+    <!-- Additional head content (you can add custom internal styles or links here) -->
+    
+    <style>
+        .container {
+            max-width: 600px;
+            padding-bottom: 50px;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+    </style>
+
+  </head>
+  <body>
+    <!-- Navbar -->
+    <!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark py-3 fixed-top" id="main-navbar">
+  <div class="container-fluid mx-3">
+    <!-- Brand -->
+    <a href="/" class="navbar-brand mx-3">SportsSync</a>
+
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navmenu"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navmenu">
+      <ul class="navbar-nav">
+        <li class="nav-item elements">
+          <a href="/how-it-works" class="nav-link mx-1 font">How it Works</a>
+        </li>
+        <li class="nav-item elements">
+          <a href="/browse-events" class="nav-link mx-1 font">Browse Events</a>
+        </li>
+        <li class="nav-item elements">
+          <a href="/post-an-event" class="nav-link mx-1 font">Create Post</a>
+        </li>
+      </ul>
+
+      <ul class="navbar-nav ms-auto">
+        
+        <li class="nav-item d-none d-lg-block">
+          <span class="nav-link font" style="cursor:default;">Hello, mattcw9090</span>
+        </li>
+        <li class="nav-item elements">
+          <a class="nav-link font" href="/profile">My Profile</a>
+        </li>
+        <li class="nav-item elements">
+          <a class="nav-link font" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Log Out</a>
+          <form id="logout-form" action="/logout" method="POST" style="display: none;">
+            <!-- CSRF Token can be included here if needed -->
+          </form>
+        </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <!-- Flash Messages -->
+    
+      
+    
+
+    <!-- Main Body Content -->
+    
+    <div class="container mt-5 pt-5">
+        <h1 class="text-center">Edit Profile</h1>
+        <div class="card mx-auto">
+            <div class="card-body">
+                <form method="POST" action="/edit_profile">
+                    <input id="csrf_token" name="csrf_token" type="hidden" value="IjZjMTE0ODQxZDdiMmUyYzFhZjIwMTk4YzU5YTk4NzI5OGU1NjFkZDYi.ZkjXyg.8wUXvhPhBZxUXADvYJGRq25Sr50">
+                    <div class="form-group">
+                        <label class="form-label" for="email">Email</label>
+                        <input class="form-control" id="email" name="email" required type="text" value="mattcw9090@gmail.com">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="fullname">Full Name</label>
+                        <input class="form-control" id="fullname" name="fullname" required type="text" value="Matthew Chew Kai Yung">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="age">Age</label>
+                        <input class="form-control" id="age" name="age" type="number" value="22">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="preferred_location">Preferred Location</label>
+                        <input class="form-control" id="preferred_location" name="preferred_location" type="text" value="Doubleview">
+                    </div>
+                    <div class="form-group text-center">
+                        <input class="btn btn-primary" id="submit" name="submit" type="submit" value="Save Changes">
+                    </div>
+                </form>
+                <div class="text-center">
+                    <a href="/profile" class="btn btn-secondary mt-3">Cancel</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Bootstrap Bundle with Popper (JavaScript) -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+      crossorigin="anonymous"
+    ></script>
+        
+    <!-- Custom JavaScript -->
+    <script src="/static/main.js"></script>
+  </body>
+</html>

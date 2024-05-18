@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    
+<title>How it Works</title>
+
+    
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM"
+      crossorigin="anonymous"
+    >
+    
+    <!-- Bootstrap Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css"
+    >
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/style.css">
+
+    <!-- Additional head content (you can add custom internal styles or links here) -->
+    
+  </head>
+  <body>
+    <!-- Navbar -->
+    <!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark py-3 fixed-top" id="main-navbar">
+  <div class="container-fluid mx-3">
+    <!-- Brand -->
+    <a href="/" class="navbar-brand mx-3">SportsSync</a>
+
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navmenu"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navmenu">
+      <ul class="navbar-nav">
+        <li class="nav-item elements">
+          <a href="/how-it-works" class="nav-link mx-1 font">How it Works</a>
+        </li>
+        <li class="nav-item elements">
+          <a href="/browse-events" class="nav-link mx-1 font">Browse Events</a>
+        </li>
+        <li class="nav-item elements">
+          <a href="/post-an-event" class="nav-link mx-1 font">Create Post</a>
+        </li>
+      </ul>
+
+      <ul class="navbar-nav ms-auto">
+        
+        <li class="nav-item d-none d-lg-block">
+          <span class="nav-link font" style="cursor:default;">Hello, mattcw9090</span>
+        </li>
+        <li class="nav-item elements">
+          <a class="nav-link font" href="/profile">My Profile</a>
+        </li>
+        <li class="nav-item elements">
+          <a class="nav-link font" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Log Out</a>
+          <form id="logout-form" action="/logout" method="POST" style="display: none;">
+            <!-- CSRF Token can be included here if needed -->
+          </form>
+        </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <!-- Flash Messages -->
+    
+      
+    
+
+    <!-- Main Body Content -->
+    
+<div class="container mt-5">
+    <!-- Hero Section -->
+    <div class="text-center hero-section mb-5">
+        <h1>How SportsSync Works!</h1>
+        <p class="lead">
+            Connect, play, and enjoy sports in your community with ease.
+        </p>
+    </div>
+    
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <a href="/profile" class="card-title">
+                <h5><i class="bi bi-gear-fill"></i> Customize Your Profile</h5>
+            </a>
+            <p class="card-text">Once logged in, add a bio, your sports preferences, and skill levels...</p>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <a href="/browse-events" class="card-title">
+                <h5><i class="bi bi-search"></i> Browse Events</h5>
+            </a>
+            <p class="card-text">Use the “Browse Events" navigation tab to browse through ongoing sports events or matches. You can search based on sport, playing level, suburb, time, and location. This makes it easy to find exactly what you’re looking for or discover something new!</p>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <a href="/post-an-event" class="card-title">
+                <h5><i class="bi bi-plus-circle-fill"></i> Post an Event</h5>
+            </a>
+            <p class="card-text">Go to the “Post an Event" navigation tab to set up a new event. Provide details like the event title, sport type, playing level, number of players needed, time, and location. Once published, other users can find and join your event.</p>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <a href="/profile" class="card-title">
+                <h5><i class="bi bi-calendar-event-fill"></i> Manage Your Events under My Profile</h5>
+            </a>
+            <p class="card-text">Check your “My Profile" page to view and manage the events you’ve posted or joined. You can edit details, communicate with participants, or cancel events if necessary.</p>
+        </div>
+    </div>
+
+    <div class="call-to-action text-center mb-5">
+        <h2 class="mb-3">Ready to Play?</h2>
+        <p class="lead mb-4">Join the SportsSync community today and transform your sports experience.</p>
+        <a href="/register" class="btn btn-lg btn-success">Sign Up Now</a>
+    </div>
+</div>
+
+
+    <!-- Bootstrap Bundle with Popper (JavaScript) -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+      crossorigin="anonymous"
+    ></script>
+        
+    <!-- Custom JavaScript -->
+    <script src="/static/main.js"></script>
+  </body>
+</html>
