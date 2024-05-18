@@ -25,13 +25,9 @@
       <p><strong>Start Time:</strong> {{ event.start_time }}</p>
       <p><strong>End Time:</strong> {{ event.end_time }}</p>
       <p><strong>Location:</strong> {{ event.location }}</p>
-      <p class="ul-content"><strong>Description:</strong></p>
-      <ul>
-        {% for description in event.description.split('\n') %}
-          <li>{{ description }}</li>
-        {% endfor %}
-      </ul>
+      <p><strong>Description:</strong> {{ event.description }}</p>
       <p><strong>Gender Preference:</strong> {{ event.gender_preference }}</p>
+      <p><strong>Contact Information:</strong> {{ event.contact_information }}</p>
     </div>
   </div>
 </section>

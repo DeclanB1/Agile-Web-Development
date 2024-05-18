@@ -53,7 +53,7 @@ class Events(db.Model):
 
     event_id = db.Column(db.Integer, primary_key=True)
     event_title = db.Column(db.String, nullable=False)
-    sport_type = db.Column(db.Integer, nullable=False)
+    sport_type = db.Column(db.String, nullable=False)
     num_players = db.Column(db.Integer, nullable=False)
     playing_level = db.Column(db.String, nullable=False)
     event_date = db.Column(db.String, nullable=False)
@@ -108,7 +108,7 @@ class RemoveProfilePictureForm(FlaskForm):
 class EventForm(FlaskForm):
     event_title = StringField('Event Title', validators=[DataRequired()])
     sport_type = SelectField('Sport Type', choices=[('Basketball', 'Basketball'), ('Soccer', 'Soccer'), ('Tennis', 'Tennis')], validators=[DataRequired()])
-    num_players = StringField('Number of Players Needed', validators=[DataRequired()])
+    num_players = IntegerField('Number of Players Needed', validators=[DataRequired()])
     playing_level = SelectField('Playing Level', choices=[('Beginner', 'Beginner'), ('Intermediate', 'Intermediate'), ('Advanced', 'Advanced')], validators=[DataRequired()])
     event_date = StringField('Event Date', validators=[DataRequired()], render_kw={'type': 'date'})
     start_time = SelectField('Event Start Time', choices=[], validators=[DataRequired()])
