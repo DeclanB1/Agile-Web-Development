@@ -136,3 +136,24 @@ flask run #run with debug mode off
 cd src
 python -m unittest test_app.py                                                     
 ```
+
+## HTML and CSS Validation
+
+The application automatically generates HTML files for validation purposes. Follow these steps to validate the HTML and CSS files:
+
+1. **Run the Application**
+
+   Follow the steps in the "Quick Start Guide" to launch the application.
+
+2. **Generate HTML Files for Validation**
+
+   The `app.py` code is set up to generate HTML files in the `html_generated_files_for_validation` directory each time a page is rendered. These files can be used for validation.
+
+3. **Validate HTML and CSS**
+
+   - Navigate to the `html_generated_files_for_validation` directory.
+   - Use the following online tools to validate the generated HTML and CSS files:
+     - HTML: [W3C Markup Validation Service](https://validator.w3.org/)
+     - CSS: [W3C CSS Validation Service](https://jigsaw.w3.org/css-validator/)
+
+   Upload the generated HTML files to these websites and review the validation results.

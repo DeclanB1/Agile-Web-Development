@@ -159,6 +159,13 @@ class EventForm(FlaskForm):
 @app.route('/')
 @app.route('/dashboard')
 def dashboard():
+    ################## SAVE RENDERED HTML TO OUTPUT FILE FOR VALIDATION CHECKING ##################
+    rendered_html = render_template('dashboard.html')
+    output_path = os.path.join('html_generated_files_for_validation', 'dashboard.html')
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    with open(output_path, 'w') as file:
+        file.write(rendered_html)
+    ###############################################################################################
     return render_template('dashboard.html')
 
 # Login
@@ -177,6 +184,13 @@ def login():
             return redirect(url_for('dashboard'))
         else:
             flash('Login Unsuccessful. Please check username and password', 'error')
+    ################## SAVE RENDERED HTML TO OUTPUT FILE FOR VALIDATION CHECKING ##################
+    rendered_html = render_template('login.html', form=form)
+    output_path = os.path.join('html_generated_files_for_validation', 'login.html')
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    with open(output_path, 'w') as file:
+        file.write(rendered_html)
+    ###############################################################################################
     return render_template('login.html', form=form)
 
 # Register
@@ -220,6 +234,13 @@ def register():
         except IntegrityError:
             db.session.rollback()
             flash('Username already in use, please choose a different name.', 'error')
+    ################## SAVE RENDERED HTML TO OUTPUT FILE FOR VALIDATION CHECKING ##################
+    rendered_html = render_template('register.html', form=form)
+    output_path = os.path.join('html_generated_files_for_validation', 'register.html')
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    with open(output_path, 'w') as file:
+        file.write(rendered_html)
+    ###############################################################################################
     return render_template('register.html', form=form)
 
 # Logout
@@ -231,6 +252,13 @@ def logout():
 # How it Works
 @app.route('/how-it-works')
 def how_it_works():
+    ################## SAVE RENDERED HTML TO OUTPUT FILE FOR VALIDATION CHECKING ##################
+    rendered_html = render_template('how_it_works.html')
+    output_path = os.path.join('html_generated_files_for_validation', 'how_it_works.html')
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    with open(output_path, 'w') as file:
+        file.write(rendered_html)
+    ###############################################################################################
     return render_template('how_it_works.html')
 
 # Create Post
@@ -276,6 +304,13 @@ def post_an_event():
         except IntegrityError:
             db.session.rollback()
             flash('Event title is already in use. Please choose a different title.', 'danger')
+    ################## SAVE RENDERED HTML TO OUTPUT FILE FOR VALIDATION CHECKING ##################
+    rendered_html = render_template('post_an_event.html', form=form)
+    output_path = os.path.join('html_generated_files_for_validation', 'post_an_event.html')
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    with open(output_path, 'w') as file:
+        file.write(rendered_html)
+    ###############################################################################################
     return render_template('post_an_event.html', form=form)
 
 # Browse all events
@@ -298,9 +333,24 @@ def browse_events():
         locations = db.session.query(Events.location.distinct()).all()
         locations = sorted([location[0] for location in locations])
 
+        ################## SAVE RENDERED HTML TO OUTPUT FILE FOR VALIDATION CHECKING ##################
+        rendered_html = render_template('browse_events.html', events=events, sport_types=sport_types, num_players=num_players, playing_levels=playing_levels, locations=locations, username=session.get('username'))
+        output_path = os.path.join('html_generated_files_for_validation', 'browse_events.html')
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
+        with open(output_path, 'w') as file:
+            file.write(rendered_html)
+        ###############################################################################################
+
         return render_template('browse_events.html', events=events, sport_types=sport_types, num_players=num_players, playing_levels=playing_levels, locations=locations, username=session.get('username'))
     except Exception as e:
         flash("Error occurred while fetching events")
+        ################## SAVE RENDERED HTML TO OUTPUT FILE FOR VALIDATION CHECKING ##################
+        rendered_html = render_template('browse_events.html')
+        output_path = os.path.join('html_generated_files_for_validation', 'browse_events.html')
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
+        with open(output_path, 'w') as file:
+            file.write(rendered_html)
+        ###############################################################################################
         return render_template('browse_events.html')
 
 # Browse single event
@@ -309,6 +359,13 @@ def browse_single_event(event_id):
     try:
         event = db.session.get(Events, event_id)
         if event:
+            ################## SAVE RENDERED HTML TO OUTPUT FILE FOR VALIDATION CHECKING ##################
+            rendered_html = render_template('browse_single_event.html', event=event)
+            output_path = os.path.join('html_generated_files_for_validation', 'browse_single_event.html')
+            os.makedirs(os.path.dirname(output_path), exist_ok=True)
+            with open(output_path, 'w') as file:
+                file.write(rendered_html)
+            ###############################################################################################
             return render_template('browse_single_event.html', event=event)
         else:
             flash("Event not found")
@@ -326,6 +383,13 @@ def profile():
     user_events = Events.query.filter_by(username=username).all()
     
     if user:
+        ################## SAVE RENDERED HTML TO OUTPUT FILE FOR VALIDATION CHECKING ##################
+        rendered_html = render_template('profile.html', user=user, events=user_events)
+        output_path = os.path.join('html_generated_files_for_validation', 'profile.html')
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
+        with open(output_path, 'w') as file:
+            file.write(rendered_html)
+        ###############################################################################################
         return render_template('profile.html', user=user, events=user_events)
     else:
         flash('User not found', 'error')
@@ -354,6 +418,13 @@ def edit_profile():
         flash('Your profile has been updated.', 'success')
         return redirect(url_for('profile'))
 
+    ################## SAVE RENDERED HTML TO OUTPUT FILE FOR VALIDATION CHECKING ##################
+    rendered_html = render_template('edit_profile.html', form=form)
+    output_path = os.path.join('html_generated_files_for_validation', 'edit_profile.html')
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    with open(output_path, 'w') as file:
+        file.write(rendered_html)
+    ###############################################################################################
     return render_template('edit_profile.html', form=form)
 
 @app.route('/edit_profile_picture', methods=['GET', 'POST'])
@@ -385,6 +456,13 @@ def edit_profile_picture():
             flash('Your profile picture has been updated.', 'success')
             return redirect(url_for('profile'))
 
+    ################## SAVE RENDERED HTML TO OUTPUT FILE FOR VALIDATION CHECKING ##################
+    rendered_html = render_template('edit_profile_picture.html', form=form, remove_form=remove_form)
+    output_path = os.path.join('html_generated_files_for_validation', 'edit_profile_picture.html')
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    with open(output_path, 'w') as file:
+        file.write(rendered_html)
+    ###############################################################################################
     return render_template('edit_profile_picture.html', form=form, remove_form=remove_form)
 
 # Remove User Profile Picture
@@ -443,7 +521,14 @@ def edit_event(event_id):
         db.session.commit()
         flash('Event updated successfully!', 'success')
         return redirect(url_for('profile'))
-    
+
+    ################## SAVE RENDERED HTML TO OUTPUT FILE FOR VALIDATION CHECKING ##################
+    rendered_html = render_template('edit_event.html', form=form, event=event)
+    output_path = os.path.join('html_generated_files_for_validation', 'edit_event.html')
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    with open(output_path, 'w') as file:
+        file.write(rendered_html)
+    ###############################################################################################
     return render_template('edit_event.html', form=form, event=event)
 
 # Delete event

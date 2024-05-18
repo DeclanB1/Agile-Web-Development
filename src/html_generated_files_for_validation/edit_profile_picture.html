@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    
+<title>Edit Profile Picture</title>
+
+    
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM"
+      crossorigin="anonymous"
+    >
+    
+    <!-- Bootstrap Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css"
+    >
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/style.css">
+
+    <!-- Additional head content (you can add custom internal styles or links here) -->
+    
+<style>
+    .container {
+        max-width: 600px;
+        padding-bottom: 50px;
+    }
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    .card {
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .card-body {
+        padding: 2rem;
+    }
+    .btn-group {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    .btn-group .btn {
+        width: 100%;
+    }
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+    .btn-danger {
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }
+    .btn-secondary {
+        background-color: #6c757d;
+        border-color: #6c757d;
+    }
+    .spacer {
+        height: 1rem;
+    }
+    @media (max-width: 768px) {
+        .container {
+            padding: 20px;
+        }
+        .btn-group {
+            flex-direction: column;
+        }
+    }
+</style>
+
+  </head>
+  <body>
+    <!-- Navbar -->
+    <!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark py-3 fixed-top" id="main-navbar">
+  <div class="container-fluid mx-3">
+    <!-- Brand -->
+    <a href="/" class="navbar-brand mx-3">SportsSync</a>
+
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navmenu"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navmenu">
+      <ul class="navbar-nav">
+        <li class="nav-item elements">
+          <a href="/how-it-works" class="nav-link mx-1 font">How it Works</a>
+        </li>
+        <li class="nav-item elements">
+          <a href="/browse-events" class="nav-link mx-1 font">Browse Events</a>
+        </li>
+        <li class="nav-item elements">
+          <a href="/post-an-event" class="nav-link mx-1 font">Create Post</a>
+        </li>
+      </ul>
+
+      <ul class="navbar-nav ms-auto">
+        
+        <li class="nav-item d-none d-lg-block">
+          <span class="nav-link font" style="cursor:default;">Hello, mattcw9090</span>
+        </li>
+        <li class="nav-item elements">
+          <a class="nav-link font" href="/profile">My Profile</a>
+        </li>
+        <li class="nav-item elements">
+          <a class="nav-link font" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Log Out</a>
+          <form id="logout-form" action="/logout" method="POST" style="display: none;">
+            <!-- CSRF Token can be included here if needed -->
+          </form>
+        </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <!-- Flash Messages -->
+    
+      
+    
+
+    <!-- Main Body Content -->
+    
+<div class="container mt-5 pt-5">
+    <h1 class="text-center">Edit Profile Picture</h1>
+    <div class="card mx-auto">
+        <div class="card-body">
+            <form method="POST" action="/edit_profile_picture" enctype="multipart/form-data">
+                <input name="csrf_token" type="hidden" value="IjZjMTE0ODQxZDdiMmUyYzFhZjIwMTk4YzU5YTk4NzI5OGU1NjFkZDYi.ZkjXyA.b_FxOEX3PjWVgWvBUd8HXEhsljE">
+                <div class="form-group">
+                    <label class="form-control-label" for="profile_picture">Profile Picture</label>
+                    <input class="form-control-file" id="profile_picture" name="profile_picture" type="file">
+                </div>
+                <div class="btn-group">
+                    <input class="btn btn-primary" id="submit" name="submit" type="submit" value="Upload Picture">
+                </div>
+            </form>
+            <div class="spacer"></div>
+            <form method="POST" action="/remove_profile_picture">
+                <input id="csrf_token" name="csrf_token" type="hidden" value="IjZjMTE0ODQxZDdiMmUyYzFhZjIwMTk4YzU5YTk4NzI5OGU1NjFkZDYi.ZkjXyA.b_FxOEX3PjWVgWvBUd8HXEhsljE">
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to remove your profile picture?');">Remove Profile Picture</button>
+                    <a href="/profile" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+    <!-- Bootstrap Bundle with Popper (JavaScript) -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+      crossorigin="anonymous"
+    ></script>
+        
+    <!-- Custom JavaScript -->
+    <script src="/static/main.js"></script>
+  </body>
+</html>
