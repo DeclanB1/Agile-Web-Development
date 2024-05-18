@@ -2,3 +2,4 @@
 *.db
 venv/
 *.env
+src/static/profile-pictures
