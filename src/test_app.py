@@ -65,8 +65,20 @@ class AppTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'Username already in use, please choose a different name.', response.data)     
 
-    # This one failed
+    # This one passed
     def test_registration_duplicate_email(self):
+        # First, register a user
+        self.client.post('/register', data=dict(
+            username='existinguser',
+            email='test@example.com',
+            password='password123',
+            confirm_password='password123',
+            fullname='Existing User',
+            age=30,
+            preferredlocation='Existing Location',
+        ), follow_redirects=True)
+
+        # Try to register another user with the same email
         response = self.client.post('/register', data=dict(
             username='newusername',
             email='test@example.com',
@@ -76,8 +88,10 @@ class AppTest(TestCase):
             age=25,
             preferredlocation='Test Location',
         ), follow_redirects=True)
+        
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b'Email already in use, please choose a different email.', response.data)   
+        self.assertIn(b'Email already in use, please choose a different email.', response.data)
+
 
     # This one passed
     def test_login_user(self):
@@ -175,7 +189,7 @@ class AppTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'Event title is already in use. Please choose a different title.', response.data)
 
-    # This one failed
+    # This one passed
     def test_post_event_missing_fields(self):
         self.client.post('/login', data=dict(
             username='testuser',

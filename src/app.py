@@ -9,7 +9,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_wtf import FlaskForm
 from werkzeug.utils import secure_filename
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, TextAreaField, SelectField, validators
-from wtforms.validators import DataRequired, EqualTo, Email, Optional
+from wtforms.validators import DataRequired, EqualTo, Email, Optional, ValidationError
 from flask_wtf.file import FileField, FileAllowed
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -101,6 +101,11 @@ class RegistrationForm(FlaskForm):
     preferredlocation = StringField('Preferred Location', [validators.Optional()])
     profile_picture = FileField('Profile Picture', validators=[Optional(), FileAllowed(['jpg', 'jpeg', 'png'], 'Images only!')])
     submit = SubmitField('Register')
+
+    def validate_email(self, email):
+        user = User.query.filter_by(email=email.data).first()
+        if user:
+            raise ValidationError('Email already in use, please choose a different email.')
 
 class EditProfileForm(FlaskForm):
     email = StringField('Email', [validators.DataRequired(), validators.Email()])
