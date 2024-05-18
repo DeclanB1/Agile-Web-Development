@@ -145,7 +145,7 @@ class EventForm(FlaskForm):
         start_time = datetime.strptime('00:00', '%H:%M')
         end_time = datetime.strptime('23:30', '%H:%M')
         while start_time <= end_time:
-            formatted_time = start_time.strftime('%I:%M %p')
+            formatted_time = start_time.strftime('%I:%M %p') #format time as AM PM
             choices.append((start_time.strftime('%H:%M'), formatted_time))
             start_time += timedelta(minutes=30)
         return choices
@@ -154,11 +154,13 @@ class EventForm(FlaskForm):
 ## Routes and Logic
 ##====================================================================================================================================================================================
 
+# Home page
 @app.route('/')
 @app.route('/dashboard')
 def dashboard():
     return render_template('dashboard.html')
 
+# Login
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
@@ -177,6 +179,7 @@ def login():
 
 from sqlalchemy.exc import IntegrityError
 
+# Register
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()
@@ -197,7 +200,7 @@ def register():
             file.save(file_path)
             profile_picture_path = f'profile-pictures/{filename}'
         else:
-            profile_picture_path = 'images/default-profile-pic.png'
+            profile_picture_path = 'images/default-profile-pic.png' #handle default image
 
         new_user = User(
             username=username,
@@ -219,15 +222,18 @@ def register():
             flash('Username already in use, please choose a different name.', 'error')
     return render_template('register.html', form=form)
 
+# Logout
 @app.route('/logout', methods=['POST'])
 def logout():
     session.clear()
     return redirect(url_for('dashboard'))
 
+# How it Works
 @app.route('/how-it-works')
 def how_it_works():
     return render_template('how_it_works.html')
 
+# Create Post
 @app.route('/post-an-event', methods=['GET', 'POST'])
 @login_required
 def post_an_event():
@@ -275,6 +281,7 @@ def post_an_event():
     
     return render_template('post_an_event.html', form=form)
 
+# Browse all events
 @app.route('/browse-events')
 def browse_events():
     try:
@@ -299,10 +306,14 @@ def browse_events():
         flash("Error occurred while fetching events")
         return render_template('browse_events.html')
 
+# Browse single event
 @app.route('/browse-single-event/<int:event_id>')
 def browse_single_event(event_id):
     try:
+        # Retrieve the event from the database based on its event_id
         event = Events.query.filter_by(event_id=event_id).first()
+
+        # Check if the event exists
         if event:
             return render_template('browse_single_event.html', event=event)
         else:
@@ -312,6 +323,7 @@ def browse_single_event(event_id):
         flash("Error occurred while fetching event details")
         return render_template('browse_single_event.html', event=None)
 
+# Display User Profile
 @app.route('/profile')
 @login_required
 def profile():
@@ -325,6 +337,7 @@ def profile():
         flash('User not found', 'error')
         return redirect(url_for('dashboard'))
 
+# Edit User Profile
 @app.route('/edit_profile', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
@@ -363,12 +376,14 @@ def edit_profile_picture():
     if form.validate_on_submit():
         file = form.profile_picture.data
         if file and file.filename != '':
+             # Delete the old profile picture if it's not the default picture
             old_picture = user.profile_picture
             if old_picture != 'images/default-profile-pic.png':
                 old_picture_path = os.path.join(app.config['UPLOAD_FOLDER'], os.path.basename(old_picture))
                 if os.path.exists(old_picture_path):
                     os.remove(old_picture_path)
 
+            # Save the new profile picture with a unique filename
             ext = os.path.splitext(file.filename)[1]
             filename = secure_filename(f"{username}_{int(time.time())}{ext}")
             file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
@@ -381,6 +396,7 @@ def edit_profile_picture():
 
     return render_template('edit_profile_picture.html', form=form, remove_form=remove_form)
 
+# Remove User Profile Picture
 @app.route('/remove_profile_picture', methods=['POST'])
 @login_required
 def remove_profile_picture():
@@ -406,12 +422,14 @@ def remove_profile_picture():
         flash('Failed to remove profile picture.', 'error')
         return redirect(url_for('profile'))
 
+# Edit event
 @app.route('/edit_event/<int:event_id>', methods=['GET', 'POST'])
 @login_required
 def edit_event(event_id):
     event = Events.query.get_or_404(event_id)
     form = EventForm(obj=event)
 
+    # Ensure time choices are populated
     form.start_time.choices = form._generate_time_choices()
     form.end_time.choices = form._generate_time_choices()
 
@@ -433,6 +451,7 @@ def edit_event(event_id):
     
     return render_template('edit_event.html', form=form, event=event)
 
+# Delete event
 @app.route('/delete_event/<int:event_id>', methods=['POST'])
 @login_required
 def delete_event(event_id):
