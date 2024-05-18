@@ -33,7 +33,7 @@ class AppTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'Welcome', response.data)
 
-    # This one failed
+    # This one passed
     def test_register_user(self):
         response = self.client.post('/register', data=dict(
             username='newuser',
@@ -66,9 +66,9 @@ class AppTest(TestCase):
         response = self.client.post('/post-an-event', data=dict(
             event_title='Soccer Match',
             sport_type='Soccer',
-            num_players='10',
+            num_players=10,
             playing_level='Intermediate',
-            event_date='25/05/2024',
+            event_date='2024/05/29',
             start_time='10:00 AM',
             end_time='12:00 PM',
             location='Morley',
@@ -80,6 +80,7 @@ class AppTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'Event posted successfully', response.data)
 
+    # This one passed
     def test_browse_events(self):
         event = Events(event_title='Basketball Game', sport_type='Basketball', num_players=5, playing_level='Beginner',
                        event_date='2024/05/30', start_time='03:00 PM', end_time='05:00 PM', location='Downtown Gym',
@@ -92,105 +93,95 @@ class AppTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'Basketball Game', response.data)
 
-    # def test_profile_page(self):
-    #     self.client.post('/login', data=dict(
-    #         username='testuser',
-    #         password='password'
-    #     ), follow_redirects=True)
+    # This one passed
+    def test_profile_page(self):
+        self.client.post('/login', data=dict(
+            username='testuser',
+            password='password'
+        ), follow_redirects=True)
         
-    #     response = self.client.get('/profile')
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertIn(b'Test User', response.data)
+        response = self.client.get('/profile')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Test User', response.data)
 
-    # def test_edit_profile(self):
-    #     self.client.post('/login', data=dict(
-    #         username='testuser',
-    #         password='password'
-    #     ), follow_redirects=True)
+    # This one passed
+    def test_edit_profile(self):
+        self.client.post('/login', data=dict(
+            username='testuser',
+            password='password'
+        ), follow_redirects=True)
         
-    #     response = self.client.post('/edit_profile', data=dict(
-    #         email='newemail@example.com',
-    #         fullname='New Name',
-    #         age='30',
-    #         preferredlocation='San Francisco'
-    #     ), follow_redirects=True)
+        response = self.client.post('/edit_profile', data=dict(
+            email='newemail@example.com',
+            fullname='New Name',
+            age='30',
+            preferredlocation='San Francisco'
+        ), follow_redirects=True)
         
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertIn(b'Your profile has been updated.', response.data)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Your profile has been updated.', response.data)
 
-    # def test_edit_profile_picture(self):
-    #     self.client.post('/login', data=dict(
-    #         username='testuser',
-    #         password='password'
-    #     ), follow_redirects=True)
+    # This one passed
+    def test_remove_profile_picture(self):
+        self.client.post('/login', data=dict(
+            username='testuser',
+            password='password'
+        ), follow_redirects=True)
         
-    #     # Assuming you have a test image in the current directory
-    #     with open('test_image.jpg', 'rb') as img:
-    #         response = self.client.post('/edit_profile_picture', data=dict(
-    #             profile_picture=(img, 'test_image.jpg')
-    #         ), follow_redirects=True)
+        response = self.client.post('/remove_profile_picture', follow_redirects=True)
         
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertIn(b'Your profile picture has been updated.', response.data)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Profile picture has been removed.', response.data)
 
-    # def test_remove_profile_picture(self):
-    #     self.client.post('/login', data=dict(
-    #         username='testuser',
-    #         password='password'
-    #     ), follow_redirects=True)
+    #  This one failed
+    def test_edit_event(self):
+        self.client.post('/login', data=dict(
+            username='testuser',
+            password='password'
+        ), follow_redirects=True)
         
-    #     response = self.client.post('/remove_profile_picture', follow_redirects=True)
+        event = Events(event_title='Basketball Game', sport_type='Basketball', num_players=5, playing_level='Beginner',
+                       event_date='30/05/2024', start_time='03:00 PM', end_time='05:00 PM', location='Downtown Gym',
+                       description='Just for fun', gender_preference='Male', contact_information='contact@example.com',
+                       username='testuser')
+        db.session.add(event)
+        db.session.commit()
         
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertIn(b'Profile picture has been removed.', response.data)
+        response = self.client.post(f'/edit_event/{event.event_id}', data=dict(
+            event_title='Updated Game',
+            sport_type='Basketball',
+            num_players=5,
+            playing_level='Beginner',
+            event_date='2024/05/30',
+            start_time='03:00 PM',
+            end_time='05:00 PM',
+            location='Downtown Gym',
+            description='Updated description',
+            gender_preference='Male',
+            contact_information='contact@example.com'
+        ), follow_redirects=True)
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Event updated successfully!', response.data)
 
-    # def test_edit_event(self):
-    #     self.client.post('/login', data=dict(
-    #         username='testuser',
-    #         password='password'
-    #     ), follow_redirects=True)
+    # This one passed
+    def test_delete_event(self):
+        self.client.post('/login', data=dict(
+            username='testuser',
+            password='password'
+        ), follow_redirects=True)
         
-    #     event = Events(event_title='Basketball Game', sport_type='Basketball', num_players=5, playing_level='Beginner',
-    #                    event_date='2024/05/30', start_time='03:00 PM', end_time='05:00 PM', location='Downtown Gym',
-    #                    description='Just for fun', gender_preference='Male', contact_information='contact@example.com',
-    #                    username='testuser')
-    #     db.session.add(event)
-    #     db.session.commit()
+        event = Events(event_title='Basketball Game', sport_type='Basketball', num_players=5, playing_level='Beginner',
+                       event_date='2024/05/30', start_time='03:00 PM', end_time='05:00 PM', location='Downtown Gym',
+                       description='Just for fun', gender_preference='Male', contact_information='contact@example.com',
+                       username='testuser')
+        db.session.add(event)
+        db.session.commit()
         
-    #     response = self.client.post(f'/edit_event/{event.event_id}', data=dict(
-    #         event_title='Updated Game',
-    #         sport_type='Basketball',
-    #         num_players='5',
-    #         playing_level='Beginner',
-    #         event_date='2024-05-30',
-    #         start_time='15:00',
-    #         end_time='17:00',
-    #         location='Downtown Gym',
-    #         description='Updated description',
-    #         gender_preference='Male',
-    #         contact_information='contact@example.com'
-    #     ), follow_redirects=True)
+        response = self.client.post(f'/delete_event/{event.event_id}', follow_redirects=True)
         
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertIn(b'Event updated successfully!', response.data)
-
-    # def test_delete_event(self):
-    #     self.client.post('/login', data=dict(
-    #         username='testuser',
-    #         password='password'
-    #     ), follow_redirects=True)
-        
-    #     event = Events(event_title='Basketball Game', sport_type='Basketball', num_players=5, playing_level='Beginner',
-    #                    event_date='2024/05/30', start_time='03:00 PM', end_time='05:00 PM', location='Downtown Gym',
-    #                    description='Just for fun', gender_preference='Male', contact_information='contact@example.com',
-    #                    username='testuser')
-    #     db.session.add(event)
-    #     db.session.commit()
-        
-    #     response = self.client.post(f'/delete_event/{event.event_id}', follow_redirects=True)
-        
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertIn(b'Event deleted successfully!', response.data)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Event deleted successfully!', response.data)
 
 if __name__ == '__main__':
     unittest.main()
