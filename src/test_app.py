@@ -127,7 +127,9 @@ class AppTest(TestCase):
             contact_information='Email: email@example.com'
         ), follow_redirects=True)
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b'Event posted successfully', response.data)
+        self.assertIn(b'Event successfully created', response.data)
+        self.assertIn(b'Event Posted Successfully!', response.data)
+
 
     # The following 2 tests should work after test post event works
     def test_post_event_duplicate_title(self):
