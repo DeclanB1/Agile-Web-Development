@@ -1,7 +1,5 @@
-##====================================================================================================================================================================================
-## Import Project Dependencies 
-##====================================================================================================================================================================================
-
+import os
+import time
 from flask import Flask, render_template, request, redirect, url_for, session, flash, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -16,8 +14,6 @@ from flask_wtf.file import FileField, FileAllowed
 from datetime import datetime, timedelta
 from pathlib import Path
 from utils import login_required
-import os
-import time
 
 ##====================================================================================================================================================================================
 ## Import Flask App and SQLAlchemy
@@ -169,12 +165,11 @@ def login():
             session['email'] = user.email
             if form.remember.data:
                 session.permanent = True
+            flash('Login successful!', 'success')
             return redirect(url_for('dashboard'))
         else:
             flash('Login Unsuccessful. Please check username and password', 'error')
     return render_template('login.html', form=form)
-
-from sqlalchemy.exc import IntegrityError
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -263,7 +258,8 @@ def post_an_event():
         
         db.session.add(event)
         db.session.commit()
-        return render_template('event_posted_successfully.html', event=event)
+        flash('Event posted successfully', 'success')
+        return redirect(url_for('browse_events'))
     
     return render_template('post_an_event.html', form=form)
 
@@ -340,9 +336,6 @@ def edit_profile():
         return redirect(url_for('profile'))
 
     return render_template('edit_profile.html', form=form)
-
-# Edit User Profile Picture
-from werkzeug.utils import secure_filename
 
 @app.route('/edit_profile_picture', methods=['GET', 'POST'])
 @login_required
