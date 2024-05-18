@@ -49,7 +49,7 @@ class User(db.Model):
     email = db.Column(db.String, nullable=False)
     fullname = db.Column(db.String, nullable=False)
     age = db.Column(db.Integer)
-    preferredlocation = db.Column(db.String)
+    preferred_location = db.Column(db.String)
     profile_picture = db.Column(db.String, default='images/default-profile-pic.png')
 
     def __repr__(self):
@@ -98,7 +98,7 @@ class RegistrationForm(FlaskForm):
     email = StringField('Email', [validators.DataRequired(), validators.Email()])
     fullname = StringField('Full Name', [validators.DataRequired()])
     age = IntegerField('Age', [validators.Optional()])
-    preferredlocation = StringField('Preferred Location', [validators.Optional()])
+    preferred_location = StringField('Preferred Location', [validators.Optional()])
     profile_picture = FileField('Profile Picture', validators=[Optional(), FileAllowed(['jpg', 'jpeg', 'png'], 'Images only!')])
     submit = SubmitField('Register')
 
@@ -111,7 +111,7 @@ class EditProfileForm(FlaskForm):
     email = StringField('Email', [validators.DataRequired(), validators.Email()])
     fullname = StringField('Full Name', [validators.DataRequired()])
     age = IntegerField('Age', [validators.Optional()])
-    preferredlocation = StringField('Preferred Location', [validators.Optional()])
+    preferred_location = StringField('Preferred Location', [validators.Optional()])
     submit = SubmitField('Save Changes')
 
 class EditProfilePictureForm(FlaskForm):
@@ -123,15 +123,15 @@ class RemoveProfilePictureForm(FlaskForm):
 
 class EventForm(FlaskForm):
     event_title = StringField('Event Title', validators=[DataRequired()])
-    sport_type = SelectField('Sport Type', choices=[('Basketball', 'Basketball'), ('Soccer', 'Soccer'), ('Tennis', 'Tennis')], validators=[DataRequired()])
+    sport_type = SelectField('Sport Type', choices=[('', 'Select Sport Type'), ('Basketball', 'Basketball'), ('Soccer', 'Soccer'), ('Tennis', 'Tennis')], validators=[DataRequired()])
     num_players = IntegerField('Number of Players Needed', validators=[DataRequired()])
-    playing_level = SelectField('Playing Level', choices=[('Beginner', 'Beginner'), ('Intermediate', 'Intermediate'), ('Advanced', 'Advanced')], validators=[DataRequired()])
+    playing_level = SelectField('Playing Level', choices=[('', 'Select Playing Level'), ('Beginner', 'Beginner'), ('Intermediate', 'Intermediate'), ('Advanced', 'Advanced')], validators=[DataRequired()])
     event_date = StringField('Event Date', validators=[DataRequired()], render_kw={'type': 'date'})
     start_time = SelectField('Event Start Time', choices=[], validators=[DataRequired()])
     end_time = SelectField('Event End Time', choices=[], validators=[DataRequired()])
     location = StringField('Event Location', validators=[DataRequired()])
     description = StringField('Description of Event', validators=[DataRequired()])
-    gender_preference = SelectField('Gender Preference', choices=[('Male', 'Male'), ('Female', 'Female'), ('Mixed', 'Mixed')], validators=[DataRequired()])
+    gender_preference = SelectField('Gender Preference', choices=[('', 'Select Gender Preference'), ('Male', 'Male'), ('Female', 'Female'), ('Mixed', 'Mixed')], validators=[DataRequired()])
     contact_information = StringField('Contact Information', validators=[DataRequired()])
     submit = SubmitField('Post Event')
 
@@ -141,7 +141,7 @@ class EventForm(FlaskForm):
         self.end_time.choices = self._generate_time_choices()
 
     def _generate_time_choices(self):
-        choices = []
+        choices = [('', 'Select Time')]
         start_time = datetime.strptime('00:00', '%H:%M')
         end_time = datetime.strptime('23:30', '%H:%M')
         while start_time <= end_time:
@@ -149,6 +149,7 @@ class EventForm(FlaskForm):
             choices.append((start_time.strftime('%H:%M'), formatted_time))
             start_time += timedelta(minutes=30)
         return choices
+
 
 ##====================================================================================================================================================================================
 ## Routes and Logic
@@ -188,7 +189,7 @@ def register():
         email = form.email.data
         fullname = form.fullname.data
         age = form.age.data
-        preferredlocation = form.preferredlocation.data
+        preferred_location = form.preferred_location.data
         
         # Process the uploaded file
         file = form.profile_picture.data
@@ -207,7 +208,7 @@ def register():
             email=email,
             fullname=fullname,
             age=age,
-            preferredlocation=preferredlocation,
+            preferred_location=preferred_location,
             profile_picture=profile_picture_path
         )
 
@@ -275,7 +276,6 @@ def post_an_event():
         except IntegrityError:
             db.session.rollback()
             flash('Event title is already in use. Please choose a different title.', 'danger')
-    
     return render_template('post_an_event.html', form=form)
 
 # Browse all events
@@ -343,13 +343,13 @@ def edit_profile():
         form.email.data = user.email
         form.fullname.data = user.fullname
         form.age.data = user.age
-        form.preferredlocation.data = user.preferredlocation
+        form.preferred_location.data = user.preferred_location
 
     if form.validate_on_submit():
         user.email = form.email.data
         user.fullname = form.fullname.data
         user.age = form.age.data
-        user.preferredlocation = form.preferredlocation.data
+        user.preferred_location = form.preferred_location.data
         db.session.commit()
         flash('Your profile has been updated.', 'success')
         return redirect(url_for('profile'))

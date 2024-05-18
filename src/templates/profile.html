@@ -1,7 +1,10 @@
 {% extends "layout.html" %}
 
+{% block title %}
+<title>My Profile</title>
+{% endblock %}
+
 {% block head %}
-    <title>My Profile</title>
     <style>
         .profile-picture-container {
             position: relative;
@@ -51,7 +54,7 @@
                 <p><strong>Email:</strong> {{ user.email }}</p>
                 <p><strong>Full Name:</strong> {{ user.fullname }}</p>
                 <p><strong>Age:</strong> {{ user.age }}</p>
-                <p><strong>Preferred Location:</strong> {{ user.preferredlocation }}</p>
+                <p><strong>Preferred Location:</strong> {{ user.preferred_location }}</p>
                 <a href="{{ url_for('edit_profile') }}" class="btn btn-primary mt-3">Edit Profile Information</a>
                 <a href="{{ url_for('dashboard') }}" class="btn btn-secondary mt-3">Back to Dashboard</a>
             </div>
