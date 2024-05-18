@@ -94,7 +94,7 @@ class LoginForm(FlaskForm):
 class RegistrationForm(FlaskForm):
     username = StringField('Username', [validators.Length(min=4, max=25), validators.DataRequired()])
     password = PasswordField('Password', [validators.DataRequired(), validators.Length(min=8)])
-    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password', message='Password entries do not match. Please try again')])    
+    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password', message='Password entries do not match. Please try again')])
     email = StringField('Email', [validators.DataRequired(), validators.Email()])
     fullname = StringField('Full Name', [validators.DataRequired()])
     age = IntegerField('Age', [validators.Optional()])
@@ -278,8 +278,6 @@ def post_an_event():
         except IntegrityError:
             db.session.rollback()
             flash('Event title is already in use. Please choose a different title.', 'danger')
-    else:
-        print("Form errors: ", form.errors)
     
     return render_template('post_an_event.html', form=form)
 
