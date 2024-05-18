@@ -2,7 +2,9 @@
 
 ## Purpose of SportsSync
 
-SportsSync is a web-based platform, created using Flask, designed to connect sports enthusiasts by allowing them to browse, join, and create sports events in their community. It enables users to tailor their experience through customisable profiles and facilitates easy communication and management of events. This solution addresses the need for a centralized location where athletes of all levels can find and organize sports activities according to their preferences and skill levels.
+We were tired of the constant back and forth trying to find a substitute to fill in for our social sports team at UWA and having to fork out hefty forfeit fees. To eliminate this hassle, we created SportsSync, making it easier for teams to find substitutes and manage their events seamlessly.
+
+SportsSync is a web-based platform, created using Flask, designed to connect sports enthusiasts by allowing them to browse, join, and create sports events in their community. It enables users to tailor their experience through customisable profiles and facilitates easy communication and management of events. This solution addresses the need for a centralised location where athletes of all levels can find and organise sports activities according to their preferences and skill levels.
 
 ## Group Members
 
@@ -50,19 +52,23 @@ pip3 install -r requirements.txt
 
 3. **Create Secret Key**
 
-   a) Create new .env file
+   a) Create new file called ".env" 
 
-   b) Generate secret key
+   b) Generate unique secret key in the terminal
+
+```python3
+import os
+os.urandom(24)
+quit()
+```
 
    c) Save generated secret key to variable SECRET_KEY in .env
 
-```bash
-python3
-import os
-os.urandom(24)
-```
+<img width="1214" alt="Screenshot 2024-05-17 at 2 50 10 pm" src="https://github.com/DeclanB1/Agile-Web-Development/assets/128463081/e2c0b633-4d24-4380-95c0-ff09bf7146ee">
 
-4. **Navigate the Source Directory**
+Sample SECRET_KEY saved to .env file
+
+5. **Navigate the Source Directory**
 
 ```bash
 cd src
@@ -71,7 +77,13 @@ cd src
 5. **Launch Application**
 
 ```bash
-python3 app.py
+python3 app.py #run with debug mode on
+```
+
+or
+
+```bash
+flask run #run with debug mode off
 ```
 
 ## How to run Tests
