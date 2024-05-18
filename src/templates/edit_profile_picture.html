@@ -53,10 +53,12 @@
                     </div>
                     <div class="btn-group">
                         {{ form.submit(class="btn btn-primary") }}
-                        <form method="POST" action="{{ url_for('remove_profile_picture') }}">
-                            {{ remove_form.hidden_tag() }}
-                            <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to remove your profile picture?');">Remove Profile Picture</button>
-                        </form>
+                    </div>
+                </form>
+                <form method="POST" action="{{ url_for('remove_profile_picture') }}">
+                    {{ remove_form.hidden_tag() }}
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to remove your profile picture?');">Remove Profile Picture</button>
                         <a href="{{ url_for('profile') }}" class="btn btn-secondary">Cancel</a>
                     </div>
                 </form>

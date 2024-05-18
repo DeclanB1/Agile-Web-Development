@@ -364,13 +364,17 @@ def remove_profile_picture():
         user = User.query.filter_by(username=username).first()
         
         if user:
+            # Delete the old profile picture if it's not the default picture
             if user.profile_picture != 'images/default-profile-pic.png':
                 old_picture_path = os.path.join(app.config['UPLOAD_FOLDER'], os.path.basename(user.profile_picture))
                 if os.path.exists(old_picture_path):
                     os.remove(old_picture_path)
+            
+            # Set the profile picture to the default picture
             user.profile_picture = 'images/default-profile-pic.png'
             db.session.commit()
             flash('Profile picture has been removed.', 'success')
+        
         return redirect(url_for('profile'))
     else:
         flash('Failed to remove profile picture.', 'error')
