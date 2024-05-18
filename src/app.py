@@ -264,6 +264,8 @@ def post_an_event():
         except IntegrityError:
             db.session.rollback()
             flash('Event title is already in use. Please choose a different title.', 'danger')
+    else:
+        print(form.errors)
     
     return render_template('post_an_event.html', form=form)
 

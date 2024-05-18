@@ -106,7 +106,7 @@ class AppTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'Login Unsuccessful. Please check username and password', response.data)
 
-    # This one failed
+    # This one passed
     def test_post_event(self):
         self.client.post('/login', data=dict(
             username='testuser',
@@ -131,16 +131,18 @@ class AppTest(TestCase):
         self.assertIn(b'Event Posted Successfully!', response.data)
 
 
-    # The following 2 tests should work after test post event works
+    # This one passed
     def test_post_event_duplicate_title(self):
-        self.client.post('/login', data=dict(
+        login_response = self.client.post('/login', data=dict(
             username='testuser',
             password='password'
         ), follow_redirects=True)
-        
+        self.assertEqual(login_response.status_code, 200)
+
+        # Post the first event
         response = self.client.post('/post-an-event', data=dict(
             event_title='Test Event',
-            sport_type='Basketball',
+            sport_type='Soccer',
             num_players=10,
             playing_level='Intermediate',
             event_date='2024-05-29',
@@ -151,6 +153,25 @@ class AppTest(TestCase):
             gender_preference='Mixed',
             contact_information='Email: email@example.com'
         ), follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Event successfully created', response.data)
+
+        # Try to post a duplicate event with duplicate title
+        response = self.client.post('/post-an-event', data=dict(
+            event_title='Test Event',
+            sport_type='Soccer',
+            num_players=10,
+            playing_level='Intermediate',
+            event_date='2024-05-30',
+            start_time='08:00',
+            end_time='10:00',
+            location='Morley',
+            description='Bring your water bottle',
+            gender_preference='Mixed',
+            contact_information='Email: email@example.com'
+        ), follow_redirects=True)
+
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'Event title is already in use. Please choose a different title.', response.data)
 
