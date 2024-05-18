@@ -18,19 +18,63 @@ SportsSync is a web-based platform, created using Flask, designed to connect spo
 
 ## SportsSync Architecture
 
->TO_DO Short Description and Screenshot for Each
-
 ### Register New Account
+
+![Screenshot 2024-05-18 at 2 27 25 pm](https://github.com/DeclanB1/Agile-Web-Development/assets/128463081/903b668f-8771-451e-a005-6f6fd9293825)
+
+_Note: not all fields are necessary some are optional for the user, and can be editted later on_
 
 ### Login
 
-### Post New Event
+User is directed to Login Page
 
-### Browse Events
+![Screenshot 2024-05-18 at 2 27 55 pm](https://github.com/DeclanB1/Agile-Web-Development/assets/128463081/cb5d039f-e1f5-444a-ae7d-3bb7bef5edb5)
 
-### Update User Profile
+User is logged in (Introductory View is displayed)
+
+![Screenshot 2024-05-18 at 2 44 16 pm](https://github.com/DeclanB1/Agile-Web-Development/assets/128463081/75ccaa9b-e6d2-45fe-a21d-a4c1a770ebc8)
+
+### Browse Events (Find Requests View)
+
+Click "Browse Events" from the navigation bar
+
+User can browse all existing event request posts 
+
+_Note: User does not need to be logged in to view this page_
+
+![331771291-c4d2ef6b-707b-40f9-abbe-75d260519acd](https://github.com/DeclanB1/Agile-Web-Development/assets/128463081/f2e8bd43-64ed-41a4-a04a-3fba06ccafe7)
+
+By clicking on details, user can view specific event request details
+
+![Screenshot 2024-05-18 at 2 30 01 pm](https://github.com/DeclanB1/Agile-Web-Development/assets/128463081/3d983fba-73d6-47ff-886f-cecb48b0eeb5)
+
+### Post New Event (Create Requests View)
+
+Click "Post New Event" from the navigation bar
+
+![Screenshot 2024-05-18 at 2 33 44 pm](https://github.com/DeclanB1/Agile-Web-Development/assets/128463081/0df36c48-0a26-4075-b11d-49a2f7f2801f)
+
+### Update User Profile (eg. add Profile Picture)
+
+Click "My Profile" from the Navigation Bar
+
+![Screenshot 2024-05-18 at 2 34 24 pm](https://github.com/DeclanB1/Agile-Web-Development/assets/128463081/61aaeb75-0c86-4135-88a2-1311b09cef38)
+
+Click on Profile Picture to edit
+
+![Screenshot 2024-05-18 at 2 34 48 pm](https://github.com/DeclanB1/Agile-Web-Development/assets/128463081/715c0001-9c2d-4c93-91f3-e8e8650a0a03)
+
+Select "Choose File", followed by Uploaded Picture
+
+![Screenshot 2024-05-18 at 2 35 52 pm](https://github.com/DeclanB1/Agile-Web-Development/assets/128463081/2eb2c14e-b70c-409b-b89d-8e9a852a6f63)
+
+_Note: User can also update their profile information
 
 ### Update/Delete Existing Event
+
+User can view, update or delete their existing events
+
+![331771712-69438838-a1c2-4a7d-97fe-23563d725dc7](https://github.com/DeclanB1/Agile-Web-Development/assets/128463081/9fcfe71b-5aa3-48d0-8a1a-f33727e4cd6f)
 
 ## Quick Start Guide
 
