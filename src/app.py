@@ -140,7 +140,7 @@ class EventForm(FlaskForm):
         start_time = datetime.strptime('00:00', '%H:%M')
         end_time = datetime.strptime('23:30', '%H:%M')
         while start_time <= end_time:
-            formatted_time = start_time.strftime('%I:%M %p')
+            formatted_time = start_time.strftime('%H:%M')
             choices.append((start_time.strftime('%H:%M'), formatted_time))
             start_time += timedelta(minutes=30)
         return choices
@@ -233,9 +233,9 @@ def post_an_event():
         sport_type = form.sport_type.data
         num_players = form.num_players.data
         playing_level = form.playing_level.data
-        event_date = datetime.strptime(form.event_date.data, '%Y-%m-%d').strftime('%Y/%m/%d')
-        start_time = datetime.strptime(form.start_time.data, '%H:%M').strftime('%I:%M %p')
-        end_time = datetime.strptime(form.end_time.data, '%H:%M').strftime('%I:%M %p')
+        event_date = form.event_date.data
+        start_time = form.start_time.data
+        end_time = form.end_time.data 
         location = form.location.data
         description = form.description.data
         gender_preference = form.gender_preference.data
