@@ -1,3 +1,7 @@
+##====================================================================================================================================================================================
+## Import Project Dependencies 
+##====================================================================================================================================================================================
+
 from flask import Flask, render_template, request, redirect, url_for, session, flash, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -15,6 +19,10 @@ from utils import login_required
 import os
 import time
 
+##====================================================================================================================================================================================
+## Import Flask App and SQLAlchemy
+##====================================================================================================================================================================================
+
 # Initialize Flask App
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key_here'
@@ -31,6 +39,10 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Ensure the upload directory exists
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+##====================================================================================================================================================================================
+## Define DB Models
+##====================================================================================================================================================================================
 
 # User Model Definition
 class User(db.Model):
@@ -73,7 +85,10 @@ class Events(db.Model):
     def __repr__(self):
         return f"<Events(event_id='{self.event_id}', event_title='{self.event_title}', sport_type='{self.sport_type}', num_players={self.num_players}, event_date='{self.event_date}', start_time='{self.start_time}', end_time='{self.end_time}', location='{self.location}', description='{self.description}', gender_preference='{self.gender_preference}', contact_information='{self.contact_information}', username='{self.username}')>"
 
-# Forms Definition
+##====================================================================================================================================================================================
+## Form Definition
+##====================================================================================================================================================================================
+
 class LoginForm(FlaskForm):
     username = StringField('Username', [validators.DataRequired()])
     password = PasswordField('Password', [validators.DataRequired()])
@@ -134,7 +149,10 @@ class EventForm(FlaskForm):
             start_time += timedelta(minutes=30)
         return choices
 
-# Routes and Logic
+##====================================================================================================================================================================================
+## Routes and Logic
+##====================================================================================================================================================================================
+
 @app.route('/')
 @app.route('/dashboard')
 def dashboard():
@@ -415,6 +433,10 @@ def delete_event(event_id):
     db.session.commit()
     flash('Event deleted successfully!', 'success')
     return redirect(url_for('profile'))
+
+##====================================================================================================================================================================================
+## Run App
+##====================================================================================================================================================================================
 
 if __name__ == '__main__':
     with app.app_context():
