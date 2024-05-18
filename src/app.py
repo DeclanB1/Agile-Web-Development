@@ -7,7 +7,9 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_wtf import FlaskForm
 from werkzeug.utils import secure_filename
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, TextAreaField, SelectField, validators
-from wtforms.validators import DataRequired, EqualTo, Email
+from wtforms.validators import DataRequired, EqualTo, Email, Optional
+from flask_wtf.file import FileField, FileAllowed
+from datetime import datetime, timedelta
 from pathlib import Path
 from utils import login_required
 import os
@@ -45,7 +47,6 @@ class User(db.Model):
     def __repr__(self):
         return f"<User(username='{self.username}', email='{self.email}', fullname='{self.fullname}')>"
 
-
 # Event Model Definition
 class Events(db.Model):
     __tablename__ = 'events'
@@ -72,6 +73,7 @@ class Events(db.Model):
     def __repr__(self):
         return f"<Events(event_id='{self.event_id}', event_title='{self.event_title}', sport_type='{self.sport_type}', num_players='{self.num_players}', event_date='{self.event_date}', start_time='{self.start_time}', end_time='{self.end_time}', location='{self.location}', description='{self.description}', gender_preference='{self.gender_preference}', contact_information='{self.contact_information}', username='{self.username}')>"
 
+# Forms Definition
 class LoginForm(FlaskForm):
     username = StringField('Username', [validators.DataRequired()])
     password = PasswordField('Password', [validators.DataRequired()])
@@ -81,13 +83,12 @@ class LoginForm(FlaskForm):
 class RegistrationForm(FlaskForm):
     username = StringField('Username', [validators.Length(min=4, max=25), validators.DataRequired()])
     password = PasswordField('Password', [validators.DataRequired(), validators.Length(min=8)])
-    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password', message='Password entries do not match. Please try again')
-    ])    
+    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password', message='Password entries do not match. Please try again')])    
     email = StringField('Email', [validators.DataRequired(), validators.Email()])
     fullname = StringField('Full Name', [validators.DataRequired()])
     age = IntegerField('Age', [validators.Optional()])
     preferredlocation = StringField('Preferred Location', [validators.Optional()])
-    profile_picture = StringField('Profile Picture', [validators.Optional()])
+    profile_picture = FileField('Profile Picture', validators=[Optional(), FileAllowed(['jpg', 'jpeg', 'png'], 'Images only!')])
     submit = SubmitField('Register')
 
 class EditProfileForm(FlaskForm):
@@ -97,24 +98,12 @@ class EditProfileForm(FlaskForm):
     preferredlocation = StringField('Preferred Location', [validators.Optional()])
     submit = SubmitField('Save Changes')
 
-from flask_wtf.file import FileField, FileAllowed
-
 class EditProfilePictureForm(FlaskForm):
     profile_picture = FileField('Profile Picture', validators=[FileAllowed(['jpg', 'jpeg', 'png'], 'Images only!')])
     submit = SubmitField('Upload Picture')
 
 class RemoveProfilePictureForm(FlaskForm):
     submit = SubmitField('Remove Profile Picture')
-
-from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField, SubmitField
-from wtforms.validators import DataRequired
-from datetime import datetime, timedelta
-
-from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField, SubmitField
-from wtforms.validators import DataRequired
-from datetime import datetime, timedelta
 
 class EventForm(FlaskForm):
     event_title = StringField('Event Title', validators=[DataRequired()])
@@ -132,8 +121,6 @@ class EventForm(FlaskForm):
 
     def __init__(self, *args, **kwargs):
         super(EventForm, self).__init__(*args, **kwargs)
-
-        # Populate time choices for start time and end time fields
         self.start_time.choices = self._generate_time_choices()
         self.end_time.choices = self._generate_time_choices()
 
@@ -141,12 +128,10 @@ class EventForm(FlaskForm):
         choices = []
         start_time = datetime.strptime('00:00', '%H:%M')
         end_time = datetime.strptime('23:30', '%H:%M')
-
         while start_time <= end_time:
-            formatted_time = start_time.strftime('%I:%M %p')  # Format time as 1 pm
+            formatted_time = start_time.strftime('%I:%M %p')
             choices.append((start_time.strftime('%H:%M'), formatted_time))
             start_time += timedelta(minutes=30)
-
         return choices
 
 # Routes and Logic
@@ -160,7 +145,6 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
-        
         if user and check_password_hash(user.password, form.password.data):
             session['logged_in'] = True
             session['username'] = user.username
@@ -194,7 +178,7 @@ def register():
             file.save(file_path)
             profile_picture_path = f'profile-pictures/{filename}'
         else:
-            profile_picture_path = profile_picture_path = 'images/default-profile-pic.png'  # Use a default image path or handle as no image
+            profile_picture_path = 'images/default-profile-pic.png'
 
         new_user = User(
             username=username,
@@ -216,7 +200,6 @@ def register():
             flash('Username already in use, please choose a different name.', 'error')
     return render_template('register.html', form=form)
 
-
 @app.route('/logout', methods=['POST'])
 def logout():
     session.clear()
@@ -226,7 +209,6 @@ def logout():
 def how_it_works():
     return render_template('how_it_works.html')
 
-# Post an event
 @app.route('/post-an-event', methods=['GET', 'POST'])
 @login_required
 def post_an_event():
@@ -267,11 +249,9 @@ def post_an_event():
     
     return render_template('post_an_event.html', form=form)
 
-# Browse all events
 @app.route('/browse-events')
 def browse_events():
     try:
-        # Fetch all events
         events = Events.query.all()
 
         # Fetch distinct values for sport type, num players, playing level, and location
@@ -288,32 +268,24 @@ def browse_events():
         locations = db.session.query(Events.location.distinct()).all()
         locations = sorted([location[0] for location in locations])
 
-        # Pass the data to the template
         return render_template('browse_events.html', events=events, sport_types=sport_types, num_players=num_players, playing_levels=playing_levels, locations=locations, username=session.get('username'))
     except Exception as e:
         flash("Error occurred while fetching events")
         return render_template('browse_events.html')
 
-# Browse single event
 @app.route('/browse-single-event/<int:event_id>')
 def browse_single_event(event_id):
     try:
-        # Retrieve the event from the database based on its event_id
         event = Events.query.filter_by(event_id=event_id).first()
-
-        # Check if the event exists
         if event:
             return render_template('browse_single_event.html', event=event)
         else:
             flash("Event not found")
-            # Pass None for event when the event is not found
             return render_template('browse_single_event.html', event=None)
-        
     except Exception as e:
         flash("Error occurred while fetching event details")
         return render_template('browse_single_event.html', event=None)
 
-# Display User Profile
 @app.route('/profile')
 @login_required
 def profile():
@@ -327,7 +299,6 @@ def profile():
         flash('User not found', 'error')
         return redirect(url_for('dashboard'))
 
-# Edit User Profile
 @app.route('/edit_profile', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
@@ -346,7 +317,6 @@ def edit_profile():
         user.fullname = form.fullname.data
         user.age = form.age.data
         user.preferredlocation = form.preferredlocation.data
-
         db.session.commit()
         flash('Your profile has been updated.', 'success')
         return redirect(url_for('profile'))
@@ -367,14 +337,12 @@ def edit_profile_picture():
     if form.validate_on_submit():
         file = request.files['profile_picture']
         if file and file.filename != '':
-            # Delete the old profile picture if it's not the default picture
             old_picture = user.profile_picture
             if old_picture != 'images/default-profile-pic.png':
                 old_picture_path = os.path.join(app.config['UPLOAD_FOLDER'], os.path.basename(old_picture))
                 if os.path.exists(old_picture_path):
                     os.remove(old_picture_path)
 
-            # Save the new profile picture with a unique filename
             ext = os.path.splitext(file.filename)[1]
             filename = secure_filename(f"{username}_{int(time.time())}{ext}")
             file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
@@ -387,7 +355,6 @@ def edit_profile_picture():
 
     return render_template('edit_profile_picture.html', form=form, remove_form=remove_form)
 
-# Remove User Profile Picture
 @app.route('/remove_profile_picture', methods=['POST'])
 @login_required
 def remove_profile_picture():
@@ -397,17 +364,13 @@ def remove_profile_picture():
         user = User.query.filter_by(username=username).first()
         
         if user:
-            # Delete the old profile picture if it's not the default picture
             if user.profile_picture != 'images/default-profile-pic.png':
                 old_picture_path = os.path.join(app.config['UPLOAD_FOLDER'], os.path.basename(user.profile_picture))
                 if os.path.exists(old_picture_path):
                     os.remove(old_picture_path)
-            
-            # Set the profile picture to the default picture
             user.profile_picture = 'images/default-profile-pic.png'
             db.session.commit()
             flash('Profile picture has been removed.', 'success')
-        
         return redirect(url_for('profile'))
     else:
         flash('Failed to remove profile picture.', 'error')
@@ -419,7 +382,6 @@ def edit_event(event_id):
     event = Events.query.get_or_404(event_id)
     form = EventForm(obj=event)
 
-    # Ensure time choices are populated
     form.start_time.choices = form._generate_time_choices()
     form.end_time.choices = form._generate_time_choices()
 
@@ -435,13 +397,11 @@ def edit_event(event_id):
         event.description = form.description.data
         event.gender_preference = form.gender_preference.data
         event.contact_information = form.contact_information.data
-        
         db.session.commit()
         flash('Event updated successfully!', 'success')
         return redirect(url_for('profile'))
     
     return render_template('edit_event.html', form=form, event=event)
-
 
 @app.route('/delete_event/<int:event_id>', methods=['POST'])
 @login_required
@@ -452,10 +412,7 @@ def delete_event(event_id):
     flash('Event deleted successfully!', 'success')
     return redirect(url_for('profile'))
 
-
-# Main Entry Point
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-
     app.run(debug=True)
