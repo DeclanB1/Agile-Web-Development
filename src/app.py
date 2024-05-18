@@ -265,7 +265,7 @@ def post_an_event():
             db.session.rollback()
             flash('Event title is already in use. Please choose a different title.', 'danger')
     else:
-        print(form.errors)
+        print("Form errors: ", form.errors)
     
     return render_template('post_an_event.html', form=form)
 

@@ -175,6 +175,7 @@ class AppTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'Event title is already in use. Please choose a different title.', response.data)
 
+    # This one failed
     def test_post_event_missing_fields(self):
         self.client.post('/login', data=dict(
             username='testuser',
