@@ -1,80 +1,83 @@
 {% extends "layout.html" %}
 
+{% block title %}
+<title>Edit Profile Picture</title>
+{% endblock %}
+
 {% block head %}
-    <title>Edit Profile Picture</title>
-    <style>
+<style>
+    .container {
+        max-width: 600px;
+        padding-bottom: 50px;
+    }
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    .card {
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .card-body {
+        padding: 2rem;
+    }
+    .btn-group {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    .btn-group .btn {
+        width: 100%;
+    }
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+    .btn-danger {
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }
+    .btn-secondary {
+        background-color: #6c757d;
+        border-color: #6c757d;
+    }
+    .spacer {
+        height: 1rem;
+    }
+    @media (max-width: 768px) {
         .container {
-            max-width: 600px;
-            padding-bottom: 50px;
-        }
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-        .card {
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        .card-body {
-            padding: 2rem;
+            padding: 20px;
         }
         .btn-group {
-            display: flex;
             flex-direction: column;
-            gap: 1rem;
         }
-        .btn-group .btn {
-            width: 100%;
-        }
-        .btn-primary {
-            background-color: #007bff;
-            border-color: #007bff;
-        }
-        .btn-danger {
-            background-color: #dc3545;
-            border-color: #dc3545;
-        }
-        .btn-secondary {
-            background-color: #6c757d;
-            border-color: #6c757d;
-        }
-        .spacer {
-            height: 1rem;
-        }
-        @media (max-width: 768px) {
-            .container {
-                padding: 20px;
-            }
-            .btn-group {
-                flex-direction: column;
-            }
-        }
-    </style>
+    }
+</style>
 {% endblock %}
 
 {% block body %}
-    <div class="container mt-5 pt-5">
-        <h1 class="text-center">Edit Profile Picture</h1>
-        <div class="card mx-auto">
-            <div class="card-body">
-                <form method="POST" action="{{ url_for('edit_profile_picture') }}" enctype="multipart/form-data">
-                    {{ form.hidden_tag() }}
-                    <div class="form-group">
-                        {{ form.profile_picture.label(class="form-control-label") }}
-                        {{ form.profile_picture(class="form-control-file") }}
-                    </div>
-                    <div class="btn-group">
-                        {{ form.submit(class="btn btn-primary") }}
-                    </div>
-                </form>
-                <div class="spacer"></div>
-                <form method="POST" action="{{ url_for('remove_profile_picture') }}">
-                    {{ remove_form.hidden_tag() }}
-                    <div class="btn-group">
-                        <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to remove your profile picture?');">Remove Profile Picture</button>
-                        <a href="{{ url_for('profile') }}" class="btn btn-secondary">Cancel</a>
-                    </div>
-                </form>
-            </div>
+<div class="container mt-5 pt-5">
+    <h1 class="text-center">Edit Profile Picture</h1>
+    <div class="card mx-auto">
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('edit_profile_picture') }}" enctype="multipart/form-data">
+                <input name="csrf_token" type="hidden" value="{{ form.csrf_token.current_token }}">
+                <div class="form-group">
+                    {{ form.profile_picture.label(class="form-control-label") }}
+                    {{ form.profile_picture(class="form-control-file") }}
+                </div>
+                <div class="btn-group">
+                    {{ form.submit(class="btn btn-primary") }}
+                </div>
+            </form>
+            <div class="spacer"></div>
+            <form method="POST" action="{{ url_for('remove_profile_picture') }}">
+                {{ remove_form.hidden_tag() }}
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to remove your profile picture?');">Remove Profile Picture</button>
+                    <a href="{{ url_for('profile') }}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
         </div>
     </div>
+</div>
 {% endblock %}

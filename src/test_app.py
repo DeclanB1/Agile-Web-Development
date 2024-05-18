@@ -45,7 +45,7 @@ class AppTest(TestCase):
             confirm_password='password',
             fullname='New User',
             age=25,
-            preferredlocation='Crawley'
+            preferred_location='Crawley'
         ), follow_redirects=True)
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'Registration Successful!', response.data)
@@ -59,7 +59,7 @@ class AppTest(TestCase):
             confirm_password='password123',
             fullname='Existing User',
             age=25,
-            preferredlocation='Test Location',
+            preferred_location='Test Location',
         ))
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'Username already in use, please choose a different name.', response.data)     
@@ -74,7 +74,7 @@ class AppTest(TestCase):
             confirm_password='password123',
             fullname='Existing User',
             age=30,
-            preferredlocation='Existing Location',
+            preferred_location='Existing Location',
         ), follow_redirects=True)
 
         # Try to register another user with the same email
@@ -85,7 +85,7 @@ class AppTest(TestCase):
             confirm_password='password123',
             fullname='New User',
             age=25,
-            preferredlocation='Test Location',
+            preferred_location='Test Location',
         ), follow_redirects=True)
         
         self.assertEqual(response.status_code, 200)
@@ -283,7 +283,7 @@ class AppTest(TestCase):
             email='newemail@example.com',
             fullname='New Name',
             age='30',
-            preferredlocation='San Francisco'
+            preferred_location='San Francisco'
         ), follow_redirects=True)
         
         self.assertEqual(response.status_code, 200)

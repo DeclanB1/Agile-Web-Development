@@ -1,5 +1,9 @@
 {% extends 'layout.html' %}
 
+{% block title %}
+<title>Browse Events</title>
+{% endblock %}
+
 {% block body %}
   <section class="browse-events pt-5">
     <div class="container">
@@ -13,7 +17,7 @@
         <div class="col-md-9">
           <div class="row">
             <div class="col-md-3">
-              <label for="sport-filter"">Sport Type:</label>
+              <label for="sport-filter">Sport Type:</label>
               <select id="sport-filter" class="form-control">
                 <option value="all">All</option>
                 {% for sport_type in sport_types %}
@@ -22,7 +26,7 @@
               </select>
             </div>
             <div class="col-md-3">
-              <label for="num-players-filter"">Number of Players:</label>
+              <label for="num-players-filter">Number of Players:</label>
               <select id="num-players-filter" class="form-control">
                 <option value="all">All</option>
                 {% for num_player in num_players %}
@@ -31,7 +35,7 @@
               </select>
             </div>
             <div class="col-md-3">
-              <label for="level-filter"">Playing Level:</label>
+              <label for="level-filter">Playing Level:</label>
               <select id="level-filter" class="form-control">
                 <option value="all">All</option>
                 {% for playing_level in playing_levels %}
@@ -40,7 +44,7 @@
               </select>
             </div>
             <div class="col-md-3">
-              <label for="location-filter"">Location:</label>
+              <label for="location-filter">Location:</label>
               <select id="location-filter" class="form-control">
                 <option value="all">All</option>
                 {% for location in locations %}

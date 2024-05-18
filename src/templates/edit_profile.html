@@ -1,7 +1,10 @@
 {% extends "layout.html" %}
 
+{% block title %}
+<title>Edit Profile</title>
+{% endblock %}
+
 {% block head %}
-    <title>Edit Profile</title>
     <style>
         .container {
             max-width: 600px;
@@ -33,8 +36,8 @@
                         {{ form.age(class="form-control") }}
                     </div>
                     <div class="form-group">
-                        {{ form.preferredlocation.label(class="form-label") }}
-                        {{ form.preferredlocation(class="form-control") }}
+                        {{ form.preferred_location.label(class="form-label") }}
+                        {{ form.preferred_location(class="form-control") }}
                     </div>
                     <div class="form-group text-center">
                         {{ form.submit(class="btn btn-primary") }}
