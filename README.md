@@ -112,7 +112,7 @@ quit()
 
 Sample SECRET_KEY saved to .env file
 
-5. **Navigate the Source Directory**
+4. **Navigate the Source Directory**
 
 ```bash
 cd src
@@ -132,4 +132,7 @@ flask run #run with debug mode off
 
 ## How to run Tests
 
->TO_DO
+```bash
+cd src
+python -m unittest test_app.py                                                     
+```
