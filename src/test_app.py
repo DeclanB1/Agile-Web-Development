@@ -4,7 +4,7 @@ from utils import set_session
 from flask import session
 from flask_testing import TestCase
 from werkzeug.security import generate_password_hash
-from datetime import datetime
+from datetime import datetime, date
 
 class AppTest(TestCase):
     def create_app(self):
@@ -218,7 +218,7 @@ class AppTest(TestCase):
             sport_type='Basketball', 
             num_players=5, 
             playing_level='Beginner',
-            event_date='2024-05-30',
+            event_date=date(2024, 5, 30),
             start_time='15:00',
             end_time='17:00',
             location='Downtown Gym',
@@ -243,9 +243,9 @@ class AppTest(TestCase):
                 sport_type='Soccer',
                 num_players=10,
                 playing_level='Intermediate',
-                event_date='2024/05/29',
-                start_time='08:00 AM',
-                end_time='10:00 AM',
+                event_date=date(2024, 5, 29),
+                start_time='08:00',
+                end_time='10:00',
                 location='Test Location',
                 description='This is a test event.',
                 gender_preference='Mixed',
@@ -316,7 +316,7 @@ class AppTest(TestCase):
                     sport_type='Basketball',
                     num_players=5,
                     playing_level='Beginner',
-                    event_date='2024-05-30',
+                    event_date=date(2024, 5, 30),
                     start_time='10:00',
                     end_time='12:00',
                     location='Downtown Gym',
@@ -358,7 +358,7 @@ class AppTest(TestCase):
             sport_type='Basketball', 
             num_players=5, 
             playing_level='Beginner',
-            event_date='2024-05-30',
+            event_date=date(2024, 5, 30),
             start_time='15:00',
             end_time='17:00',
             location='Downtown Gym',

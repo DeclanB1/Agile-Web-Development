@@ -11,7 +11,7 @@ from werkzeug.utils import secure_filename
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, TextAreaField, SelectField, validators
 from wtforms.validators import DataRequired, EqualTo, Email, Optional, ValidationError
 from flask_wtf.file import FileField, FileAllowed
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from pathlib import Path
 from utils import login_required
 
@@ -60,7 +60,7 @@ class Events(db.Model):
     __tablename__ = 'events'
 
     event_id = db.Column(db.Integer, primary_key=True)
-    event_title = db.Column(db.String, nullable=False)
+    event_title = db.Column(db.String, nullable=False, unique=True)
     sport_type = db.Column(db.String, nullable=False)
     num_players = db.Column(db.Integer, nullable=False)
     playing_level = db.Column(db.String, nullable=False)
@@ -74,7 +74,7 @@ class Events(db.Model):
     username = db.Column(db.String, db.ForeignKey('users.username'), nullable=False)
 
     def __repr__(self):
-        return f"<Events(event_id='{self.event_id}', event_title='{self.event_title}', sport_type='{self.sport_type}', num_players={self.num_players}, event_date='{self.event_date.strftime('%d:%m:%Y')}', start_time='{self.start_time}', end_time='{self.end_time}', location='{self.location}', description='{self.description}', gender_preference='{self.gender_preference}', contact_information='{self.contact_information}', username='{self.username}')>"
+        return f"<Events(event_id='{self.event_id}', event_title='{self.event_title}', sport_type='{self.sport_type}', num_players={self.num_players}, event_date='{self.event_date.strftime('%d/%m/%Y')}', start_time='{self.start_time}', end_time='{self.end_time}', location='{self.location}', description='{self.description}', gender_preference='{self.gender_preference}', contact_information='{self.contact_information}', username='{self.username}')>"
 
 ##====================================================================================================================================================================================
 ## Form Definition
@@ -144,6 +144,12 @@ class EventForm(FlaskForm):
             choices.append((start_time.strftime('%H:%M'), formatted_time))
             start_time += timedelta(minutes=30)
         return choices
+
+    def validate_on_submit(self):
+        if super(EventForm, self).validate_on_submit():
+            self.event_date.data = datetime.strptime(self.event_date.data, '%Y-%m-%d').date()
+            return True
+        return False
 
 
 ##====================================================================================================================================================================================
@@ -269,7 +275,7 @@ def post_an_event():
             sport_type = form.sport_type.data
             num_players = form.num_players.data
             playing_level = form.playing_level.data
-            event_date = datetime.strptime(form.event_date.data, '%Y-%m-%d')
+            event_date = form.event_date.data
             start_time = form.start_time.data
             end_time = form.end_time.data 
             location = form.location.data
@@ -513,7 +519,7 @@ def edit_event(event_id):
         event.sport_type = form.sport_type.data
         event.num_players = form.num_players.data
         event.playing_level = form.playing_level.data
-        event.event_date = datetime.strptime(form.event_date.data, '%Y-%m-%d')
+        event.event_date = form.event_date.data
         event.start_time = form.start_time.data
         event.end_time = form.end_time.data
         event.location = form.location.data
