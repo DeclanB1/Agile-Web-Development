@@ -64,7 +64,7 @@ class Events(db.Model):
     sport_type = db.Column(db.String, nullable=False)
     num_players = db.Column(db.Integer, nullable=False)
     playing_level = db.Column(db.String, nullable=False)
-    event_date = db.Column(db.String, nullable=False)
+    event_date = db.Column(db.Date, nullable=False)
     start_time = db.Column(db.String, nullable=False)
     end_time = db.Column(db.String, nullable=False)
     location = db.Column(db.String, nullable=False)
@@ -73,13 +73,8 @@ class Events(db.Model):
     contact_information = db.Column(db.String, nullable=False)
     username = db.Column(db.String, db.ForeignKey('users.username'), nullable=False)
 
-    __table_args__ = (
-        UniqueConstraint('event_id'),
-        UniqueConstraint('event_title')
-    )
-
     def __repr__(self):
-        return f"<Events(event_id='{self.event_id}', event_title='{self.event_title}', sport_type='{self.sport_type}', num_players={self.num_players}, event_date='{self.event_date}', start_time='{self.start_time}', end_time='{self.end_time}', location='{self.location}', description='{self.description}', gender_preference='{self.gender_preference}', contact_information='{self.contact_information}', username='{self.username}')>"
+        return f"<Events(event_id='{self.event_id}', event_title='{self.event_title}', sport_type='{self.sport_type}', num_players={self.num_players}, event_date='{self.event_date.strftime('%d:%m:%Y')}', start_time='{self.start_time}', end_time='{self.end_time}', location='{self.location}', description='{self.description}', gender_preference='{self.gender_preference}', contact_information='{self.contact_information}', username='{self.username}')>"
 
 ##====================================================================================================================================================================================
 ## Form Definition
@@ -274,7 +269,7 @@ def post_an_event():
             sport_type = form.sport_type.data
             num_players = form.num_players.data
             playing_level = form.playing_level.data
-            event_date = form.event_date.data
+            event_date = datetime.strptime(form.event_date.data, '%Y-%m-%d')
             start_time = form.start_time.data
             end_time = form.end_time.data 
             location = form.location.data
@@ -300,6 +295,13 @@ def post_an_event():
             db.session.add(event)
             db.session.commit()
             flash('Event successfully created', 'success')
+            ################## SAVE RENDERED HTML TO OUTPUT FILE FOR VALIDATION CHECKING ##################
+            rendered_html = render_template('event_posted_successfully.html', event=event)
+            output_path = os.path.join('html_generated_files_for_validation', 'event_posted_successfully.html')
+            os.makedirs(os.path.dirname(output_path), exist_ok=True)
+            with open(output_path, 'w') as file:
+                file.write(rendered_html)
+            ###############################################################################################
             return render_template('event_posted_successfully.html', event=event)
         except IntegrityError:
             db.session.rollback()
@@ -511,7 +513,7 @@ def edit_event(event_id):
         event.sport_type = form.sport_type.data
         event.num_players = form.num_players.data
         event.playing_level = form.playing_level.data
-        event.event_date = form.event_date.data
+        event.event_date = datetime.strptime(form.event_date.data, '%Y-%m-%d')
         event.start_time = form.start_time.data
         event.end_time = form.end_time.data
         event.location = form.location.data

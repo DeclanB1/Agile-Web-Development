@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     
-<title>Browse Events</title>
+<title>Event Posted Successfully</title>
 
     
     <!-- Bootstrap CSS -->
@@ -81,89 +81,38 @@
     <!-- Flash Messages -->
     
       
+        <div id="flash-messages" class="container mt-3">
+          
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+              Event successfully created
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          
+        </div>
+      
     
 
     <!-- Main Body Content -->
     
-  <section class="browse-events pt-5">
-    <div class="container">
-      <h2 class="mb-3">Browse Events</h2>
-      <div class="row align-items-center">
-        <!-- Search bar -->
-        <div class="col-md-3">
-          <input type="text" class="form-control mt-4" id="search" placeholder="Search for an Event">
-        </div>
-        <!-- Filter Options -->
-        <div class="col-md-9">
-          <div class="row">
-            <div class="col-md-3">
-              <label for="sport-filter">Sport Type:</label>
-              <select id="sport-filter" class="form-control">
-                <option value="all">All</option>
-                
-                  <option value="Soccer">Soccer</option>
-                
-              </select>
-            </div>
-            <div class="col-md-3">
-              <label for="num-players-filter">Number of Players:</label>
-              <select id="num-players-filter" class="form-control">
-                <option value="all">All</option>
-                
-                  <option value="4">4</option>
-                
-              </select>
-            </div>
-            <div class="col-md-3">
-              <label for="level-filter">Playing Level:</label>
-              <select id="level-filter" class="form-control">
-                <option value="all">All</option>
-                
-                  <option value="Intermediate">Intermediate</option>
-                
-              </select>
-            </div>
-            <div class="col-md-3">
-              <label for="location-filter">Location:</label>
-              <select id="location-filter" class="form-control">
-                <option value="all">All</option>
-                
-                  <option value="UWA Campus">UWA Campus</option>
-                
-              </select>
-            </div>
-          </div>
-        </div>
-      </div>
-      <hr>
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>Event Title</th>
-            <th>Sport Type</th>
-            <th>Number of Players</th>
-            <th>Playing Level</th>
-            <th>Location</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          
-            <tr>
-              <td>Another Event</td>
-              <td>Soccer</td>
-              <td>4</td> 
-              <td>Intermediate</td>
-              <td>UWA Campus</td>
-              <td><a href="/browse-single-event/1" class="btn btn-secondary">Details</a></td>
-            </tr>
-          
-        </tbody>
-      </table>
-      <hr>
-      <a class="btn btn-primary" href="/post-an-event">Post your Event</a>
-    </div>
-  </section>
+<div class="container mt-5">
+    <h2>Event Posted Successfully!</h2>
+    <p>Here are the details of your event:</p>
+    <ul>
+        <li><strong>Event Title:</strong> Another Event</li>
+        <li><strong>Sport Type:</strong> Soccer</li>
+        <li><strong>Number of Players Needed:</strong> 4</li>
+        <li><strong>Playing Level:</strong> Intermediate</li>
+        <li><strong>Event Date:</strong> 06/05/2045</li>
+        <li><strong>Start Time:</strong> 00:30</li>
+        <li><strong>End Time:</strong> 13:30</li>
+        <li><strong>Location:</strong> Dalkeith</li>
+        <li><strong>Description:</strong> Test</li>
+        <li><strong>Gender Preference:</strong> Female</li>
+        <li><strong>Contact Information:</strong> 0400049991</li>
+    </ul>
+
+    <a href="/dashboard" class="btn btn-primary mt-3">Back to Home</a>
+</div>
 
 
     <!-- Bootstrap Bundle with Popper (JavaScript) -->

@@ -13,7 +13,7 @@
         <li><strong>Sport Type:</strong> {{ event.sport_type }}</li>
         <li><strong>Number of Players Needed:</strong> {{ event.num_players }}</li>
         <li><strong>Playing Level:</strong> {{ event.playing_level }}</li>
-        <li><strong>Event Date:</strong> {{ event.event_date }}</li>
+        <li><strong>Event Date:</strong> {{ event.event_date.strftime('%d/%m/%Y') }}</li>
         <li><strong>Start Time:</strong> {{ event.start_time }}</li>
         <li><strong>End Time:</strong> {{ event.end_time }}</li>
         <li><strong>Location:</strong> {{ event.location }}</li>
